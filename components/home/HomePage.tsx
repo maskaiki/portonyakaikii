@@ -4,7 +4,7 @@ import { Hero } from "./Hero";
 import { TickerSection } from "./TickerSection";
 import { StatementSection } from "./StatementSection";
 import { EditorialSection } from "./EditorialSection";
-import { HallOfFame } from "./HallOfFame";
+import { SelectedWorkSection } from "./SelectedWorkSection";
 import { CollabsSection } from "./CollabsSection";
 
 export default function HomePage() {
@@ -22,8 +22,8 @@ export default function HomePage() {
       {/* 4. Asymmetric Editorial Grid & Lime Signature Quote */}
       <EditorialSection />
 
-      {/* 5. Projects Hall of Fame with Authentic Notched Cyber Cards */}
-      <HallOfFame />
+      {/* 5. Crafted Portfolio & Filterable Work Showcase */}
+      <SelectedWorkSection />
 
       {/* 6. Tech Stack & Collaborations with Giant Graffiti Collabs Script */}
       <CollabsSection />
