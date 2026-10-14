@@ -16,53 +16,55 @@ export function Hero() {
       {/* Cyan/Blue subtle edge vignette */}
       <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_120px_rgba(56,189,248,0.18)]" />
 
-      {/* Main Hero Stage: Full width with flush edge paddings */}
-      <div className="relative z-10 flex-1 flex flex-col justify-center my-auto w-full px-4 sm:px-6 md:px-8 lg:px-12 pt-20 sm:pt-24 pb-20 md:pb-24">
-        
-        {/* Right: Informatics Engineering (Bold & Large text, no frame, no bullet, flush to the right) */}
-        <div className="w-full flex justify-end mb-4 sm:mb-6 md:mb-8">
-          <motion.div
-            initial={{ opacity: 0, x: 25 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="text-right"
-          >
-            <h2 className="font-display text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight text-[#111112] leading-[0.9]">
-              INFORMATICS <br />
-              ENGINEERING
-            </h2>
-            <p className="font-display text-xs sm:text-sm md:text-base font-black uppercase tracking-[0.2em] text-[#00d2ff] mt-2">
-              × CREATIVE TECHNOLOGY
-            </p>
-          </motion.div>
-        </div>
+      {/* Main Hero Stage: Full width with side-by-side alignment to prevent vertical clipping */}
+      <div className="relative z-10 flex-1 flex flex-col justify-center my-auto w-full px-4 sm:px-6 md:px-8 lg:px-12 pt-24 sm:pt-28 pb-24 md:pb-28">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* Left Column: Kinetic Headline (Flush left, zero vertical clipping) */}
+          <div className="lg:col-span-8 flex flex-col items-start text-left">
+            <motion.h1
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="font-display text-4xl sm:text-6xl md:text-7xl lg:text-[5rem] xl:text-[6rem] font-black uppercase tracking-tight text-[#111112] leading-[1.04] select-none text-left py-3 overflow-visible"
+            >
+              BUILDING{" "}
+              <span className="font-brier italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#1d4ed8] to-[#0a192f] bg-clip-text text-transparent">
+                SYSTEMS
+              </span>
+              .
+              <br />
+              EXPLORING{" "}
+              <span className="font-brier italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#1d4ed8] to-[#0a192f] bg-clip-text text-transparent">
+                IDEAS
+              </span>
+              .
+              <br />
+              TELLING{" "}
+              <span className="font-brier italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#1d4ed8] to-[#0a192f] bg-clip-text text-transparent">
+                STORIES
+              </span>
+              .
+            </motion.h1>
+          </div>
 
-        {/* Kinetic Headline: Flush to the Left ("mentokin ke kiri", space in center for photo) */}
-        <div className="w-full flex flex-col items-start text-left">
-          <motion.h1
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-[7.2rem] font-black uppercase tracking-tight text-[#111112] leading-[0.88] select-none text-left"
-          >
-            BUILDING{" "}
-            <span className="font-brier italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#1d4ed8] to-[#0a192f] bg-clip-text text-transparent">
-              SYSTEMS
-            </span>
-            .
-            <br />
-            EXPLORING{" "}
-            <span className="font-brier italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#1d4ed8] to-[#0a192f] bg-clip-text text-transparent">
-              IDEAS
-            </span>
-            .
-            <br />
-            TELLING{" "}
-            <span className="font-brier italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#1d4ed8] to-[#0a192f] bg-clip-text text-transparent">
-              STORIES
-            </span>
-            .
-          </motion.h1>
+          {/* Right Column: Informatics Engineering (Bold & Large, flush right, text only) */}
+          <div className="lg:col-span-4 flex justify-start lg:justify-end text-left lg:text-right pt-2 lg:pt-4">
+            <motion.div
+              initial={{ opacity: 0, x: 25 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight text-[#111112] leading-[0.95]">
+                INFORMATICS <br className="hidden lg:block" />
+                ENGINEERING
+              </h2>
+              <p className="font-display text-xs sm:text-sm md:text-base font-black uppercase tracking-[0.2em] text-[#00d2ff] mt-2">
+                × CREATIVE TECHNOLOGY
+              </p>
+            </motion.div>
+          </div>
+
         </div>
       </div>
 
