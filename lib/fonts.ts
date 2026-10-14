@@ -14,7 +14,7 @@ export const serifFont = localFont({
   src: "../public/fonts/Brier-Bold.woff2",
   variable: "--font-serif",
   display: "swap",
-  weight: "700",
+  weight: "100 900",
 });
 
 // Clean sans-serif for body/UI text

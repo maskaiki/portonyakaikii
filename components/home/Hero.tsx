@@ -6,7 +6,7 @@ import Link from "next/link";
 export function Hero() {
   return (
     <section
-      className="hero-section relative min-h-screen w-full bg-[#f4f4ed] text-[#111112] overflow-hidden flex flex-col justify-between pt-20 pb-8 select-none"
+      className="hero-section relative min-h-screen w-full bg-[#f4f4ed] text-[#111112] overflow-x-hidden flex flex-col justify-between pt-20 pb-8 select-none"
       style={{
         backgroundImage: "url('/assets/shared/67dbeba158707fa1cd5e5e45_blobs_footer_1.svg')",
         backgroundSize: "cover",
@@ -16,32 +16,32 @@ export function Hero() {
       {/* Cyan/Blue subtle edge vignette */}
       <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_120px_rgba(56,189,248,0.18)]" />
 
-      {/* Main Hero Stage: Full width with side-by-side alignment to prevent vertical clipping */}
-      <div className="relative z-10 flex-1 flex flex-col justify-center my-auto w-full px-4 sm:px-6 md:px-8 lg:px-12 pt-24 sm:pt-28 pb-24 md:pb-28">
+      {/* Main Hero Stage: Full width with side-by-side alignment, generous padding, zero vertical clipping */}
+      <div className="relative z-10 flex-1 flex flex-col justify-center w-full px-4 sm:px-6 md:px-8 lg:px-12 pt-12 sm:pt-16 pb-16 md:pb-20">
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Left Column: Kinetic Headline (Flush left, zero vertical clipping) */}
+          {/* Left Column: Kinetic Headline (Flush left, zero clipping, fully rendered glyphs) */}
           <div className="lg:col-span-8 flex flex-col items-start text-left">
             <motion.h1
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="font-display text-4xl sm:text-6xl md:text-7xl lg:text-[5rem] xl:text-[6rem] font-black uppercase tracking-tight text-[#111112] leading-[1.04] select-none text-left py-3 overflow-visible"
+              className="font-display text-4xl sm:text-6xl md:text-7xl lg:text-[5rem] xl:text-[6rem] font-black uppercase tracking-tight text-[#111112] leading-[1.08] select-none text-left py-4 overflow-visible"
             >
               BUILDING{" "}
-              <span className="font-brier italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#1d4ed8] to-[#0a192f] bg-clip-text text-transparent">
+              <span className="inline-block font-brier italic font-bold bg-gradient-to-r from-[#00d2ff] via-[#38bdf8] to-[#1d4ed8] bg-clip-text text-transparent px-1.5 py-1 overflow-visible">
                 SYSTEMS
               </span>
               .
               <br />
               EXPLORING{" "}
-              <span className="font-brier italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#1d4ed8] to-[#0a192f] bg-clip-text text-transparent">
+              <span className="inline-block font-brier italic font-bold bg-gradient-to-r from-[#00d2ff] via-[#38bdf8] to-[#1d4ed8] bg-clip-text text-transparent px-1.5 py-1 overflow-visible">
                 IDEAS
               </span>
               .
               <br />
               TELLING{" "}
-              <span className="font-brier italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#1d4ed8] to-[#0a192f] bg-clip-text text-transparent">
+              <span className="inline-block font-brier italic font-bold bg-gradient-to-r from-[#00d2ff] via-[#38bdf8] to-[#1d4ed8] bg-clip-text text-transparent px-1.5 py-1 overflow-visible">
                 STORIES
               </span>
               .
