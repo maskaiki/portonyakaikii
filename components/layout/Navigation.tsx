@@ -38,6 +38,8 @@ export function Navigation() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
+  const [wicaksanaActive, setWicaksanaActive] = useState(false);
+
   return (
     <>
       <header
@@ -47,42 +49,20 @@ export function Navigation() {
             : "bg-transparent py-5 text-[#111112]"
         }`}
       >
-        <div className="page-shell flex items-center justify-between">
-          {/* Left: Brand Logo (LANDO NORRIS style) */}
+        <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 flex items-center justify-between">
+          {/* Left: RW Monogram Logo + RIFKY WICAKSANA (Flush to far left) */}
           <Link
             href="/"
-            className="flex flex-col text-left group transition-transform duration-200 hover:scale-[1.02]"
+            onClick={() => setWicaksanaActive((prev) => !prev)}
+            className="flex items-center gap-3 text-left group transition-transform duration-200 hover:scale-[1.02]"
             aria-label="Rifky Wicaksana — Home"
           >
-            <span
-              className={`font-display text-sm font-black tracking-widest uppercase leading-none transition-colors ${
-                scrolled
-                  ? "text-[#efefe5] group-hover:text-[#00d2ff]"
-                  : "text-[#111112] group-hover:text-[#0284c7]"
-              }`}
-            >
-              RIFKY
-            </span>
-            <span
-              className={`font-display text-lg font-black tracking-tighter uppercase leading-tight ${
-                scrolled ? "text-[#efefe5]" : "text-[#111112]"
-              }`}
-            >
-              WICAKSANA
-            </span>
-          </Link>
-
-          {/* Center: Geometric RW Racing Monogram (LN Style) */}
-          <Link
-            href="/"
-            className="hidden md:flex items-center justify-center p-2 group"
-            aria-label="Monogram"
-          >
+            {/* Geometric RW Racing Monogram (moved to left) */}
             <div
-              className={`w-9 h-9 rounded-sm flex items-center justify-center backdrop-blur-sm transition-all ${
+              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center backdrop-blur-sm transition-all duration-300 ${
                 scrolled
-                  ? "border border-[#00d2ff]/40 bg-[#0a192f]/60 group-hover:border-[#00d2ff]"
-                  : "border border-black/20 bg-white/40 group-hover:border-[#00d2ff]"
+                  ? "border border-[#00d2ff]/40 bg-[#0a192f]/60 group-hover:border-[#00d2ff] group-hover:shadow-[0_0_15px_rgba(0,210,255,0.4)]"
+                  : "border border-black/15 bg-white/70 group-hover:border-[#00d2ff] group-hover:shadow-[0_0_15px_rgba(0,210,255,0.3)]"
               }`}
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -95,6 +75,30 @@ export function Navigation() {
                   fill={scrolled ? "#f4f4ed" : "#111112"}
                 />
               </svg>
+            </div>
+
+            {/* Brand Name Text */}
+            <div className="flex flex-col">
+              <span
+                className={`font-display text-xs sm:text-sm font-black tracking-widest uppercase leading-none transition-colors duration-200 ${
+                  scrolled
+                    ? "text-[#efefe5] group-hover:text-[#00d2ff]"
+                    : "text-[#111112] group-hover:text-[#00d2ff]"
+                }`}
+              >
+                RIFKY
+              </span>
+              <span
+                className={`font-display text-base sm:text-lg font-black tracking-tighter uppercase leading-tight transition-colors duration-200 ${
+                  wicaksanaActive
+                    ? "text-[#00d2ff]"
+                    : scrolled
+                    ? "text-[#efefe5] group-hover:text-[#00d2ff] group-active:text-[#00d2ff] active:text-[#00d2ff]"
+                    : "text-[#111112] group-hover:text-[#00d2ff] group-active:text-[#00d2ff] active:text-[#00d2ff]"
+                }`}
+              >
+                WICAKSANA
+              </span>
             </div>
           </Link>
 

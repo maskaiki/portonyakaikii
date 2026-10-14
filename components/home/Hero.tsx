@@ -16,26 +16,34 @@ export function Hero() {
       {/* Cyan/Blue subtle edge vignette */}
       <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_120px_rgba(56,189,248,0.18)]" />
 
-      {/* Main Center Stage (Plain, clean, bold kinetic typography) */}
-      <div className="page-shell relative z-10 flex-1 flex flex-col items-center justify-center my-auto">
-        <div className="relative w-full max-w-5xl flex flex-col items-center text-center py-12 md:py-20">
+      {/* Main Hero Stage: Full width with flush edge paddings */}
+      <div className="relative z-10 flex-1 flex flex-col justify-center my-auto w-full px-4 sm:px-6 md:px-8 lg:px-12 pt-20 sm:pt-24 pb-20 md:pb-24">
+        
+        {/* Right: Informatics Engineering (Bold & Large text, no frame, no bullet, flush to the right) */}
+        <div className="w-full flex justify-end mb-4 sm:mb-6 md:mb-8">
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-black/10 bg-black/5 backdrop-blur-sm mb-6"
+            initial={{ opacity: 0, x: 25 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            className="text-right"
           >
-            <span className="w-2 h-2 rounded-full bg-[#00d2ff] animate-pulse" />
-            <span className="font-display text-[10px] md:text-xs font-bold uppercase tracking-[0.25em] text-[#282c20]/80">
-              INFORMATICS ENGINEERING × CREATIVE TECHNOLOGY
-            </span>
+            <h2 className="font-display text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight text-[#111112] leading-[0.9]">
+              INFORMATICS <br />
+              ENGINEERING
+            </h2>
+            <p className="font-display text-xs sm:text-sm md:text-base font-black uppercase tracking-[0.2em] text-[#00d2ff] mt-2">
+              × CREATIVE TECHNOLOGY
+            </p>
           </motion.div>
+        </div>
 
+        {/* Kinetic Headline: Flush to the Left ("mentokin ke kiri", space in center for photo) */}
+        <div className="w-full flex flex-col items-start text-left">
           <motion.h1
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-[7.5rem] font-black uppercase tracking-tight text-[#111112] leading-[0.88] select-none"
+            className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-[7.2rem] font-black uppercase tracking-tight text-[#111112] leading-[0.88] select-none text-left"
           >
             BUILDING{" "}
             <span className="font-brier italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#1d4ed8] to-[#0a192f] bg-clip-text text-transparent">
