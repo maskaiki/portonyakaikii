@@ -26,6 +26,8 @@ yarn-error.log*
 # local env files
 .env*.local
 *mcp_config.json
+stitch_generated.html
+stitch_screenshot.png
 
 # vercel
 .vercel
