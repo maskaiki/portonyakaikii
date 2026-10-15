@@ -36,10 +36,10 @@ export function Navigation() {
     <>
       <header className="fixed top-3 sm:top-5 inset-x-0 z-50 px-3 sm:px-6 md:px-8 max-w-7xl mx-auto transition-all duration-300">
         <div
-          className={`w-full rounded-full transition-all duration-300 px-5 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between backdrop-blur-2xl ${
+          className={`w-full transition-all duration-300 px-4 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between site-nav-glass ${
             scrolled
-              ? "bg-[#0A0A0A]/90 border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.15)] text-[#efefe5]"
-              : "bg-white/80 border border-white/90 shadow-[0_12px_36px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,1)] text-[#111112]"
+              ? "bg-[#0A0A0A]/90 border-white/20 text-[#efefe5] shadow-[0_16px_40px_rgba(0,0,0,0.4)]"
+              : "text-[#111112]"
           }`}
         >
           {/* Left: Aesthetic Clean RW Monogram (No dots, No KAIKI) */}
@@ -62,11 +62,11 @@ export function Navigation() {
             </div>
           </a>
 
-          {/* Center: Desktop Anchor Links Navigation (Minimal Glass Pill Nav) */}
-          <nav className="hidden lg:flex items-center gap-1">
+          {/* Center: Desktop Anchor Links Navigation (NFstyles Architectural Glass Nav) */}
+          <nav className="hidden lg:flex items-center gap-1.5">
             <a
               href="#hero"
-              className="px-3.5 py-1.5 rounded-full font-manrope text-[11px] font-extrabold uppercase tracking-wider text-[#111112] bg-black/5 hover:bg-black/10 transition-all duration-200"
+              className="site-nav-link site-nav-link--active"
             >
               Explore
             </a>
@@ -74,39 +74,39 @@ export function Navigation() {
               <a
                 key={href}
                 href={href}
-                className="px-3.5 py-1.5 rounded-full font-manrope text-[11px] font-extrabold uppercase tracking-wider text-[#111112]/75 hover:text-[#111112] hover:bg-black/5 transition-all duration-200"
+                className="site-nav-link"
               >
                 {label}
               </a>
             ))}
           </nav>
 
-          {/* Right: Glassmorphism CONNECT Button (No dots) + Mobile Hamburger Menu */}
+          {/* Right: Glassmorphism CONNECT Button (No dots, Architectural Sharp) + Mobile Hamburger Menu */}
           <div className="flex items-center gap-2.5">
             <a
               href="#contact"
-              className={`inline-flex items-center justify-center px-5 py-1.5 sm:py-2 rounded-full font-display text-xs font-black uppercase tracking-wider transition-all duration-200 transform hover:-translate-y-0.5 border ${
+              className={`inline-flex items-center justify-center px-5 py-2 rounded-none font-display text-xs font-black uppercase tracking-wider transition-all duration-200 border ${
                 scrolled
                   ? "bg-white text-black hover:bg-[#00d2ff] hover:text-black border-transparent shadow-[0_4px_16px_rgba(255,255,255,0.2)]"
-                  : "bg-[#111112] text-white hover:bg-[#00d2ff] hover:text-black border-white/20 shadow-[0_4px_16px_rgba(0,0,0,0.15)]"
+                  : "bg-[#111112] text-white hover:bg-[#00d2ff] hover:text-black border-black/20 shadow-[0_4px_16px_rgba(0,0,0,0.15)]"
               }`}
             >
               CONNECT
             </a>
 
-            {/* Circular Glass Hamburger Button */}
+            {/* Architectural Square Glass Hamburger Button */}
             <button
               onClick={toggleMenu}
-              className={`w-9 h-9 flex flex-col items-center justify-center gap-1.5 rounded-full backdrop-blur-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#00d2ff] ${
+              className={`w-9 h-9 flex flex-col items-center justify-center gap-1.5 rounded-none backdrop-blur-md transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-[#00d2ff] ${
                 scrolled
-                  ? "border border-white/15 hover:border-[#00d2ff] bg-white/10 text-white"
-                  : "border border-black/10 hover:border-[#00d2ff] bg-black/5 text-[#111112]"
+                  ? "border border-white/20 hover:border-[#00d2ff] bg-white/10 text-white"
+                  : "border border-black/15 hover:border-[#111112] bg-white/60 text-[#111112]"
               }`}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
             >
               <span
-                className={`w-4 h-[2px] rounded-full transition-all duration-300 ${
+                className={`w-4 h-[2px] transition-all duration-300 ${
                   menuOpen
                     ? "rotate-45 translate-y-1.5 bg-[#00d2ff]"
                     : scrolled
@@ -115,7 +115,7 @@ export function Navigation() {
                 }`}
               />
               <span
-                className={`w-4 h-[2px] rounded-full transition-all duration-300 ${
+                className={`w-4 h-[2px] transition-all duration-300 ${
                   menuOpen
                     ? "-rotate-45 -translate-y-1 bg-[#00d2ff]"
                     : scrolled

@@ -10,10 +10,11 @@ import { ProductCallout } from "./ProductCallout";
 import { ReticleFocus } from "./ReticleFocus";
 
 export function Hero() {
-  const [intensity, setIntensity] = useState(20); // Calm, elegant, non-crowded rain
-  const [speed, setSpeed] = useState(75);
-  const [size, setSize] = useState(28);
+  const [intensity, setIntensity] = useState(25); // Elegant, visible Storm Lab rain flow
+  const [speed, setSpeed] = useState(80);
+  const [size, setSize] = useState(30);
   const [isPaused, setIsPaused] = useState(false);
+  const [wetness, setWetness] = useState(0);
 
   return (
     <section
@@ -47,6 +48,7 @@ export function Hero() {
         speed={speed}
         size={size}
         isPaused={isPaused}
+        onWetnessChange={setWetness}
       />
 
       {/* Floating Top-Left "TEST YOUR SYSTEM" Control Panel at z-[35] */}
@@ -63,7 +65,27 @@ export function Hero() {
         />
       </div>
 
-      {/* Floating Bottom-Left: Kaiki's Original Tagline (Building Systems, Exploring Ideas, Telling Stories) at z-[35] */}
+      {/* Floating Top-Right: Storm Lab Surface Wetness Readout from experience.tsx at z-[35] */}
+      <aside
+        className="surface-readout-panel absolute top-20 sm:top-24 right-4 sm:right-6 md:right-12 z-[35] pointer-events-none select-none hidden md:flex"
+        aria-label={`Subject surface wetness: ${wetness} percent.`}
+        title="Real-time particle telemetry"
+      >
+        <div className="surface-readout__measurement" aria-hidden="true">
+          <svg className="surface-readout__drop" viewBox="0 0 24 32" fill="currentColor">
+            <path d="M12 0C9 6 1 16 1 21a11 11 0 0 0 22 0C23 16 15 6 12 0Z" />
+          </svg>
+          <div className="surface-readout__value">
+            <span>{String(wetness).padStart(2, "0")}</span>
+            <span className="surface-readout__unit">%</span>
+          </div>
+        </div>
+        <p className="surface-readout-caption">
+          Subject surface<br />wetness
+        </p>
+      </aside>
+
+      {/* Floating Bottom-Left: Kaiki's Original Tagline at z-[35] */}
       <div className="absolute bottom-5 sm:bottom-8 left-4 sm:left-6 md:left-12 z-[35] pointer-events-auto">
         <BottomIntro />
       </div>
