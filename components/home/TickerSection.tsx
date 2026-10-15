@@ -24,12 +24,16 @@ export function TickerSection() {
                 key={i}
                 className="font-brier text-5xl md:text-8xl italic bg-gradient-to-r from-[#00d2ff] via-[#38bdf8] to-[#1d4ed8] bg-clip-text text-transparent uppercase tracking-tight flex items-center gap-8"
               >
-                <span>CODE AT SCALE</span>
-                <span className="w-4 h-4 rounded-full bg-white/20" />
-                <span>SYSTEMS THINKING</span>
-                <span className="w-4 h-4 rounded-full bg-white/20" />
-                <span>VISUAL CRAFT</span>
-                <span className="w-4 h-4 rounded-full bg-white/20" />
+                <span>DESIGN</span>
+                <span className="w-3.5 h-3.5 rounded-full bg-white/20" />
+                <span>DEVELOP</span>
+                <span className="w-3.5 h-3.5 rounded-full bg-white/20" />
+                <span>STRATEGIZE</span>
+                <span className="w-3.5 h-3.5 rounded-full bg-white/20" />
+                <span>INNOVATE</span>
+                <span className="w-3.5 h-3.5 rounded-full bg-white/20" />
+                <span>CREATE</span>
+                <span className="w-3.5 h-3.5 rounded-full bg-white/20" />
               </span>
             ))}
           </div>
@@ -41,16 +45,16 @@ export function TickerSection() {
             {[...Array(4)].map((_, i) => (
               <span
                 key={i}
-                className="font-display text-6xl md:text-9xl font-black text-[#f4f4ed]/90 uppercase tracking-tighter flex items-center gap-8"
+                className="font-display text-5xl md:text-8xl font-black text-[#f4f4ed]/90 uppercase tracking-tighter flex items-center gap-8"
               >
-                <span>SOFTWARE</span>
+                <span>INFORMATICS ENGINEERING</span>
                 <span className="w-3 h-3 bg-[#00d2ff]" />
-                <span>ARTIFICIAL INTELLIGENCE</span>
+                <span>GRAPHIC DESIGN</span>
+                <span className="w-3 h-3 bg-[#00FF88]" />
+                <span>SOCIAL MEDIA STRATEGY</span>
                 <span className="w-3 h-3 bg-[#00d2ff]" />
-                <span>BLOCKCHAIN</span>
-                <span className="w-3 h-3 bg-[#00d2ff]" />
-                <span>INFORMATICS</span>
-                <span className="w-3 h-3 bg-[#00d2ff]" />
+                <span>KINETIC INTERFACES</span>
+                <span className="w-3 h-3 bg-[#00FF88]" />
               </span>
             ))}
           </div>

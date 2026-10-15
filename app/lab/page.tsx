@@ -1,5 +1,5 @@
-import { ReservedRoute } from "@/components/shared/ReservedRoute";
+import { redirect } from "next/navigation";
 
 export default function LabPage() {
-  return <ReservedRoute name="Lab" />;
+  redirect("/#skills");
 }

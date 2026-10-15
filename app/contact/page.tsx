@@ -1,5 +1,5 @@
-import { ReservedRoute } from "@/components/shared/ReservedRoute";
+import { redirect } from "next/navigation";
 
 export default function ContactPage() {
-  return <ReservedRoute name="Contact" />;
+  redirect("/#contact");
 }

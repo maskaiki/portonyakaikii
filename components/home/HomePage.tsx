@@ -2,31 +2,39 @@
 
 import { Hero } from "./Hero";
 import { TickerSection } from "./TickerSection";
-import { StatementSection } from "./StatementSection";
-import { EditorialSection } from "./EditorialSection";
+import { AboutSection } from "./AboutSection";
 import { SelectedWorkSection } from "./SelectedWorkSection";
-import { CollabsSection } from "./CollabsSection";
+import { ArsenalSection } from "./ArsenalSection";
+import { JourneySection } from "./JourneySection";
+import { ManifestoSection } from "./ManifestoSection";
+import { ContactSection } from "./ContactSection";
 
 export default function HomePage() {
   return (
     <div className="relative min-h-screen text-[#efefe5] overflow-x-hidden">
-      {/* 1. Sliced Visor Hero Section with Austin GP Cyber Badge */}
+      {/* 01. Visor Hero Section */}
       <Hero />
 
-      {/* 2. Message from Rifky & Kinetic Dual-Tier Marquee */}
+      {/* 02. Kinetic Dual-Tier Marquee Ticker */}
       <TickerSection />
 
-      {/* 3. Bold Alternating Kinetic Statement */}
-      <StatementSection />
+      {/* 03. About Me Story & Metric Stats */}
+      <AboutSection />
 
-      {/* 4. Asymmetric Editorial Grid & Lime Signature Quote */}
-      <EditorialSection />
-
-      {/* 5. Crafted Portfolio & Filterable Work Showcase */}
+      {/* 04. Selected Work Showcase with Filter Tabs */}
       <SelectedWorkSection />
 
-      {/* 6. Tech Stack & Collaborations with Giant Graffiti Collabs Script */}
-      <CollabsSection />
+      {/* 05. Arsenal Skills & Tech Marquee */}
+      <ArsenalSection />
+
+      {/* 06. Journey & Experience Timeline */}
+      <JourneySection />
+
+      {/* 07. Manifesto Quote Section */}
+      <ManifestoSection />
+
+      {/* 08. Direct Contact & Collaboration CTA */}
+      <ContactSection />
     </div>
   );
 }

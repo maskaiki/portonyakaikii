@@ -5,11 +5,15 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Rifky Wicaksana",
-    template: "%s | Rifky Wicaksana",
+    default: "KAIKI — Digital Creative | Design & Development",
+    template: "%s | KAIKI — Digital Creative",
   },
   description:
-    "Informatics Engineering student building at the intersection of software, AI/data, blockchain, and creative technology. Technology × Creativity.",
+    "Portfolio of Mohammad Rifky Wicaksana (Kaiki) — Informatics Engineering student, freelance graphic designer, and social media strategist. Crafting experiences at the intersection of code and creativity.",
+  openGraph: {
+    title: "KAIKI — Digital Creative",
+    description: "Code × Design × Content. Portfolio by Kaiki.",
+  },
 };
 
 export const viewport: Viewport = {

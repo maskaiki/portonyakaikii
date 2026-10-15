@@ -1,5 +1,5 @@
-import { ReservedRoute } from "@/components/shared/ReservedRoute";
+import { redirect } from "next/navigation";
 
 export default function ProjectsPage() {
-  return <ReservedRoute name="Projects" />;
+  redirect("/#work");
 }

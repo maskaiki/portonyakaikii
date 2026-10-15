@@ -1,4 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Libre+Barcode+128&family=Manrope:wght@200..800&display=swap");
 @import "tailwindcss";
+
+.font-manrope {
+  font-family: 'Manrope', var(--font-display), sans-serif;
+}
+
+.font-barcode {
+  font-family: 'Libre Barcode 128', monospace;
+}
+
+.negative-blend {
+  mix-blend-mode: difference;
+}
 
 /* ══════════════════════════════════════════════════════════════════
    KAIKI — Design System
@@ -65,6 +78,10 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+section[id] {
+  scroll-margin-top: 80px;
 }
 
 body {

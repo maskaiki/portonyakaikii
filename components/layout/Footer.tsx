@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 
 const SPONSORS = [
   { name: "Google", icon: "/assets/shared/68dbd5d7a8a302c07e91904d_ln4-ln4-collab-google.svg" },
@@ -13,12 +12,16 @@ const SPONSORS = [
 ];
 
 export function Footer() {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <footer className="relative bg-gradient-to-br from-[#00d2ff] via-[#1d4ed8] to-[#0a1128] pt-12 pb-4 overflow-hidden">
+    <footer className="relative bg-gradient-to-br from-[#00d2ff] via-[#1d4ed8] to-[#0a1128] pt-12 pb-6 overflow-hidden">
       
-      {/* The Iconic Inverted-Curved Masked Frame (Lando Norris Signature) */}
+      {/* The Iconic Inverted-Curved Masked Frame */}
       <div className="page-shell px-2 md:px-6">
-        <div className="relative rounded-[2.5rem] bg-[#0a1128] text-[#f4f4ed] overflow-hidden shadow-2xl border-4 border-[#00d2ff] shadow-[0_0_50px_rgba(0,210,255,0.25)]">
+        <div className="relative rounded-[2.5rem] bg-[#0A0A0A] text-[#efefe5] overflow-hidden shadow-2xl border-4 border-[#00d2ff] shadow-[0_0_50px_rgba(0,210,255,0.25)]">
           
           {/* Topographic Lines Inside Footer */}
           <div
@@ -51,42 +54,48 @@ export function Footer() {
             {/* Three-Column Layout: Left Links | Center 3D Helmet Bust | Right Socials */}
             <div className="w-full grid grid-cols-1 md:grid-cols-3 items-center gap-8 mb-12">
               
-              {/* Left Column: PAGES */}
+              {/* Left Column: SINGLE SCROLL SECTIONS */}
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                <span className="font-display text-[10px] font-bold uppercase tracking-widest text-[#dde1d2]/60 mb-3">
-                  PAGES
+                <span className="font-display text-[10px] font-bold uppercase tracking-widest text-[#8A8A7A] mb-3">
+                  SECTIONS
                 </span>
                 <nav className="flex flex-col gap-2">
-                  <Link
-                    href="/"
+                  <a
+                    href="#hero"
                     className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
                   >
                     HOME
-                  </Link>
-                  <Link
-                    href="/projects"
-                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
-                  >
-                    PROJECTS
-                  </Link>
-                  <Link
-                    href="/lab"
-                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
-                  >
-                    LAB &amp; RESEARCH
-                  </Link>
-                  <Link
-                    href="/about"
+                  </a>
+                  <a
+                    href="#about"
                     className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
                   >
                     ABOUT
-                  </Link>
-                  <Link
-                    href="/contact"
+                  </a>
+                  <a
+                    href="#work"
+                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
+                  >
+                    SELECTED WORK
+                  </a>
+                  <a
+                    href="#skills"
+                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
+                  >
+                    ARSENAL
+                  </a>
+                  <a
+                    href="#journey"
+                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
+                  >
+                    JOURNEY
+                  </a>
+                  <a
+                    href="#contact"
                     className="font-display text-2xl md:text-3xl font-black uppercase text-[#00d2ff] hover:text-white transition-colors"
                   >
                     CONTACT
-                  </Link>
+                  </a>
                 </nav>
               </div>
 
@@ -103,27 +112,27 @@ export function Footer() {
 
                 {/* Overlaid CTA Button in Front of Chest */}
                 <div className="mt-[-2rem] relative z-20">
-                  <Link
-                    href="/contact"
+                  <a
+                    href="#contact"
                     style={{ color: "#ffffff" }}
                     className="inline-flex items-center gap-2.5 px-6 py-3 bg-gradient-to-r from-[#00d2ff] via-[#1d4ed8] to-[#0a192f] hover:from-[#38bdf8] hover:to-[#1e3a8a] font-display text-sm font-black uppercase tracking-wider rounded-xl shadow-[0_4px_24px_rgba(0,210,255,0.45)] transition-all duration-200 transform hover:-translate-y-1 text-white"
                   >
-                    <span>BUSINESS ENQUIRIES</span>
+                    <span>START A PROJECT</span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M7 17L17 7M7 7h10v10" />
                     </svg>
-                  </Link>
+                  </a>
                 </div>
               </div>
 
               {/* Right Column: FOLLOW ON */}
               <div className="flex flex-col items-center md:items-end text-center md:text-right">
-                <span className="font-display text-[10px] font-bold uppercase tracking-widest text-[#dde1d2]/60 mb-3">
-                  FOLLOW ON
+                <span className="font-display text-[10px] font-bold uppercase tracking-widest text-[#8A8A7A] mb-3">
+                  CONNECT ON
                 </span>
                 <div className="flex flex-col gap-2">
                   <a
-                    href="https://github.com"
+                    href="https://github.com/maskaiki"
                     target="_blank"
                     rel="noreferrer"
                     className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
@@ -146,14 +155,6 @@ export function Footer() {
                   >
                     INSTAGRAM
                   </a>
-                  <a
-                    href="https://youtube.com"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
-                  >
-                    YOUTUBE
-                  </a>
                 </div>
               </div>
 
@@ -173,14 +174,16 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Bottom Electric Blue Bar with Copyright */}
+      {/* Bottom Electric Blue Bar with Copyright & Back to Top */}
       <div className="page-shell mt-4 px-6 flex flex-col sm:flex-row items-center justify-between text-white/90 font-display text-[11px] font-black uppercase tracking-wider">
-        <span>© 2026 MOHAMMAD RIFKY WICAKSANA. ALL RIGHTS RESERVED</span>
-        <div className="flex gap-4 mt-2 sm:mt-0">
-          <Link href="/about" className="hover:underline">PRIVACY POLICY</Link>
-          <span>•</span>
-          <Link href="/about" className="hover:underline">TERMS</Link>
-        </div>
+        <span>© 2026 KAIKI (MOHAMMAD RIFKY WICAKSANA). ALL RIGHTS RESERVED</span>
+        <button
+          onClick={scrollToTop}
+          className="mt-2 sm:mt-0 flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
+        >
+          <span>BACK TO TOP</span>
+          <span>↑</span>
+        </button>
       </div>
 
     </footer>
