@@ -36,50 +36,37 @@ export function Navigation() {
     <>
       <header className="fixed top-3 sm:top-5 inset-x-0 z-50 px-3 sm:px-6 md:px-8 max-w-7xl mx-auto transition-all duration-300">
         <div
-          className={`w-full rounded-full transition-all duration-300 px-4 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between backdrop-blur-2xl ${
+          className={`w-full rounded-full transition-all duration-300 px-5 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between backdrop-blur-2xl ${
             scrolled
-              ? "bg-[#0A0A0A]/85 border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.15)] text-[#efefe5]"
-              : "bg-white/25 dark:bg-black/35 border border-white/60 dark:border-white/15 shadow-[0_12px_36px_rgba(0,0,0,0.06),inset_0_1px_1px_rgba(255,255,255,0.85)] text-[#111112]"
+              ? "bg-[#0A0A0A]/90 border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.15)] text-[#efefe5]"
+              : "bg-white/80 border border-white/90 shadow-[0_12px_36px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,1)] text-[#111112]"
           }`}
         >
-          {/* Left: Aesthetic Unboxed RW Monogram + KAIKI */}
+          {/* Left: Aesthetic Clean RW Monogram (No dots, No KAIKI) */}
           <a
             href="#hero"
-            className="flex items-center gap-2 text-left group select-none transition-transform duration-200 hover:scale-[1.03]"
+            className="flex items-center text-left group select-none transition-transform duration-200 hover:scale-[1.03]"
             aria-label="Kaiki — Back to Top"
           >
-            {/* Aesthetic Unboxed Typographic RW Monogram */}
             <div className="flex items-baseline tracking-tighter leading-none">
-              <span className="font-display text-xl sm:text-2xl font-black tracking-tight text-[#00d2ff] transition-transform duration-300 group-hover:-translate-y-0.5">
+              <span className="font-display text-2xl sm:text-[1.75rem] font-black tracking-tight text-[#00d2ff] transition-transform duration-300 group-hover:-translate-y-0.5">
                 R
               </span>
               <span
-                className={`font-brier italic text-xl sm:text-2xl font-bold -ml-1 transition-colors duration-300 ${
+                className={`font-brier italic text-2xl sm:text-[1.75rem] font-bold -ml-1 transition-colors duration-300 ${
                   scrolled ? "text-[#efefe5]" : "text-[#111112]"
                 } group-hover:text-[#00d2ff]`}
               >
                 W
               </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00d2ff] ml-1 self-center animate-pulse" />
             </div>
-
-            {/* Brand Name Text: KAIKI */}
-            <span
-              className={`font-display text-sm sm:text-base font-black tracking-[0.16em] uppercase transition-colors duration-200 ${
-                scrolled
-                  ? "text-[#efefe5] group-hover:text-[#00d2ff]"
-                  : "text-[#111112] group-hover:text-[#00d2ff]"
-              }`}
-            >
-              KAIKI
-            </span>
           </a>
 
           {/* Center: Desktop Anchor Links Navigation (Minimal Glass Pill Nav) */}
           <nav className="hidden lg:flex items-center gap-1">
             <a
               href="#hero"
-              className="px-3.5 py-1.5 rounded-full font-manrope text-[11px] font-extrabold uppercase tracking-wider text-[#111112] dark:text-white bg-white/50 dark:bg-white/15 backdrop-blur-md transition-all duration-200"
+              className="px-3.5 py-1.5 rounded-full font-manrope text-[11px] font-extrabold uppercase tracking-wider text-[#111112] bg-black/5 hover:bg-black/10 transition-all duration-200"
             >
               Explore
             </a>
@@ -87,25 +74,24 @@ export function Navigation() {
               <a
                 key={href}
                 href={href}
-                className="px-3.5 py-1.5 rounded-full font-manrope text-[11px] font-extrabold uppercase tracking-wider text-[#111112]/75 dark:text-[#efefe5]/75 hover:text-[#111112] dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/10 transition-all duration-200"
+                className="px-3.5 py-1.5 rounded-full font-manrope text-[11px] font-extrabold uppercase tracking-wider text-[#111112]/75 hover:text-[#111112] hover:bg-black/5 transition-all duration-200"
               >
                 {label}
               </a>
             ))}
           </nav>
 
-          {/* Right: Glassmorphism CONNECT Button + Mobile Hamburger Menu */}
+          {/* Right: Glassmorphism CONNECT Button (No dots) + Mobile Hamburger Menu */}
           <div className="flex items-center gap-2.5">
             <a
               href="#contact"
-              className={`inline-flex items-center gap-2 px-4 py-1.5 sm:py-2 rounded-full font-display text-xs font-black uppercase tracking-wider transition-all duration-200 transform hover:-translate-y-0.5 border ${
+              className={`inline-flex items-center justify-center px-5 py-1.5 sm:py-2 rounded-full font-display text-xs font-black uppercase tracking-wider transition-all duration-200 transform hover:-translate-y-0.5 border ${
                 scrolled
                   ? "bg-white text-black hover:bg-[#00d2ff] hover:text-black border-transparent shadow-[0_4px_16px_rgba(255,255,255,0.2)]"
                   : "bg-[#111112] text-white hover:bg-[#00d2ff] hover:text-black border-white/20 shadow-[0_4px_16px_rgba(0,0,0,0.15)]"
               }`}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00d2ff] animate-ping" />
-              <span>CONNECT</span>
+              CONNECT
             </a>
 
             {/* Circular Glass Hamburger Button */}
@@ -114,7 +100,7 @@ export function Navigation() {
               className={`w-9 h-9 flex flex-col items-center justify-center gap-1.5 rounded-full backdrop-blur-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#00d2ff] ${
                 scrolled
                   ? "border border-white/15 hover:border-[#00d2ff] bg-white/10 text-white"
-                  : "border border-white/60 dark:border-white/20 hover:border-[#00d2ff] bg-white/40 dark:bg-white/10 text-[#111112]"
+                  : "border border-black/10 hover:border-[#00d2ff] bg-black/5 text-[#111112]"
               }`}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}

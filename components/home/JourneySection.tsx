@@ -64,10 +64,11 @@ export function JourneySection() {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-20">
           <div className="space-y-4">
-            <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#141414] border border-[#2A2A2A] text-xs font-mono tracking-widest text-[#00d2ff] uppercase">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00d2ff] animate-pulse" />
-              04 // JOURNEY
-            </span>
+            <div>
+              <span className="font-display text-xs sm:text-sm font-black tracking-[0.25em] text-[#00d2ff] uppercase">
+                JOURNEY
+              </span>
+            </div>
             <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight text-[#EFEFE5] leading-[0.95]">
               EXPERIENCE &amp; <br />
               <span className="font-serif italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#38bdf8] to-[#1d4ed8] bg-clip-text text-transparent">

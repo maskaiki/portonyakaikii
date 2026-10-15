@@ -66,13 +66,11 @@ export function AboutSection() {
 
       <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-16 relative z-10">
         
-        {/* Section Label */}
-        <div className="flex items-center gap-3 mb-10">
-          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#141414] border border-[#2A2A2A] text-xs font-mono tracking-widest text-[#00d2ff] uppercase">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00d2ff] animate-pulse" />
-            01 // ABOUT
+        {/* Clean Section Label: Just ABOUT (No pills, no dots, no dashes) */}
+        <div className="mb-8">
+          <span className="font-display text-xs sm:text-sm font-black tracking-[0.25em] text-[#00d2ff] uppercase">
+            ABOUT
           </span>
-          <div className="h-[1px] flex-1 bg-gradient-to-r from-white/10 to-transparent" />
         </div>
 
         {/* Top Story Header & Bio Statement */}

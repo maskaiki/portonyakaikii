@@ -14,9 +14,9 @@ export function BottomIntro({ className = "" }: BottomIntroProps) {
       transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
       className={`z-25 flex flex-col items-start text-left select-none max-w-[340px] sm:max-w-[440px] lg:max-w-[500px] ${className}`}
     >
-      {/* Kaiki's Original Signature Kinetic Headline */}
+      {/* Kaiki's Signature Kinetic Headline - High Contrast Solid Black */}
       <h2
-        className="font-display font-black tracking-tight leading-[1.08] uppercase text-[#111112] dark:text-[#efefe5]"
+        className="font-display font-black tracking-tight leading-[1.08] uppercase text-[#111112]"
         style={{ fontSize: "clamp(26px, 2.9vw, 50px)" }}
       >
         BUILDING{" "}
@@ -39,23 +39,26 @@ export function BottomIntro({ className = "" }: BottomIntroProps) {
       </h2>
 
       {/* Subtitle Description */}
-      <p className="mt-3 sm:mt-4 font-sans text-xs sm:text-[13px] text-[#111112]/75 dark:text-[#efefe5]/75 leading-relaxed tracking-tight max-w-md">
+      <p className="mt-3 sm:mt-4 font-sans text-xs sm:text-[13px] text-[#111112]/80 font-medium leading-relaxed tracking-tight max-w-md">
         Mohammad Rifky Wicaksana (Kaiki) — Informatics student & creative technologist bridging high-performance computer science systems, brand identities, and kinetic storytelling.
       </p>
 
-      {/* Quick Action Badges */}
-      <div className="flex items-center gap-2 mt-4 pt-1">
-        <a
-          href="#work"
-          className="px-3.5 py-1.5 rounded-md bg-[#111112] text-white font-manrope text-[10px] sm:text-[11px] font-bold uppercase tracking-wider hover:bg-[#00d2ff] hover:text-black transition-colors shadow-sm"
-        >
-          View Archive
-        </a>
+      {/* Meaningful Action Buttons: ABOUT ME & EXPLORE WORK */}
+      <div className="flex items-center gap-3 mt-4 pt-1">
         <a
           href="#about"
-          className="px-3.5 py-1.5 rounded-md border border-black/15 dark:border-white/15 text-[#111112] dark:text-[#efefe5] font-manrope text-[10px] sm:text-[11px] font-bold uppercase tracking-wider hover:border-[#00d2ff] hover:text-[#00d2ff] transition-colors"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#111112] text-white font-manrope text-xs font-bold uppercase tracking-wider hover:bg-[#0066FF] transition-all duration-200 shadow-sm"
         >
-          Curriculum
+          <span>About Me</span>
+          <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M6 3l5 5-5 5" />
+          </svg>
+        </a>
+        <a
+          href="#work"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-black/20 hover:border-black bg-white/40 hover:bg-white text-[#111112] font-manrope text-xs font-bold uppercase tracking-wider transition-all duration-200"
+        >
+          <span>Explore Work</span>
         </a>
       </div>
     </motion.div>
