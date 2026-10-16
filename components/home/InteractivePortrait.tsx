@@ -16,9 +16,9 @@ const PORTRAITS = [
     label: "LOOK 01 // STUDIO",
   },
   {
-    src: "/assets/hero/kaiki-portrait-hood.webp",
-    alt: "Mohammad Rifky Wicaksana (Kaiki) — Technical Editorial",
-    label: "LOOK 02 // TECHNICAL",
+    src: "/assets/hero/kaiki-portrait-pose.webp",
+    alt: "Mohammad Rifky Wicaksana (Kaiki) — Creative Pose",
+    label: "LOOK 02 // CREATIVE",
   },
 ];
 
