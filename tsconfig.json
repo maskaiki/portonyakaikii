@@ -38,7 +38,9 @@
   "exclude": [
     "node_modules",
     "How-to-Clone-Website---Claude-Skills-main",
-    "lenis"
+    "lenis",
+    "gsap-skills"
   ]
 }
+
 
