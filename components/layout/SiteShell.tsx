@@ -1,5 +1,6 @@
 import { Navigation } from "./Navigation";
 import { Footer } from "./Footer";
+import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 
 type SiteShellProps = {
   children: React.ReactNode;
@@ -7,11 +8,12 @@ type SiteShellProps = {
 
 export function SiteShell({ children }: SiteShellProps) {
   return (
-    <>
+    <SmoothScrollProvider>
       <div className="viewport-edge-glow" />
       <Navigation />
       <main id="main-content">{children}</main>
       <Footer />
-    </>
+    </SmoothScrollProvider>
   );
 }
+
