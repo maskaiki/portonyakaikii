@@ -116,6 +116,7 @@ const FILTER_TABS: { key: ProjectCategory; label: string }[] = [
 
 export function SelectedWorkSection() {
   const [activeFilter, setActiveFilter] = useState<ProjectCategory>("all");
+  const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
 
   const filteredProjects =
     activeFilter === "all"
@@ -149,14 +150,14 @@ export function SelectedWorkSection() {
           </div>
 
           {/* Interactive Filter Tabs */}
-          <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-full bg-[#141414] border border-[#2A2A2A] self-start lg:self-end">
+          <div className="flex items-center gap-2 p-1.5 rounded-2xl sm:rounded-full bg-[#141414] border border-[#2A2A2A] overflow-x-auto max-w-full scrollbar-none self-start lg:self-end">
             {FILTER_TABS.map((tab) => {
               const isActive = activeFilter === tab.key;
               return (
                 <button
                   key={tab.key}
                   onClick={() => setActiveFilter(tab.key)}
-                  className={`relative px-5 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 ${
+                  className={`relative px-4 sm:px-5 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 whitespace-nowrap shrink-0 ${
                     isActive
                       ? "text-[#0A0A0A]"
                       : "text-[#8A8A7A] hover:text-[#EFEFE5]"
@@ -187,7 +188,8 @@ export function SelectedWorkSection() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.94, y: -20 }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="group relative flex flex-col justify-between p-6 sm:p-8 rounded-2xl bg-[#121212] border border-[#222222] hover:border-[#0066FF] transition-all duration-500 shadow-[0_8px_30px_rgba(0,0,0,0.6)] hover:shadow-[0_16px_50px_rgba(0,102,255,0.18)]"
+                onClick={() => setSelectedProject(project)}
+                className="group relative flex flex-col justify-between p-6 sm:p-8 rounded-2xl bg-[#121212] border border-[#222222] hover:border-[#0066FF] transition-all duration-500 shadow-[0_8px_30px_rgba(0,0,0,0.6)] hover:shadow-[0_16px_50px_rgba(0,102,255,0.18)] cursor-pointer"
               >
                 <div>
                   {/* Image Container with Ambient Vignette & Badges */}
@@ -246,17 +248,12 @@ export function SelectedWorkSection() {
                     ))}
                   </div>
 
-                  <a
-                    href={project.ctaLink}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-xs font-bold uppercase tracking-wider text-[#00d2ff] hover:text-white transition-colors flex items-center gap-1 group/cta"
-                  >
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#00d2ff] group-hover:text-white transition-colors flex items-center gap-1 group/cta">
                     <span>{project.ctaLabel}</span>
                     <span className="inline-block transition-transform duration-200 group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5">
                       ↗
                     </span>
-                  </a>
+                  </span>
                 </div>
               </motion.div>
             ))}
@@ -276,6 +273,98 @@ export function SelectedWorkSection() {
           </a>
         </div>
       </div>
+
+      {/* Interactive Case Study Modal (Single-Scroll Friendly) */}
+      <AnimatePresence>
+        {selectedProject && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedProject(null)}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-3xl rounded-2xl bg-[#121212] border border-[#00d2ff]/50 overflow-hidden shadow-[0_24px_80px_rgba(0,210,255,0.2)]"
+            >
+              <div className="relative w-full aspect-[16/9] bg-[#181818]">
+                <Image
+                  src={selectedProject.image}
+                  alt={selectedProject.title}
+                  fill
+                  className="object-cover"
+                />
+                <button
+                  onClick={() => setSelectedProject(null)}
+                  className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/80 border border-white/20 text-white hover:border-[#00d2ff] hover:text-[#00d2ff] flex items-center justify-center font-mono text-sm cursor-pointer transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="p-6 sm:p-8 space-y-4">
+                <div className="flex items-center gap-3">
+                  <span
+                    className="px-3 py-1 rounded-full bg-[#1C1C1C] text-xs font-bold uppercase"
+                    style={{ color: selectedProject.accentColor }}
+                  >
+                    {selectedProject.categoryLabel}
+                  </span>
+                  <span className="font-mono text-xs text-[#8A8A7A]">
+                    YEAR // {selectedProject.year}
+                  </span>
+                </div>
+
+                <h3 className="font-display text-2xl sm:text-4xl font-black uppercase text-[#EFEFE5]">
+                  {selectedProject.title}
+                </h3>
+
+                <p className="font-sans text-sm sm:text-base text-[#8A8A7A] leading-relaxed">
+                  {selectedProject.description}
+                </p>
+
+                <div className="pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProject.techs.map((t) => (
+                      <span
+                        key={t}
+                        className="text-xs font-mono text-[#EFEFE5] px-3 py-1 rounded bg-[#1C1C1C] border border-white/10"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+
+                  {selectedProject.ctaLink && selectedProject.ctaLink !== "#" ? (
+                    <a
+                      href={selectedProject.ctaLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-6 py-2.5 rounded-full bg-[#0066FF] hover:bg-[#00d2ff] hover:text-black text-white font-display text-xs font-black uppercase tracking-wider transition-colors inline-flex items-center gap-1.5"
+                    >
+                      <span>{selectedProject.ctaLabel}</span>
+                      <span>↗</span>
+                    </a>
+                  ) : (
+                    <a
+                      href="#contact"
+                      onClick={() => setSelectedProject(null)}
+                      className="px-6 py-2.5 rounded-full bg-[#1F1F1F] hover:bg-[#00d2ff] hover:text-black text-[#EFEFE5] font-display text-xs font-black uppercase tracking-wider transition-colors inline-flex items-center gap-1.5 border border-white/10"
+                    >
+                      <span>REQUEST CASE BRIEF</span>
+                      <span>→</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

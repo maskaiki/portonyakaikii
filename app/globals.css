@@ -268,6 +268,20 @@ body::before {
   width: max-content;
 }
 
+.marquee-track-logos {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  animation: marquee-scroll-left 28s linear infinite;
+  width: max-content;
+}
+
+.marquee-row:hover .marquee-track-left,
+.marquee-row:hover .marquee-track-right,
+.marquee-track-logos:hover {
+  animation-play-state: paused;
+}
+
 @keyframes marquee-scroll-left {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -277,6 +291,20 @@ body::before {
   0% { transform: translateX(-50%); }
   100% { transform: translateX(0); }
 }
+
+/* ── Editorial Hollow Stroke ──────────────────────────────────── */
+.text-stroke-editorial {
+  -webkit-text-stroke: 1.5px rgba(239, 239, 229, 0.35);
+  color: transparent;
+  transition: all 0.3s ease;
+}
+
+.text-stroke-editorial:hover {
+  -webkit-text-stroke: 1.5px #00d2ff;
+  color: #00d2ff;
+  filter: drop-shadow(0 0 16px rgba(0, 210, 255, 0.4));
+}
+
 
 /* ── Scroll reveal animation ──────────────────────────────────── */
 .reveal {
@@ -504,14 +532,23 @@ body::before {
 
 .rain-panel {
   position: relative;
-  width: clamp(270px, 18vw, 320px);
-  padding: 24px;
+  width: auto;
+  max-width: calc(100vw - 24px);
+  padding: 10px 14px;
   border: 1px solid rgba(255, 255, 255, 0.85);
   background: rgba(255, 255, 255, 0.45);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   backdrop-filter: blur(20px) saturate(180%);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.9);
   border-radius: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 640px) {
+  .rain-panel {
+    width: clamp(270px, 18vw, 320px);
+    padding: 24px;
+  }
 }
 
 .rain-panel__heading {
@@ -519,13 +556,19 @@ body::before {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 0;
+}
+
+@media (min-width: 640px) {
+  .rain-panel__heading {
+    margin-bottom: 16px;
+  }
 }
 
 .rain-panel h2 {
   margin: 0;
   font-family: var(--font-display), "Manrope", sans-serif;
-  font-size: clamp(13px, 1.05vw, 15px);
+  font-size: clamp(12px, 1.05vw, 15px);
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: 0.02em;
@@ -554,7 +597,6 @@ body::before {
 }
 
 .rain-panel__controls {
-  display: grid;
   gap: 14px;
 }
 
@@ -691,10 +733,16 @@ body::before {
 
 /* Storm Lab Surface Wetness Readout */
 .surface-readout-panel {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  pointer-events: none;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .surface-readout-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    pointer-events: none;
+  }
 }
 
 .surface-readout__measurement {

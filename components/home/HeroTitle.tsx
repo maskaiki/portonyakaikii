@@ -7,17 +7,17 @@ interface HeroTitleProps {
 export function HeroTitle({ className = "" }: HeroTitleProps) {
   return (
     <div
-      className={`hero-title-stage absolute top-[22%] sm:top-[24%] left-[46%] sm:left-[50%] md:left-[52%] lg:left-[53%] pointer-events-none select-none ${className}`}
+      className={`hero-title-stage absolute top-[20%] sm:top-[24%] left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-[50%] md:left-[52%] lg:left-[53%] pointer-events-none select-none flex flex-col items-center sm:items-start ${className}`}
       aria-hidden="true"
     >
       <h1
         className="font-manrope font-extrabold lowercase tracking-[-0.07em] leading-[0.78161] whitespace-nowrap"
         style={{
-          fontSize: "clamp(68px, min(8.4vw, 15svh), 195px)",
+          fontSize: "clamp(52px, min(14.5vw, 13svh), 195px)",
         }}
       >
-        {/* Line 1: 'never' shifted right by 0.58em with blue 'er' */}
-        <span className="block" style={{ marginLeft: "0.58em" }}>
+        {/* Line 1: 'never' shifted right by 0.3em on mobile, 0.58em on desktop with blue 'er' */}
+        <span className="block ml-[0.25em] sm:ml-[0.58em]">
           <span
             className="text-white negative-blend"
             style={{ mixBlendMode: "difference" }}

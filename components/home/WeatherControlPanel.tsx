@@ -33,21 +33,21 @@ export function WeatherControlPanel({
       aria-labelledby="rain-panel-title"
     >
       {/* Heading Row */}
-      <div className="rain-panel__heading">
-        <div className="flex items-center gap-2.5">
+      <div className={`rain-panel__heading ${isExpanded ? "mb-3 sm:mb-4" : "mb-0 sm:mb-4"}`}>
+        <div className="flex items-center gap-2">
           {/* Storm Lab Square Indicator (Pure Sharp Kotak) */}
-          <span className="w-2.5 h-2.5 rounded-none bg-[#00d2ff] shrink-0 shadow-[0_0_10px_rgba(0,210,255,0.9)]" />
-          <h2 id="rain-panel-title" className="tracking-wider">
-            TEST YOUR SYSTEM
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-none bg-[#00d2ff] shrink-0 shadow-[0_0_10px_rgba(0,210,255,0.9)]" />
+          <h2 id="rain-panel-title" className="tracking-wider text-xs sm:text-sm">
+            VIBE CHECK ✦
           </h2>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Mobile Toggle Button */}
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="sm:hidden p-1.5 text-[#111112] hover:bg-black/5 transition-colors"
+            className="sm:hidden p-1 text-[#111112] hover:bg-black/5 transition-colors cursor-pointer"
             aria-expanded={isExpanded}
             aria-label={isExpanded ? "Hide rain controls" : "Show rain controls"}
           >
@@ -88,14 +88,14 @@ export function WeatherControlPanel({
       {/* Sliders Area (Visible on desktop, collapsible on mobile) */}
       <div
         className={`rain-panel__controls ${
-          isExpanded ? "grid" : "hidden sm:grid"
+          isExpanded ? "grid pt-2 border-t border-black/10" : "hidden sm:grid"
         }`}
         id="rain-controls"
       >
         {/* Rain / Shard Intensity */}
         <div className="rain-control">
           <div className="rain-control__label">
-            <label htmlFor="rain-intensity">SHARD INTENSITY</label>
+            <label htmlFor="rain-intensity">CHAOS LEVEL</label>
             <output htmlFor="rain-intensity">{intensity}%</output>
           </div>
           <input
@@ -113,7 +113,7 @@ export function WeatherControlPanel({
         {/* Drop Speed */}
         <div className="rain-control">
           <div className="rain-control__label">
-            <label htmlFor="drop-speed">DROP SPEED</label>
+            <label htmlFor="drop-speed">PIXEL VELOCITY</label>
             <output htmlFor="drop-speed">{speed}%</output>
           </div>
           <input
@@ -131,7 +131,7 @@ export function WeatherControlPanel({
         {/* Drop Size */}
         <div className="rain-control">
           <div className="rain-control__label">
-            <label htmlFor="drop-size">DROP SIZE</label>
+            <label htmlFor="drop-size">DRAMA SCALE</label>
             <output htmlFor="drop-size">{size}%</output>
           </div>
           <input

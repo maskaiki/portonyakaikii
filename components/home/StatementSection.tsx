@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export function StatementSection() {
   return (
-    <section className="relative bg-[#282c20] text-[#f4f4ed] py-24 md:py-36 overflow-hidden">
+    <section className="relative bg-[#0A0A0A] text-[#f4f4ed] py-24 md:py-36 overflow-hidden border-t border-b border-white/10">
       {/* Subtle topographic contour vector background */}
       <div
         className="absolute inset-0 pointer-events-none opacity-15"

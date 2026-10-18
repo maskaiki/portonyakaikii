@@ -28,7 +28,7 @@ const EDITORIAL_PHOTOS = [
   {
     tag: "MALANG, 2024",
     title: "System Architecture & Lab Research",
-    img: "/assets/shared/68302ff5ff89a9a4afb8c19e_ln-home-helm-large.webp",
+    img: "/assets/about/kaiki-candid.jpg",
     aspect: "aspect-[4/5]",
     className: "md:translate-y-8",
   },
@@ -52,7 +52,7 @@ export function AboutSection() {
   return (
     <section
       id="about"
-      className="relative bg-[#0d0f0c] text-[#efefe5] py-24 md:py-36 overflow-hidden border-b border-white/10"
+      className="relative bg-[#0A0A0A] text-[#efefe5] py-24 md:py-36 overflow-hidden border-b border-white/10"
     >
       {/* Topographic line art backdrop */}
       <div
@@ -159,15 +159,10 @@ export function AboutSection() {
             &ldquo;It doesn&rsquo;t matter <span className="font-bold underline decoration-[#00d2ff]">where</span> you start, it&rsquo;s <span className="font-bold bg-gradient-to-r from-[#00d2ff] via-[#38bdf8] to-[#1d4ed8] bg-clip-text text-transparent">how</span> you progress from there.&rdquo;
           </motion.blockquote>
 
-          <div className="flex justify-end mt-4">
-            <div className="relative w-40 h-16">
-              <Image
-                src="/assets/shared/signature-lime.svg"
-                alt="Kaiki Signature"
-                fill
-                className="object-contain filter drop-shadow-[0_2px_12px_rgba(0,210,255,0.6)]"
-              />
-            </div>
+          <div className="flex justify-end mt-4 select-none">
+            <span className="font-brier italic text-2xl sm:text-4xl text-[#00d2ff] drop-shadow-[0_2px_12px_rgba(0,210,255,0.6)]">
+              Rifky Wicaksana
+            </span>
           </div>
         </div>
 

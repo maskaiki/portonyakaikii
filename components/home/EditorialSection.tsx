@@ -7,13 +7,13 @@ const EDITORIAL_PHOTOS = [
   {
     tag: "MALANG, 2024",
     title: "System Architecture & Lab Research",
-    img: "/assets/shared/68302ff5ff89a9a4afb8c19e_ln-home-helm-large.webp",
+    img: "/assets/about/kaiki-candid.jpg",
     aspect: "aspect-[4/5]",
     className: "md:translate-y-8",
   },
   {
     tag: "SURABAYA TECH EXPO, 2024",
-    title: "Digital Infrastructure & Pesantren Tech",
+    title: "Digital Infrastructure & Tech Design",
     img: "/assets/hero/hero-workspace-v1.jpg",
     aspect: "aspect-square",
     className: "md:-translate-y-12",
@@ -29,7 +29,7 @@ const EDITORIAL_PHOTOS = [
 
 export function EditorialSection() {
   return (
-    <section className="relative bg-[#20261a] text-[#f4f4ed] py-28 overflow-hidden">
+    <section className="relative bg-[#0A0A0A] text-[#f4f4ed] py-28 overflow-hidden">
       {/* Topographic line art backdrop */}
       <div
         className="absolute inset-0 pointer-events-none opacity-20"
@@ -42,7 +42,7 @@ export function EditorialSection() {
 
       <div className="page-shell relative z-10">
         
-        {/* Quote Block with Lando's Signature in Electric Lime */}
+        {/* Quote Block with Kaiki's Typographic Signature */}
         <div className="max-w-2xl ml-auto mb-20 text-right md:pr-12">
           <motion.blockquote
             initial={{ opacity: 0, x: 20 }}
@@ -55,15 +55,10 @@ export function EditorialSection() {
           </motion.blockquote>
 
           {/* Authentic Electric Blue Handwritten Signature */}
-          <div className="flex justify-end mt-4">
-            <div className="relative w-40 h-16">
-              <Image
-                src="/assets/shared/signature-lime.svg"
-                alt="Signature"
-                fill
-                className="object-contain filter drop-shadow-[0_2px_12px_rgba(0,210,255,0.6)]"
-              />
-            </div>
+          <div className="flex justify-end mt-4 select-none">
+            <span className="font-brier italic text-2xl sm:text-4xl text-[#00d2ff] drop-shadow-[0_2px_12px_rgba(0,210,255,0.6)]">
+              Rifky Wicaksana
+            </span>
           </div>
         </div>
 

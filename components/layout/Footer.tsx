@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 
-const SPONSORS = [
-  { name: "Google", icon: "/assets/shared/68dbd5d7a8a302c07e91904d_ln4-ln4-collab-google.svg" },
-  { name: "Hilton", icon: "/assets/shared/67efc88c1939bc87931c2599_ln4-ln4-collab-logo-hilton.svg" },
-  { name: "Uber", icon: "/assets/shared/68d294a99b218abd71dc0764_ln4-ln4-collab-logo-uber.svg" },
-  { name: "Quadrant", icon: "/assets/shared/67efc88c532235956e5d267a_ln4-ln4-collab-logo-quadrant.svg" },
-  { name: "TUMI", icon: "/assets/shared/67efc88cb3373daa7ba240d6_ln4-ln4-collab-logo-tumi.svg" },
-  { name: "Bell", icon: "/assets/shared/68dbd5d72c50967c2195c702_ln4-ln4-collab-bell-helmets.svg" },
+const CORE_PILLARS = [
+  "NEXT.JS 15 // APP ROUTER",
+  "TYPESCRIPT // STRICT",
+  "TAILWIND CSS // V4",
+  "FRAMER MOTION // PHYSICS",
+  "FIGMA & ADOBE SUITE",
+  "CAPCUT PRO // RETENTION",
 ];
 
 export function Footer() {
@@ -35,14 +35,11 @@ export function Footer() {
 
           <div className="relative z-10 pt-16 pb-12 px-6 md:px-14 flex flex-col items-center">
             
-            {/* Top Floating Signature in Electric Blue */}
-            <div className="relative w-44 h-16 mb-2">
-              <Image
-                src="/assets/shared/signature-lime.svg"
-                alt="Signature"
-                fill
-                className="object-contain filter drop-shadow-[0_2px_16px_rgba(0,210,255,0.7)]"
-              />
+            {/* Top Floating Typographic Signature in Electric Blue */}
+            <div className="mb-4 flex flex-col items-center select-none">
+              <span className="font-brier italic text-3xl sm:text-5xl text-[#00d2ff] drop-shadow-[0_2px_16px_rgba(0,210,255,0.6)]">
+                Rifky Wicaksana
+              </span>
             </div>
 
             {/* Headline */}
@@ -51,7 +48,7 @@ export function Footer() {
               <span className="font-brier italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#38bdf8] to-[#1d4ed8] bg-clip-text text-transparent">FIGHT</span>.
             </h2>
 
-            {/* Three-Column Layout: Left Links | Center 3D Helmet Bust | Right Socials */}
+            {/* Three-Column Layout: Left Links | Center Technologist Bust | Right Socials */}
             <div className="w-full grid grid-cols-1 md:grid-cols-3 items-center gap-8 mb-12">
               
               {/* Left Column: SINGLE SCROLL SECTIONS */}
@@ -99,14 +96,14 @@ export function Footer() {
                 </nav>
               </div>
 
-              {/* Center Column: 3D Helmet Technologist Bust + CTA Button */}
+              {/* Center Column: Kaiki Technologist Bust + CTA Button */}
               <div className="flex flex-col items-center justify-center relative">
                 <div className="relative w-64 h-64 md:w-80 md:h-80 select-none">
                   <Image
-                    src="/assets/shared/footer-helmet.webp"
-                    alt="Cyberpunk Helmet Technologist"
+                    src="/assets/shared/kaiki-footer.webp"
+                    alt="Mohammad Rifky Wicaksana (Kaiki)"
                     fill
-                    className="object-contain filter contrast-110 drop-shadow-[0_12px_32px_rgba(0,0,0,0.9)]"
+                    className="object-contain filter grayscale contrast-125 drop-shadow-[0_0_25px_rgba(0,210,255,0.35)]"
                   />
                 </div>
 
@@ -160,12 +157,15 @@ export function Footer() {
 
             </div>
 
-            {/* Bottom Sponsor / Tech Partners Logo Strip */}
-            <div className="w-full pt-8 border-t border-white/10 flex items-center justify-around gap-6 flex-wrap opacity-60">
-              {SPONSORS.map((sp, i) => (
-                <div key={i} className="relative h-6 w-20 filter grayscale invert">
-                  <Image src={sp.icon} alt={sp.name} fill className="object-contain" />
-                </div>
+            {/* Bottom Core Pillars Strip */}
+            <div className="w-full pt-8 border-t border-white/10 flex items-center justify-around gap-4 flex-wrap">
+              {CORE_PILLARS.map((pillar, i) => (
+                <span
+                  key={i}
+                  className="font-mono text-[10px] sm:text-xs font-bold tracking-widest text-[#8A8A7A] hover:text-[#00d2ff] transition-colors uppercase"
+                >
+                  {pillar}
+                </span>
               ))}
             </div>
 
