@@ -101,7 +101,9 @@ export function RainSimulationCanvas({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wetnessModelRef = useRef<StormWetnessModel>(new StormWetnessModel());
   const onWetnessRef = useRef(onWetnessChange);
-  onWetnessRef.current = onWetnessChange;
+  useEffect(() => {
+    onWetnessRef.current = onWetnessChange;
+  }, [onWetnessChange]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

@@ -269,7 +269,7 @@ export function SelectedWorkSection() {
             href="#contact"
             className="px-8 py-4 rounded-full bg-[#141414] border border-[#2A2A2A] text-xs font-bold uppercase tracking-widest text-[#EFEFE5] hover:border-[#0066FF] hover:text-[#00d2ff] transition-all duration-300 flex items-center gap-2 group shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
           >
-            <span>HAVE A PROJECT FOR KAIKI? LET'S CONNECT</span>
+            <span>HAVE A PROJECT FOR KAIKI? LET&apos;S CONNECT</span>
             <span className="transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>

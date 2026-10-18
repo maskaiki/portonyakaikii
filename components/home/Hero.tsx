@@ -15,7 +15,6 @@ export function Hero() {
   const [size, setSize] = useState(30);
   const [isPaused, setIsPaused] = useState(false);
   const [wetness, setWetness] = useState(0);
-  const [lookMode, setLookMode] = useState<"studio" | "creative">("studio");
 
   return (
     <section
@@ -35,13 +34,12 @@ export function Hero() {
         <ReticleFocus />
       </div>
 
-      {/* Center Stage: Interactive Half-Body Portrait + Overlapping Negative Blend Typography */}
+      {/* Center Stage: Portrait + Overlapping Negative Blend Typography */}
       <div className="absolute inset-0 pointer-events-none">
-        <InteractivePortrait
-          lookMode={lookMode}
-          onToggleLook={() => setLookMode((prev) => (prev === "studio" ? "creative" : "studio"))}
-        />
-        <HeroTitle isVisible={lookMode === "studio"} />
+        <div className="absolute inset-x-0 bottom-0 flex justify-center items-end pointer-events-auto">
+          <InteractivePortrait />
+        </div>
+        <HeroTitle />
       </div>
 
       {/* Real-time Rain Particle Simulation Canvas with realistic splashes & sliding beads at z-[30] */}
@@ -93,13 +91,10 @@ export function Hero() {
       </div>
 
       {/* Floating Bottom-Right: Technical Callout & Barcode at z-[35] */}
-      <div
-        className={`absolute bottom-5 sm:bottom-8 right-4 sm:right-6 md:right-12 z-[35] pointer-events-auto transition-all duration-300 ${
-          lookMode === "creative" ? "opacity-25 hover:opacity-100 hidden 2xl:flex" : "opacity-100"
-        }`}
-      >
+      <div className="absolute bottom-5 sm:bottom-8 right-4 sm:right-6 md:right-12 z-[35] pointer-events-auto">
         <ProductCallout />
       </div>
     </section>
   );
 }
+
