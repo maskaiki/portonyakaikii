@@ -4,14 +4,13 @@ import React, { useEffect, useRef } from "react";
 
 export interface PptItem {
   id: number;
-  title: string;
+  num: string;
   image: string;
 }
 
-// 10 Desain PPT (16:9 JPG) — public/assets/ppt/ppt-1.jpg s/d ppt-10.jpg
 const PPT_ITEMS: PptItem[] = Array.from({ length: 10 }, (_, i) => ({
   id: i + 1,
-  title: `Presentation Deck ${String(i + 1).padStart(2, "0")}`,
+  num: String(i + 1).padStart(2, "0"),
   image: `/assets/ppt/ppt-${i + 1}.jpg`,
 }));
 
@@ -34,10 +33,9 @@ export function PptSnakeShowcase() {
 
     window.addEventListener("scroll", onScroll, { passive: true });
 
-    // Spacing between cards in the snake train & total cycle length (includes pause when text is 100% clear)
     const CARD_SPACING = 0.055;
-    const SNAKE_TAIL_SPAN = PPT_ITEMS.length * CARD_SPACING; // 0.55
-    const TOTAL_CYCLE = 1 + SNAKE_TAIL_SPAN + 0.18; // Extra 0.18 gap so text is completely uncovered between waves
+    const SNAKE_TAIL_SPAN = PPT_ITEMS.length * CARD_SPACING;
+    const TOTAL_CYCLE = 1 + SNAKE_TAIL_SPAN + 0.18;
 
     const render = () => {
       animId = requestAnimationFrame(render);
@@ -48,12 +46,9 @@ export function PptSnakeShowcase() {
 
       cardsRef.current.forEach((card, idx) => {
         if (!card) return;
-
-        // u is this card's individual progress from far-left outside (0) to far-right outside (1)
         const u = cycleRef.current - idx * CARD_SPACING;
 
         if (u < 0 || u > 1) {
-          // Card is either waiting outside left edge or has already disappeared on the right
           card.style.opacity = "0";
           card.style.pointerEvents = "none";
           card.style.transform = "translate3d(-120vw, 200px, -200px) scale(0.5)";
@@ -62,23 +57,15 @@ export function PptSnakeShowcase() {
 
         card.style.pointerEvents = "auto";
 
-        // Horizontal travel: starts outside far-left (-75vw) and exits outside far-right (+75vw)
         const xVw = -75 + u * 150;
-
-        // Diagonal climb (bottom-left to top-right) + 3D S-curve snake wave
         const waveY = Math.sin(u * Math.PI * 2.5) * 42;
         const yPx = (0.45 - u) * 240 + waveY;
-
-        // 3D Depth & Scale
         const zPx = Math.sin(u * Math.PI) * 60;
         const scale = 0.96 - u * 0.18;
-
-        // Crisp solid opacity across the screen, fading out smoothly as it disappears on the right
         const opacity = u < 0.05 ? u / 0.05 : u > 0.86 ? (1 - u) / 0.14 : 1;
 
         card.style.transform = `translate3d(${xVw}vw, ${yPx}px, ${zPx}px) scale(${scale})`;
         card.style.opacity = String(Math.max(0, Math.min(1, opacity)));
-        // Front/leading cards stay layered cleanly over trailing cards
         card.style.zIndex = String(100 - idx);
       });
     };
@@ -99,38 +86,25 @@ export function PptSnakeShowcase() {
       onMouseLeave={() => {
         isHoveredRef.current = false;
       }}
-      className="relative w-screen left-1/2 -translate-x-1/2 py-20 lg:py-28 overflow-hidden select-none"
+      className="relative w-screen left-1/2 -translate-x-1/2 py-16 lg:py-24 overflow-hidden select-none"
     >
-      {/* Inner Content Aligned with Page Padding */}
-      <div className="w-full px-5 sm:px-10 lg:px-14 xl:px-20">
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
-          <span className="font-display text-xs font-extrabold uppercase tracking-[0.2em] text-[#f4f4ed]/50">
-            Presentation Design (10 Works • 16:9)
-          </span>
-          <span className="font-brier italic text-lg text-[#0055FF]">
-            Slide Decks
-          </span>
-        </div>
-      </div>
-
-      {/* Full-Bleed Viewport Stage so Snake Enters from Outside Left Edge & Disappears on Right */}
       <div
-        className="relative w-full h-[460px] sm:h-[560px] flex items-center justify-center"
+        className="relative w-full h-[440px] sm:h-[520px] flex items-center justify-center"
         style={{ perspective: "1400px" }}
       >
         {/* Background Giant Typography */}
         <div className="w-full px-5 sm:px-10 lg:px-14 xl:px-20 relative z-0 pointer-events-none flex flex-col justify-center">
-          <h3 className="font-sans text-5xl sm:text-7xl lg:text-8xl xl:text-[6.5rem] font-semibold tracking-tight leading-[0.94] text-[#f4f4ed]">
-            Revolutionizing <br />
-            <span className="font-brier italic font-normal text-[#0055FF]">
-              Slide
+          <h3 className="font-display text-5xl sm:text-7xl lg:text-8xl xl:text-[6.5rem] font-black uppercase tracking-tight leading-[0.92] text-[#f4f4ed]">
+            REVOLUTIONIZING <br />
+            <span className="font-brier italic font-normal text-[#0055FF] lowercase">
+              slide
             </span>{" "}
             <br />
-            Visualization
+            VISUALIZATION.
           </h3>
         </div>
 
-        {/* 10 Slithering 16:9 PPT Cards (Enters from -75vw left, exits +75vw right) */}
+        {/* 10 Slithering 16:9 PPT Cards (Clean, no broken image icons or file path text) */}
         <div
           className="absolute inset-0 flex items-center justify-center pointer-events-none"
           style={{ transformStyle: "preserve-3d" }}
@@ -141,9 +115,9 @@ export function PptSnakeShowcase() {
               ref={(el) => {
                 cardsRef.current[idx] = el;
               }}
-              className="absolute w-[280px] sm:w-[370px] md:w-[420px] aspect-video rounded-[28px] p-3 sm:p-3.5 bg-[#f4f4ed] text-[#111112] border border-white shadow-[0_24px_60px_rgba(0,0,0,0.9)] flex flex-col justify-between will-change-transform"
+              className="absolute w-[280px] sm:w-[370px] md:w-[420px] aspect-video rounded-[24px] p-2.5 bg-[#f4f4ed] border border-white shadow-[0_24px_60px_rgba(0,0,0,0.9)] flex items-center justify-center will-change-transform"
             >
-              <div className="relative w-full h-full rounded-[20px] overflow-hidden bg-[#18181c] flex items-center justify-center">
+              <div className="relative w-full h-full rounded-[18px] overflow-hidden bg-[#18181c] flex items-center justify-center">
                 <img
                   src={item.image}
                   alt=""
@@ -152,25 +126,13 @@ export function PptSnakeShowcase() {
                   }}
                   className="absolute inset-0 w-full h-full object-cover z-10"
                 />
-                <div className="flex flex-col items-center justify-center text-center p-4 z-0">
-                  <span className="font-brier italic text-3xl text-[#f4f4ed]/50">
-                    PPT {String(item.id).padStart(2, "0")}
-                  </span>
-                </div>
+                <span className="font-brier italic text-3xl text-[#f4f4ed]/30 z-0">
+                  {item.num}
+                </span>
               </div>
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Bottom Micro Captions */}
-      <div className="w-full px-5 sm:px-10 lg:px-14 xl:px-20 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mt-6 text-xs text-[#f4f4ed]/55">
-        <p className="max-w-xs">
-          High-impact 16:9 presentation decks crafted with structured layouts and visual clarity.
-        </p>
-        <p className="max-w-xs sm:text-right">
-          Continuous 3D wave showcase — enters from left and glides across the stage.
-        </p>
       </div>
     </div>
   );
