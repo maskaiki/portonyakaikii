@@ -158,7 +158,7 @@ export function AboutSection() {
 
       {/* Full-Bleed Widescreen Container */}
       <div className="w-full px-5 sm:px-10 lg:px-14 xl:px-20 relative z-10">
-        
+
         {/* Full-Width Top Editorial Bar */}
         <div className="flex items-baseline justify-between pb-6 mb-14 border-b border-[#111112]/15">
           <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#111112]/60 uppercase">
@@ -181,9 +181,8 @@ export function AboutSection() {
                 return (
                   <span
                     key={i}
-                    className={`scrub-word inline-block ${
-                      isHighlight ? "font-brier italic font-normal text-[#0055FF] lowercase" : ""
-                    }`}
+                    className={`scrub-word inline-block ${isHighlight ? "font-brier italic font-normal text-[#0055FF] lowercase" : ""
+                      }`}
                   >
                     {word}
                   </span>

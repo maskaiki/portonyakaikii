@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Obsidian Architectural Squircle Background -->
+  <rect x="16" y="16" width="480" height="480" rx="108" fill="#111112" stroke="#2A2A2A" stroke-width="12"/>
+  
+  <!-- Subtle Inner Grid Hairlines -->
+  <line x1="16" y1="256" x2="496" y2="256" stroke="#F4F4ED" stroke-opacity="0.05" stroke-width="4"/>
+  <line x1="256" y1="16" x2="256" y2="496" stroke="#F4F4ED" stroke-opacity="0.05" stroke-width="4"/>
+
+  <!-- Storm Lab Corner Square Accent -->
+  <rect x="412" y="68" width="32" height="32" fill="#0055FF"/>
+
+  <!-- Bold Geometric "R" in Cobalt Blue (#0055FF) -->
+  <path
+    d="M92 140H208C252 140 280 164 280 204C280 234 262 256 232 264L286 372H224L178 272H148V372H92V140ZM148 186V230H200C216 230 226 220 226 208C226 195 216 186 200 186H148Z"
+    fill="#0055FF"
+  />
+
+  <!-- Editorial Italic Serif "W" in Warm Bone (#F4F4ED) -->
+  <path
+    d="M254 176H306L318 298L362 192H398L410 298L448 176H484L422 372H382L368 258L322 372H282L254 176Z"
+    fill="#F4F4ED"
+  />
+</svg>

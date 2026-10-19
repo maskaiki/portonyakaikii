@@ -3,6 +3,8 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { PptSnakeShowcase } from "./PptSnakeShowcase";
+import { VisualFlyAndDomeShowcase } from "./VisualFlyAndDomeShowcase";
 
 const WEB_PROJECTS = [
   {
@@ -383,11 +385,10 @@ export function SelectedWorkSection() {
                       transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
                       transformStyle: "preserve-3d",
                     }}
-                    className={`absolute inset-0 p-5 bg-[#f4f4ed] text-[#111112] border shadow-[0_24px_60px_rgba(0,0,0,0.75)] flex flex-col justify-between transition-all duration-300 cursor-pointer ${
-                      isSelected
+                    className={`absolute inset-0 p-5 bg-[#f4f4ed] text-[#111112] border shadow-[0_24px_60px_rgba(0,0,0,0.75)] flex flex-col justify-between transition-all duration-300 cursor-pointer ${isSelected
                         ? "border-[#0055FF] ring-2 ring-[#0055FF] shadow-[0_0_30px_rgba(0,85,255,0.35)]"
                         : "border-[#111112] hover:border-[#0055FF]"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-baseline justify-between">
                       <span className="font-brier italic text-xl">
@@ -426,6 +427,9 @@ export function SelectedWorkSection() {
             </div>
           </div>
         </div>
+
+        {/* ── PPT PRESENTATION DECKS (3D Auto-Looping Snake Trajectory) ── */}
+        <PptSnakeShowcase />
 
         {/* ── PART 3: 1 FEATURED VIDEO EDIT (GSAP 3D Scroll Unfold) ── */}
         <div style={{ perspective: "1200px" }}>
@@ -486,6 +490,9 @@ export function SelectedWorkSection() {
             </div>
           </div>
         </div>
+
+        {/* ── VISUAL FLY-PAST & 16-SLOT FISHEYE DOME SHOWCASE ── */}
+        <VisualFlyAndDomeShowcase />
       </div>
     </section>
   );
