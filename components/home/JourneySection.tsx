@@ -1,160 +1,189 @@
 "use client";
 
-import { motion } from "framer-motion";
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 interface TimelineItem {
+  num: string;
   year: string;
   role: string;
   organization: string;
   description: string;
   tags: string[];
-  accent: string;
 }
 
 const TIMELINE_DATA: TimelineItem[] = [
   {
-    year: "2024 — PRESENT",
-    role: "Freelance Graphic Designer & Brand Consultant",
+    num: "01",
+    year: "Present",
+    role: "Freelance Front-End & Visual Creator",
     organization: "Independent Practice",
     description:
-      "Crafting high-impact visual identities, custom typography posters, and marketing collateral for diverse commercial clients and creative competitions.",
-    tags: ["Branding", "Visual Systems", "Poster Art", "Figma & Adobe"],
-    accent: "#00d2ff",
+      "Helping people build interactive personal portfolio websites, alongside graphic design in Canva and short-form video editing in CapCut.",
+    tags: ["Front-End Web", "Portfolio Websites", "Canva", "CapCut"],
   },
   {
-    year: "2024 — PRESENT",
-    role: "Social Media Strategist & Content Architect",
-    organization: "Digital Creators & Brand Campaigns",
+    num: "02",
+    year: "2025 — 2026",
+    role: "Creative Media & Graphic Design",
+    organization: "UKM Al-Qur'an Study Club (ASC) — Universitas Negeri Malang",
     description:
-      "Engineering viral short-form micro-content loops, carousel structures, and audience retention strategies that generated over 120k organic impressions.",
-    tags: ["CapCut", "Viral Hooks", "Audience Growth", "Analytics"],
-    accent: "#FF6B00",
+      "Created event posters, commemorative holiday graphics, and visual documentation layouts for organizational programs and social media.",
+    tags: ["Graphic Design", "Event Documentation", "Social Media"],
   },
   {
-    year: "2023",
-    role: "Competition Finalist & Design Award",
-    organization: "National Creative & Tech Design Contest",
-    description:
-      "Honored for innovative futuristic poster aesthetics and brand design narrative in speculative electronic and cultural themes.",
-    tags: ["Competition Winner", "Key Visuals", "Design Award"],
-    accent: "#00FF88",
-  },
-  {
-    year: "2022 — PRESENT",
-    role: "Informatics Engineering Degree",
+    num: "03",
+    year: "2023 — Present",
+    role: "Informatics Engineering Student",
     organization: "Universitas Negeri Malang (UM)",
     description:
-      "Pursuing Bachelor of Informatics Engineering. Focusing on software engineering, frontend architecture, reactive UI systems, and algorithmic problem-solving.",
-    tags: ["Software Engineering", "Full-Stack", "Algorithms", "Systems"],
-    accent: "#38bdf8",
+      "Studying software development, front-end web interfaces, and exploring modern AI-assisted workflows using Antigravity and Google AI Studio.",
+    tags: ["Informatics Engineering", "Front-End", "Visual Web"],
   },
 ];
 
 export function JourneySection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const progressLineRef = useRef<HTMLDivElement>(null);
+  const rowsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context(() => {
+      if (progressLineRef.current && rowsRef.current) {
+        gsap.fromTo(
+          progressLineRef.current,
+          { scaleY: 0 },
+          {
+            scaleY: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: rowsRef.current,
+              start: "top 70%",
+              end: "bottom 50%",
+              scrub: 0.4,
+            },
+          }
+        );
+      }
+
+      if (rowsRef.current) {
+        const items = rowsRef.current.querySelectorAll(".journey-row");
+        items.forEach((row) => {
+          gsap.fromTo(
+            row,
+            { opacity: 0.2, rotateX: -20, y: 40, transformPerspective: 1000 },
+            {
+              opacity: 1,
+              rotateX: 0,
+              y: 0,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: row,
+                start: "top 85%",
+                end: "top 45%",
+                scrub: 0.4,
+              },
+            }
+          );
+        });
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       id="journey"
-      className="relative w-full py-24 lg:py-32 bg-[#0A0A0A] text-[#EFEFE5] border-t border-[#1F1F1F] overflow-hidden"
+      className="relative w-full py-24 lg:py-36 bg-[#111112] text-[#f4f4ed] border-t border-white/10 overflow-hidden"
     >
-      {/* Subtle atmospheric gradient */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#0066FF]/05 blur-[180px] pointer-events-none" />
+      {/* Full-Width Architectural Grid Lines */}
+      <div className="absolute inset-0 pointer-events-none grid grid-cols-4 lg:grid-cols-12 px-5 sm:px-10 lg:px-14 xl:px-20 opacity-[0.04]">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div key={i} className="border-r border-white h-full first:border-l" />
+        ))}
+      </div>
 
-      <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-16 relative z-10">
+      {/* Full-Bleed Widescreen Wrapper (No max-w-4xl bottleneck!) */}
+      <div className="w-full px-5 sm:px-10 lg:px-14 xl:px-20 relative z-10">
         
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-20">
-          <div className="space-y-4">
-            <div>
-              <span className="font-display text-xs sm:text-sm font-black tracking-[0.25em] text-[#00d2ff] uppercase">
-                JOURNEY
-              </span>
-            </div>
-            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight text-[#EFEFE5] leading-[0.95]">
+        {/* Full-Width Section Header */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 mb-16 border-b border-white/15">
+          <div>
+            <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#f4f4ed]/50 uppercase block mb-3">
+              Journey &amp; CV
+            </span>
+            <h2 className="font-display text-4xl sm:text-6xl lg:text-8xl font-black uppercase tracking-tight text-[#f4f4ed] leading-[0.92]">
               EXPERIENCE &amp; <br />
-              <span className="font-serif italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#38bdf8] to-[#1d4ed8] bg-clip-text text-transparent">
-                MILESTONES
+              <span className="font-brier italic font-normal text-[#0055FF]">
+                background.
               </span>
             </h2>
           </div>
 
-          <p className="max-w-md font-sans text-sm text-[#8A8A7A] leading-relaxed">
-            The progression through software engineering academia, freelance brand commissions, and high-retention digital media architecture.
+          <p className="max-w-md font-sans text-sm sm:text-base text-[#f4f4ed]/65 leading-relaxed">
+            My academic foundation at Universitas Negeri Malang, campus creative roles, and freelance front-end &amp; visual practice.
           </p>
         </div>
 
-        {/* Luminescent Timeline Container */}
-        <div className="relative max-w-4xl mx-auto">
-          
-          {/* Vertical Center Line (Desktop) / Left Line (Mobile) */}
-          <div className="absolute top-4 bottom-4 left-4 md:left-1/2 -translate-x-1/2 w-[2px] bg-gradient-to-b from-[#00d2ff] via-[#0066FF] to-transparent opacity-40" />
+        {/* Full-Width 12-Column Editorial Rows with GSAP Scrubbed Progress Line */}
+        <div ref={rowsRef} className="relative w-full">
+          {/* Background Track Line on Left Edge */}
+          <div className="hidden lg:block absolute left-[25%] top-0 bottom-0 w-[1px] bg-white/10" />
+          {/* GSAP Scrubbed Active Cobalt Line */}
+          <div
+            ref={progressLineRef}
+            className="hidden lg:block absolute left-[25%] top-0 bottom-0 w-[2px] bg-[#0055FF] origin-top"
+          />
 
-          <div className="space-y-12 md:space-y-16">
-            {TIMELINE_DATA.map((item, idx) => {
-              const isEven = idx % 2 === 0;
-              return (
-                <motion.div
-                  key={item.role}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: idx * 0.12 }}
-                  className={`relative flex flex-col md:flex-row items-start ${
-                    isEven ? "md:flex-row-reverse" : ""
-                  } gap-8 md:gap-16 pl-12 md:pl-0`}
-                >
-                  {/* Glowing Timeline Node */}
-                  <div className="absolute left-4 md:left-1/2 -translate-x-1/2 top-6 z-20 flex items-center justify-center">
-                    <div
-                      className="w-4 h-4 rounded-full border-2 border-[#0A0A0A] shadow-[0_0_16px_currentColor] animate-pulse"
-                      style={{ backgroundColor: item.accent, color: item.accent }}
-                    />
-                  </div>
+          <div className="divide-y divide-white/15">
+            {TIMELINE_DATA.map((item) => (
+              <div
+                key={item.role}
+                className="journey-row group grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 py-12 lg:py-16 items-start will-change-transform"
+              >
+                {/* Left 3 Cols: Giant Year & Index (Spreads to Far Left) */}
+                <div className="lg:col-span-3 flex flex-col justify-between pr-6">
+                  <span className="font-brier italic text-3xl sm:text-4xl text-[#0055FF] group-hover:translate-x-2 transition-transform">
+                    {item.year}
+                  </span>
+                  <span className="font-display text-xs font-bold uppercase tracking-[0.2em] text-[#f4f4ed]/35 mt-2">
+                    Milestone {item.num}
+                  </span>
+                </div>
 
-                  {/* Content Card */}
-                  <div
-                    className={`w-full md:w-[calc(50%-2rem)] p-6 sm:p-8 rounded-2xl bg-[#141414] border border-white/10 hover:border-[#0066FF] transition-all duration-300 shadow-[0_8px_30px_rgba(0,0,0,0.4)] group hover:-translate-y-1 ${
-                      isEven ? "md:text-left" : "md:text-left"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 mb-2">
+                {/* Center 5 Cols: Role & Organization */}
+                <div className="lg:col-span-5 lg:pl-8">
+                  <h3 className="font-display text-2xl sm:text-4xl font-black uppercase text-[#f4f4ed] group-hover:text-[#0055FF] transition-colors leading-[0.98]">
+                    {item.role}
+                  </h3>
+                  <p className="font-display text-xs sm:text-sm font-bold uppercase tracking-wider text-[#f4f4ed]/50 mt-2">
+                    {item.organization}
+                  </p>
+                </div>
+
+                {/* Right 4 Cols: Description & Tags (Spreads to Far Right) */}
+                <div className="lg:col-span-4 flex flex-col justify-between space-y-6 bg-[#18181a] border border-white/10 group-hover:border-white/35 p-6 sm:p-8 transition-colors">
+                  <p className="font-sans text-sm sm:text-base text-[#f4f4ed]/70 leading-relaxed">
+                    {item.description}
+                  </p>
+                  <div className="flex flex-wrap gap-3 pt-4 border-t border-white/10">
+                    {item.tags.map((tag) => (
                       <span
-                        className="font-mono text-xs font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-[#1C1C1C] border border-white/5"
-                        style={{ color: item.accent }}
+                        key={tag}
+                        className="font-display text-[10px] font-bold uppercase tracking-wider text-[#f4f4ed]/50"
                       >
-                        {item.year}
+                        {tag}
                       </span>
-                    </div>
-
-                    <h3 className="font-display text-xl sm:text-2xl font-black uppercase text-[#EFEFE5] group-hover:text-[#00d2ff] transition-colors leading-snug">
-                      {item.role}
-                    </h3>
-                    <p className="font-display text-xs font-bold uppercase tracking-wider text-[#8A8A7A] mt-1 mb-4">
-                      {item.organization}
-                    </p>
-
-                    <p className="font-sans text-sm text-[#8A8A7A] leading-relaxed mb-6">
-                      {item.description}
-                    </p>
-
-                    <div className="flex flex-wrap gap-2">
-                      {item.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="text-[11px] font-mono text-[#8A8A7A] px-2.5 py-1 rounded bg-[#1C1C1C] border border-white/5"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                    ))}
                   </div>
-
-                  {/* Spacer for opposite column */}
-                  <div className="hidden md:block md:w-[calc(50%-2rem)]" />
-                </motion.div>
-              );
-            })}
+                </div>
+              </div>
+            ))}
           </div>
-
         </div>
 
       </div>

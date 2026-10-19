@@ -6,35 +6,29 @@ import { AboutSection } from "./AboutSection";
 import { SelectedWorkSection } from "./SelectedWorkSection";
 import { ArsenalSection } from "./ArsenalSection";
 import { JourneySection } from "./JourneySection";
-import { ManifestoSection } from "./ManifestoSection";
-import { ContactSection } from "./ContactSection";
 
 export default function HomePage() {
   return (
     <div className="relative min-h-screen text-[#efefe5] overflow-x-hidden">
-      {/* 01. Visor Hero Section */}
+      {/* 01. EXPLORE — Visor Hero Section */}
       <Hero />
 
-      {/* 02. Kinetic Dual-Tier Marquee Ticker */}
+      {/* Kinetic Dual-Tier Marquee Transition */}
       <TickerSection />
 
-      {/* 03. About Me Story & Metric Stats */}
+      {/* 02. ABOUT — "I Make Front-End For People" & Personal Side */}
       <AboutSection />
 
-      {/* 04. Selected Work Showcase with Filter Tabs */}
+      {/* 03. WORK — 3 Webs, 10 Graphic Designs (3D), 1 Video Edit */}
       <SelectedWorkSection />
 
-      {/* 05. Arsenal Skills & Tech Marquee */}
+      {/* 04. ARSENAL — Built With & Platforms Marquee */}
       <ArsenalSection />
 
-      {/* 06. Journey & Experience Timeline */}
+      {/* 05. JOURNEY — CV & Experience Timeline */}
       <JourneySection />
 
-      {/* 07. Manifesto Quote Section */}
-      <ManifestoSection />
-
-      {/* 08. Direct Contact & Collaboration CTA */}
-      <ContactSection />
+      {/* 06. CONTACT + FOOTER — Rendered by SiteShell via Footer.tsx (#contact) */}
     </div>
   );
 }

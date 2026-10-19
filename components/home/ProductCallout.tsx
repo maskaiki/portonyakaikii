@@ -7,56 +7,35 @@ interface ProductCalloutProps {
   className?: string;
 }
 
-const MODULES = [
+const DISCIPLINES = [
   {
-    code: "MOD.01 // ENG",
-    title: "FRONTEND & SYSTEMS",
-    metric: "NEXT.JS 15 + TS",
-    accent: "#0066FF",
+    index: "01",
+    title: "Front-End Web",
+    sub: "Interactive Portfolio Builds",
   },
   {
-    code: "MOD.02 // VIS",
-    title: "EDITORIAL & BRANDING",
-    metric: "FIGMA + ADOBE CC",
-    accent: "#00d2ff",
+    index: "02",
+    title: "Graphic Design",
+    sub: "Visual Layouts & Posters",
   },
   {
-    code: "MOD.03 // GRW",
-    title: "SOCIAL ARCHITECTURE",
-    metric: "120K+ ORGANIC REACH",
-    accent: "#00FF88",
+    index: "03",
+    title: "Video Editing",
+    sub: "Short-Form Motion & Cuts",
   },
 ];
 
 export function ProductCallout({ className = "" }: ProductCalloutProps) {
   const [activeIdx, setActiveIdx] = useState(0);
-  const [timeStr, setTimeStr] = useState("MALANG // GMT+7");
-
-  useEffect(() => {
-    const updateClock = () => {
-      const now = new Date();
-      const formatted = new Intl.DateTimeFormat("en-GB", {
-        timeZone: "Asia/Jakarta",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-      }).format(now);
-      setTimeStr(`MLG, ID // ${formatted} WIB`);
-    };
-    updateClock();
-    const timer = setInterval(updateClock, 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     const cycle = setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % MODULES.length);
-    }, 3200);
+      setActiveIdx((prev) => (prev + 1) % DISCIPLINES.length);
+    }, 3500);
     return () => clearInterval(cycle);
   }, []);
 
-  const current = MODULES[activeIdx];
+  const current = DISCIPLINES[activeIdx];
 
   return (
     <motion.aside
@@ -64,82 +43,65 @@ export function ProductCallout({ className = "" }: ProductCalloutProps) {
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
       className={`z-25 flex flex-col items-end select-none pointer-events-auto ${className}`}
-      aria-label="Kaiki System Telemetry"
+      aria-label="Kaiki Disciplines"
     >
-      {/* Interactive Telemetry Spec Box (Replacing old ski goggles) */}
+      {/* Clean Storm Lab Architectural Glass Card */}
       <div
-        onClick={() => setActiveIdx((prev) => (prev + 1) % MODULES.length)}
-        title="Click to cycle system module"
-        className="relative w-44 sm:w-52 p-3 border border-black/25 bg-white/65 backdrop-blur-xl group cursor-pointer transition-all duration-300 hover:border-[#0066FF] shadow-[0_12px_32px_rgba(0,0,0,0.06)] rounded-sm"
+        onClick={() => setActiveIdx((prev) => (prev + 1) % DISCIPLINES.length)}
+        className="relative w-48 sm:w-52 p-4 border border-white/85 bg-white/45 backdrop-blur-xl cursor-pointer transition-all duration-300 hover:bg-white/65 shadow-[0_16px_40px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(255,255,255,0.9)]"
       >
         {/* Storm Lab Top-Right Solid Square Tick */}
         <div
-          className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#111112] group-hover:bg-[#0066FF] transition-colors"
+          className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#111112]"
           aria-hidden="true"
         />
 
-        {/* Top Telemetry Bar: Real-time Malang Clock */}
-        <div className="flex items-center justify-between border-b border-black/10 pb-1.5 mb-2">
-          <span className="font-mono text-[9px] font-bold tracking-wider text-[#111112]/70">
-            {timeStr}
+        <div className="flex items-baseline justify-between border-b border-[#111112]/10 pb-2 mb-3">
+          <span className="font-display text-[10px] font-extrabold tracking-[0.16em] uppercase text-[#111112]/50">
+             Focus Area
           </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#00d2ff] animate-ping" />
+          <span className="font-brier italic text-sm text-[#111112]">
+            {current.index}
+          </span>
         </div>
 
-        {/* Cycling Tri-Pillar Module Display */}
-        <div className="h-14 flex flex-col justify-between relative overflow-hidden">
+        <div className="h-12 flex flex-col justify-center relative overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
-              key={current.code}
-              initial={{ opacity: 0, y: 8 }}
+              key={current.index}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25 }}
-              className="flex flex-col"
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.22 }}
             >
-              <span
-                className="font-mono text-[9px] font-black tracking-widest uppercase"
-                style={{ color: current.accent }}
-              >
-                {current.code}
-              </span>
-              <span className="font-display text-xs sm:text-[13px] font-black text-[#111112] tracking-tight leading-tight mt-0.5">
+              <p className="font-display text-sm font-black uppercase text-[#111112] tracking-tight leading-none">
                 {current.title}
-              </span>
-              <span className="font-mono text-[10px] font-bold text-[#111112]/60 mt-1">
-                {current.metric}
-              </span>
+              </p>
+              <p className="font-sans text-[11px] text-[#111112]/65 mt-1">
+                {current.sub}
+              </p>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Progress Dots */}
-        <div className="flex items-center gap-1 mt-2 pt-1.5 border-t border-black/10">
-          {MODULES.map((_, i) => (
+        <div className="flex items-center gap-1.5 mt-3 pt-2 border-t border-[#111112]/10">
+          {DISCIPLINES.map((_, i) => (
             <span
               key={i}
-              className={`h-1 transition-all duration-300 ${
-                i === activeIdx ? "w-5 bg-[#0066FF]" : "w-1.5 bg-black/20"
+              className={`h-[2px] transition-all duration-300 ${
+                i === activeIdx ? "w-6 bg-[#111112]" : "w-2 bg-[#111112]/20"
               }`}
             />
           ))}
-          <span className="ml-auto font-mono text-[8px] font-bold text-black/40 uppercase">
-            CLICK TO SWITCH
-          </span>
         </div>
       </div>
 
-      {/* Barcode Graphic using Libre Barcode 128 */}
+      {/* Storm Lab Barcode */}
       <div
-        className="w-44 sm:w-52 mt-2 font-barcode text-[#111112]/85 text-xl sm:text-2xl leading-none select-none tracking-widest text-right overflow-hidden"
+        className="w-48 sm:w-52 mt-2 font-barcode text-[#111112]/80 text-xl leading-none select-none tracking-widest text-right overflow-hidden"
         aria-hidden="true"
       >
         <div className="whitespace-nowrap">NEVERSTOPCREATING</div>
-        <div className="flex justify-between font-mono text-[9px] tracking-wider font-bold text-[#111112]/70 mt-0.5">
-          <span>KAIKI</span>
-          <span>UM // MLG</span>
-          <span>SYS.2026</span>
-        </div>
       </div>
     </motion.aside>
   );

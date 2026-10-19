@@ -1,31 +1,74 @@
 "use client";
 
+import React, { useState, useRef } from "react";
 import Image from "next/image";
+import gsap from "gsap";
 
 const CORE_PILLARS = [
-  "NEXT.JS 15 // APP ROUTER",
-  "TYPESCRIPT // STRICT",
-  "TAILWIND CSS // V4",
-  "FRAMER MOTION // PHYSICS",
-  "FIGMA & ADOBE SUITE",
-  "CAPCUT PRO // RETENTION",
+  "ANTIGRAVITY",
+  "GOOGLE AI STUDIO",
+  "NEXT.JS & TAILWIND",
+  "GITHUB & VERCEL",
+  "CANVA",
+  "CAPCUT",
 ];
 
 export function Footer() {
+  const [copied, setCopied] = useState(false);
+  const email = "mwrifky@gmail.com";
+
+  const bustRef = useRef<HTMLDivElement>(null);
+  const bgTitleRef = useRef<HTMLHeadingElement>(null);
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const nx = (e.clientX - rect.left) / rect.width - 0.5;
+    const ny = (e.clientY - rect.top) / rect.height - 0.5;
+
+    if (bustRef.current) {
+      gsap.to(bustRef.current, {
+        x: nx * 36,
+        y: ny * 24,
+        rotateY: nx * 18,
+        rotateX: -ny * 14,
+        duration: 0.5,
+        ease: "power2.out",
+        transformPerspective: 1000,
+      });
+    }
+
+    if (bgTitleRef.current) {
+      gsap.to(bgTitleRef.current, {
+        x: -nx * 28,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+    }
+  };
+
   return (
-    <footer className="relative bg-gradient-to-br from-[#00d2ff] via-[#1d4ed8] to-[#0a1128] pt-12 pb-6 overflow-hidden">
-      
-      {/* The Iconic Inverted-Curved Masked Frame */}
-      <div className="page-shell px-2 md:px-6">
-        <div className="relative rounded-[2.5rem] bg-[#0A0A0A] text-[#efefe5] overflow-hidden shadow-2xl border-4 border-[#00d2ff] shadow-[0_0_50px_rgba(0,210,255,0.25)]">
+    <footer
+      id="contact"
+      onMouseMove={handleMouseMove}
+      className="relative w-full bg-[#f4f4ed] pt-10 pb-8 overflow-hidden scroll-mt-10 border-t border-[#111112]/15"
+    >
+      {/* Full-Width Edge-to-Edge Outer Padding */}
+      <div className="w-full px-4 sm:px-8 lg:px-12">
+        <div className="relative rounded-[2rem] bg-[#111112] text-[#f4f4ed] overflow-hidden border border-[#111112]">
           
           {/* Topographic Lines Inside Footer */}
           <div
-            className="absolute inset-0 pointer-events-none opacity-20"
+            className="absolute inset-0 pointer-events-none opacity-15"
             style={{
               backgroundImage: "url('/assets/shared/67dbeba158707fa1cd5e5e45_blobs_footer_1.svg')",
               backgroundSize: "cover",
@@ -33,136 +76,163 @@ export function Footer() {
             }}
           />
 
-          <div className="relative z-10 pt-16 pb-12 px-6 md:px-14 flex flex-col items-center">
+          <div className="relative z-10 pt-16 pb-12 px-6 sm:px-12 lg:px-16 xl:px-24 flex flex-col items-center">
             
-            {/* Top Floating Typographic Signature in Electric Blue */}
-            <div className="mb-4 flex flex-col items-center select-none">
-              <span className="font-brier italic text-3xl sm:text-5xl text-[#00d2ff] drop-shadow-[0_2px_16px_rgba(0,210,255,0.6)]">
+            <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#f4f4ed]/50 uppercase mb-3">
+              Contact &amp; Collab
+            </span>
+
+            <div className="mb-2 flex flex-col items-center select-none">
+              <span className="font-brier italic text-3xl sm:text-5xl text-[#0055FF]">
                 Rifky Wicaksana
               </span>
             </div>
 
-            {/* Headline */}
-            <h2 className="font-display text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight text-center text-[#efefe5] mb-12">
-              ALWAYS <span className="font-brier italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#38bdf8] to-[#1d4ed8] bg-clip-text text-transparent">BRINGING</span> THE{" "}
-              <span className="font-brier italic font-normal bg-gradient-to-r from-[#00d2ff] via-[#38bdf8] to-[#1d4ed8] bg-clip-text text-transparent">FIGHT</span>.
+            {/* Giant Parallax Headline */}
+            <h2
+              ref={bgTitleRef}
+              className="font-display text-4xl sm:text-6xl md:text-8xl font-black uppercase tracking-tight text-center text-[#f4f4ed] mb-4 will-change-transform"
+            >
+              LET&rsquo;S BUILD YOUR{" "}
+              <span className="font-brier italic font-normal text-[#0055FF]">
+                portfolio
+              </span>{" "}
+              WEB.
             </h2>
 
-            {/* Three-Column Layout: Left Links | Center Technologist Bust | Right Socials */}
-            <div className="w-full grid grid-cols-1 md:grid-cols-3 items-center gap-8 mb-12">
+            <p className="font-sans text-sm sm:text-base text-[#f4f4ed]/65 max-w-xl text-center mb-8">
+              Want a standout front-end portfolio website like this, Canva graphic design, or CapCut video edits? Copy my email below or reach out on socials.
+            </p>
+
+            {/* Copy Gmail + Direct Mailto Buttons */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 mb-16">
+              <button
+                onClick={handleCopyEmail}
+                className="inline-flex items-center gap-3 px-8 py-4 bg-[#f4f4ed] hover:bg-[#0055FF] hover:text-white text-[#111112] font-display text-xs font-extrabold uppercase tracking-wider transition-colors cursor-pointer"
+                aria-label="Copy email address"
+              >
+                <span>{copied ? "Copied: mwrifky@gmail.com" : email}</span>
+              </button>
+
+              <a
+                href={`mailto:${email}`}
+                className="inline-flex items-center gap-2 px-7 py-4 bg-[#18181a] border border-white/20 hover:border-white text-xs font-display font-extrabold uppercase tracking-wider text-[#f4f4ed] transition-colors"
+              >
+                <span>Send Email</span>
+                <span>↗</span>
+              </a>
+            </div>
+
+            {/* Full-Width Three-Column Layout: Left Navigation | Center 3D Bust | Right Socials */}
+            <div className="w-full grid grid-cols-1 md:grid-cols-3 items-center gap-8 mb-12 pt-12 border-t border-white/10">
               
-              {/* Left Column: SINGLE SCROLL SECTIONS */}
+              {/* Left Column: SECTIONS (Flush Left) */}
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                <span className="font-display text-[10px] font-bold uppercase tracking-widest text-[#8A8A7A] mb-3">
-                  SECTIONS
+                <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#f4f4ed]/40 mb-4">
+                  Navigation
                 </span>
                 <nav className="flex flex-col gap-2">
-                  <a
-                    href="#hero"
-                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
-                  >
-                    HOME
+                  <a href="#hero" className="font-display text-2xl md:text-4xl font-black uppercase text-[#f4f4ed] hover:text-[#0055FF] hover:translate-x-2 transition-all">
+                    Explore
                   </a>
-                  <a
-                    href="#about"
-                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
-                  >
-                    ABOUT
+                  <a href="#about" className="font-display text-2xl md:text-4xl font-black uppercase text-[#f4f4ed] hover:text-[#0055FF] hover:translate-x-2 transition-all">
+                    About
                   </a>
-                  <a
-                    href="#work"
-                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
-                  >
-                    SELECTED WORK
+                  <a href="#work" className="font-display text-2xl md:text-4xl font-black uppercase text-[#f4f4ed] hover:text-[#0055FF] hover:translate-x-2 transition-all">
+                    Work
                   </a>
-                  <a
-                    href="#skills"
-                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
-                  >
-                    ARSENAL
+                  <a href="#skills" className="font-display text-2xl md:text-4xl font-black uppercase text-[#f4f4ed] hover:text-[#0055FF] hover:translate-x-2 transition-all">
+                    Arsenal
                   </a>
-                  <a
-                    href="#journey"
-                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
-                  >
-                    JOURNEY
-                  </a>
-                  <a
-                    href="#contact"
-                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#00d2ff] hover:text-white transition-colors"
-                  >
-                    CONTACT
+                  <a href="#journey" className="font-display text-2xl md:text-4xl font-black uppercase text-[#f4f4ed] hover:text-[#0055FF] hover:translate-x-2 transition-all">
+                    Journey
                   </a>
                 </nav>
               </div>
 
-              {/* Center Column: Kaiki Technologist Bust + CTA Button */}
-              <div className="flex flex-col items-center justify-center relative">
-                <div className="relative w-64 h-64 md:w-80 md:h-80 select-none">
+              {/* Center Column: 3D Parallax Kaiki Bust */}
+              <div className="flex flex-col items-center justify-center relative" style={{ perspective: "1000px" }}>
+                <div
+                  ref={bustRef}
+                  style={{ transformStyle: "preserve-3d" }}
+                  className="relative w-64 h-64 md:w-80 md:h-80 select-none will-change-transform"
+                >
                   <Image
                     src="/assets/shared/kaiki-footer.webp"
                     alt="Mohammad Rifky Wicaksana (Kaiki)"
                     fill
-                    className="object-contain filter grayscale contrast-125 drop-shadow-[0_0_25px_rgba(0,210,255,0.35)]"
+                    className="object-contain filter grayscale contrast-125"
                   />
-                </div>
-
-                {/* Overlaid CTA Button in Front of Chest */}
-                <div className="mt-[-2rem] relative z-20">
-                  <a
-                    href="#contact"
-                    style={{ color: "#ffffff" }}
-                    className="inline-flex items-center gap-2.5 px-6 py-3 bg-gradient-to-r from-[#00d2ff] via-[#1d4ed8] to-[#0a192f] hover:from-[#38bdf8] hover:to-[#1e3a8a] font-display text-sm font-black uppercase tracking-wider rounded-xl shadow-[0_4px_24px_rgba(0,210,255,0.45)] transition-all duration-200 transform hover:-translate-y-1 text-white"
-                  >
-                    <span>START A PROJECT</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M7 17L17 7M7 7h10v10" />
-                    </svg>
-                  </a>
                 </div>
               </div>
 
-              {/* Right Column: FOLLOW ON */}
+              {/* Right Column: SOCIALS (Flush Right) */}
               <div className="flex flex-col items-center md:items-end text-center md:text-right">
-                <span className="font-display text-[10px] font-bold uppercase tracking-widest text-[#8A8A7A] mb-3">
-                  CONNECT ON
+                <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#f4f4ed]/40 mb-4">
+                  Socials
                 </span>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-4">
+                  <a
+                    href="https://instagram.com/mrifkywicaksana"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group flex flex-col items-center md:items-end text-[#f4f4ed] hover:text-[#0055FF] transition-colors"
+                  >
+                    <span className="font-display text-xl md:text-3xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform">
+                      Instagram ↗
+                    </span>
+                    <span className="font-brier italic text-sm text-[#f4f4ed]/60 mt-1">
+                      @mrifkywicaksana
+                    </span>
+                  </a>
+
                   <a
                     href="https://github.com/maskaiki"
                     target="_blank"
                     rel="noreferrer"
-                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
+                    className="group flex flex-col items-center md:items-end text-[#f4f4ed] hover:text-[#0055FF] transition-colors"
                   >
-                    GITHUB
+                    <span className="font-display text-xl md:text-3xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform">
+                      GitHub ↗
+                    </span>
+                    <span className="font-brier italic text-sm text-[#f4f4ed]/60 mt-1">
+                      maskaiki
+                    </span>
                   </a>
+
                   <a
-                    href="https://linkedin.com"
+                    href="https://www.linkedin.com/search/results/all/?keywords=Mohammad%20Rifky%20Wicaksana"
                     target="_blank"
                     rel="noreferrer"
-                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
+                    className="group flex flex-col items-center md:items-end text-[#f4f4ed] hover:text-[#0055FF] transition-colors"
                   >
-                    LINKEDIN
+                    <span className="font-display text-xl md:text-3xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform">
+                      LinkedIn ↗
+                    </span>
+                    <span className="font-brier italic text-sm text-[#f4f4ed]/60 mt-1">
+                      Mohammad Rifky Wicaksana
+                    </span>
                   </a>
-                  <a
-                    href="https://instagram.com"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-display text-2xl md:text-3xl font-black uppercase text-[#efefe5] hover:text-[#00d2ff] transition-colors"
-                  >
-                    INSTAGRAM
-                  </a>
+
+                  <div className="flex flex-col items-center md:items-end text-[#f4f4ed]/35">
+                    <span className="font-display text-xl md:text-3xl font-black uppercase leading-none">
+                      TikTok
+                    </span>
+                    <span className="font-brier italic text-xs mt-1">
+                      Coming soon
+                    </span>
+                  </div>
                 </div>
               </div>
 
             </div>
 
-            {/* Bottom Core Pillars Strip */}
-            <div className="w-full pt-8 border-t border-white/10 flex items-center justify-around gap-4 flex-wrap">
+            {/* Bottom Core Platforms Strip */}
+            <div className="w-full pt-8 border-t border-white/10 flex items-center justify-between gap-4 flex-wrap">
               {CORE_PILLARS.map((pillar, i) => (
                 <span
                   key={i}
-                  className="font-mono text-[10px] sm:text-xs font-bold tracking-widest text-[#8A8A7A] hover:text-[#00d2ff] transition-colors uppercase"
+                  className="font-display text-[11px] font-bold tracking-[0.18em] text-[#f4f4ed]/40 uppercase"
                 >
                   {pillar}
                 </span>
@@ -170,22 +240,20 @@ export function Footer() {
             </div>
 
           </div>
-
         </div>
       </div>
 
-      {/* Bottom Electric Blue Bar with Copyright & Back to Top */}
-      <div className="page-shell mt-4 px-6 flex flex-col sm:flex-row items-center justify-between text-white/90 font-display text-[11px] font-black uppercase tracking-wider">
-        <span>© 2026 KAIKI (MOHAMMAD RIFKY WICAKSANA). ALL RIGHTS RESERVED</span>
+      {/* Bottom Copyright & Back to Top */}
+      <div className="w-full px-6 sm:px-12 mt-5 flex flex-col sm:flex-row items-center justify-between text-[#111112]/70 font-display text-[11px] font-extrabold uppercase tracking-wider">
+        <span>© 2026 KAIKI — MOHAMMAD RIFKY WICAKSANA</span>
         <button
           onClick={scrollToTop}
-          className="mt-2 sm:mt-0 flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
+          className="mt-2 sm:mt-0 flex items-center gap-1.5 hover:text-[#111112] transition-colors cursor-pointer"
         >
-          <span>BACK TO TOP</span>
+          <span>Back to Top</span>
           <span>↑</span>
         </button>
       </div>
-
     </footer>
   );
 }
