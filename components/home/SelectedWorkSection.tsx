@@ -40,16 +40,16 @@ const WEB_PROJECTS = [
 ];
 
 const GRAPHIC_DESIGNS = [
-  { id: 1, title: "Poster Tahun Baru Islam 1448 H", category: "Poster Design", year: "2026", image: "" },
-  { id: 2, title: "Dokumentasi Pelantikan ASC UM", category: "Event Visual", year: "2026", image: "" },
-  { id: 3, title: "Visual Poster Exploration III", category: "Graphic Design", year: "2025", image: "" },
-  { id: 4, title: "Social Media Feed Layout IV", category: "Social Media", year: "2025", image: "" },
-  { id: 5, title: "Event Key Visual & Banner V", category: "Brand Collateral", year: "2025", image: "" },
-  { id: 6, title: "Typography Poster Series VI", category: "Editorial Print", year: "2025", image: "" },
-  { id: 7, title: "Creative Carousel Story VII", category: "Social Media", year: "2025", image: "" },
-  { id: 8, title: "Digital Campaign Artwork VIII", category: "Graphic Design", year: "2025", image: "" },
-  { id: 9, title: "Visual Presentation Deck IX", category: "Editorial Layout", year: "2026", image: "" },
-  { id: 10, title: "Experimental Visual Poster X", category: "Visual Art", year: "2026", image: "" },
+  { id: 1, title: "Choose Your June Cat — ASC UM", image: "/assets/designs/design-1.webp" },
+  { id: 2, title: "Maulid Nabi 1448 H — ASC UM", image: "/assets/designs/design-2.webp" },
+  { id: 3, title: "AKSI Indosiar 2026 Support Poster", image: "/assets/designs/design-3.webp" },
+  { id: 4, title: "Rekap Kabar Juara ASC 2026", image: "/assets/designs/design-4.webp" },
+  { id: 5, title: "SYIAR UKM ASC 2026", image: "/assets/designs/design-5.webp" },
+  { id: 6, title: "Tahun Baru Islam 1 Muharram 1448 H", image: "/assets/designs/design-6.webp" },
+  { id: 7, title: "Sema'an Akbar & Lailatul Qiro'ah", image: "/assets/designs/design-7.webp" },
+  { id: 8, title: "Mahasiswa Berprestasi Semester Genap", image: "/assets/designs/design-8.webp" },
+  { id: 9, title: "Mahasiswa Berprestasi Semester Ganjil", image: "/assets/designs/design-9.webp" },
+  { id: 10, title: "Halalbihalal Keluarga Besar ASC 2026", image: "/assets/designs/design-10.webp" },
 ];
 
 function Web3DCard({ web }: { web: (typeof WEB_PROJECTS)[0] }) {
@@ -148,9 +148,11 @@ export function SelectedWorkSection() {
   const videoStageRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Deterministic rotation state (Never snaps back to old position!)
+  // Continuous Auto-Rotation state (No snap-back, smooth interpolation)
   const rotationRef = useRef({ y: 0 });
   const targetYRef = useRef(0);
+  const pauseUntilRef = useRef(0);
+  const currentActiveIdxRef = useRef(0);
   const isDraggingRef = useRef(false);
   const dragMovedRef = useRef(false);
   const startXRef = useRef(0);
@@ -162,43 +164,53 @@ export function SelectedWorkSection() {
   const angleStep = 360 / count; // 36deg per card
   const radius = 560; // Wide cylinder radius so cards spread nicely without clipping
 
-  // Helper to animate cylinder to any target angle and update active card index
-  const animateCylinderTo = useCallback(
-    (newTargetY: number, duration = 0.75) => {
-      targetYRef.current = newTargetY;
-      // Calculate which card index (0..9) is currently facing the front
-      const normalizedStep = Math.round(-newTargetY / angleStep);
-      const wrappedIndex = ((normalizedStep % count) + count) % count;
-      setActiveIdx(wrappedIndex);
-
-      gsap.to(rotationRef.current, {
-        y: newTargetY,
-        duration,
-        ease: "power3.out",
-        overwrite: true,
-        onUpdate: () => {
-          if (ringRef.current) {
-            gsap.set(ringRef.current, { rotateY: rotationRef.current.y });
-          }
-        },
-      });
-    },
-    [angleStep, count]
-  );
-
   // Jump directly to a specific card (0..9) via shortest 3D rotation path
   const goToCardIndex = useCallback(
     (targetIdx: number) => {
+      pauseUntilRef.current = performance.now() + 2500;
       const currentStep = Math.round(-targetYRef.current / angleStep);
       const currentWrapped = ((currentStep % count) + count) % count;
       let diff = targetIdx - currentWrapped;
       if (diff > count / 2) diff -= count;
       if (diff < -count / 2) diff += count;
-      const nextAngle = (currentStep + diff) * -angleStep;
-      animateCylinderTo(nextAngle, 0.8);
+      targetYRef.current = (currentStep + diff) * -angleStep;
     },
-    [angleStep, animateCylinderTo, count]
+    [angleStep, count]
   );
+
+  const spinByStep = useCallback(
+    (dir: number) => {
+      // dir: 1 (left) or -1 (right)
+      pauseUntilRef.current = performance.now() + 2500;
+      const currentStep = Math.round(targetYRef.current / angleStep);
+      targetYRef.current = (currentStep + dir) * angleStep;
+    },
+    [angleStep]
+  );
+
+  // Continuous Smooth Auto-Spin for 3D Cylinder (Never snaps back on drag/click!)
+  useEffect(() => {
+    let rafId: number;
+    const tick = (now: number) => {
+      rafId = requestAnimationFrame(tick);
+      if (!isDraggingRef.current && now > pauseUntilRef.current) {
+        targetYRef.current -= 0.16; // Smooth continuous spin
+      }
+      rotationRef.current.y += (targetYRef.current - rotationRef.current.y) * 0.1;
+      if (ringRef.current) {
+        ringRef.current.style.transform = `rotateY(${rotationRef.current.y}deg)`;
+      }
+
+      const normalizedStep = Math.round(-rotationRef.current.y / angleStep);
+      const wrappedIndex = ((normalizedStep % count) + count) % count;
+      if (wrappedIndex !== currentActiveIdxRef.current) {
+        currentActiveIdxRef.current = wrappedIndex;
+        setActiveIdx(wrappedIndex);
+      }
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [angleStep, count]);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -230,32 +242,36 @@ export function SelectedWorkSection() {
     isDraggingRef.current = true;
     dragMovedRef.current = false;
     startXRef.current = e.clientX;
-    gsap.killTweensOf(rotationRef.current);
+    pauseUntilRef.current = performance.now() + 2500;
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDraggingRef.current || !ringRef.current) return;
     const dx = e.clientX - startXRef.current;
-    if (Math.abs(dx) > 4) {
+    if (Math.abs(dx) > 3) {
       dragMovedRef.current = true;
     }
     startXRef.current = e.clientX;
-    rotationRef.current.y += dx * 0.28;
-    gsap.set(ringRef.current, { rotateY: rotationRef.current.y });
+    targetYRef.current += dx * 0.32;
+    rotationRef.current.y = targetYRef.current;
+    ringRef.current.style.transform = `rotateY(${rotationRef.current.y}deg)`;
+    pauseUntilRef.current = performance.now() + 2500;
+
+    const normalizedStep = Math.round(-rotationRef.current.y / angleStep);
+    const wrappedIndex = ((normalizedStep % count) + count) % count;
+    if (wrappedIndex !== currentActiveIdxRef.current) {
+      currentActiveIdxRef.current = wrappedIndex;
+      setActiveIdx(wrappedIndex);
+    }
   };
 
   const handlePointerUp = () => {
     if (!isDraggingRef.current) return;
     isDraggingRef.current = false;
-    // Snap to closest card on release
-    const nearestStep = Math.round(rotationRef.current.y / angleStep);
-    animateCylinderTo(nearestStep * angleStep, 0.6);
-  };
-
-  const spinByStep = (dir: number) => {
-    // dir: 1 (left) or -1 (right)
-    const currentStep = Math.round(targetYRef.current / angleStep);
-    animateCylinderTo((currentStep + dir) * angleStep, 0.7);
+    pauseUntilRef.current = performance.now() + 2500;
+    // Snap target to closest card on release so it settles neatly
+    const nearestStep = Math.round(targetYRef.current / angleStep);
+    targetYRef.current = nearestStep * angleStep;
   };
 
   const toggleVideo = () => {
@@ -323,7 +339,7 @@ export function SelectedWorkSection() {
           </div>
         </div>
 
-        {/* ── PART 2: 10 GRAPHIC DESIGNS (GSAP 3D 360° Cylinder Ring) ─ */}
+        {/* ── PART 2: 10 GRAPHIC DESIGNS (Liquid Glass 3D Cylinder Ring) ─ */}
         <div>
           <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
             <div>
@@ -334,7 +350,7 @@ export function SelectedWorkSection() {
                 </span>
               </h3>
               <p className="font-sans text-sm text-[#f4f4ed]/60 mt-1">
-                Drag to spin or click any card to bring it front and center.
+                Continuous auto-rotation. Drag to spin or click any poster to view front and center.
               </p>
             </div>
 
@@ -354,30 +370,41 @@ export function SelectedWorkSection() {
             </div>
           </div>
 
-          {/* Full-Bleed 3D Cylinder Stage (No clipping, perspective 2400px, radius 560px) */}
+          {/* SVG Liquid Glass Refraction Filter */}
+          <svg className="hidden" aria-hidden="true">
+            <defs>
+              <filter id="liquid-glass-refraction" x="-20%" y="-20%" width="140%" height="140%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="2" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G" />
+              </filter>
+            </defs>
+          </svg>
+
+          {/* Unclipped 3:4 Liquid Glass 3D Cylinder Stage */}
           <div
-            onPointerDown={handlePointerDown}
+            onPointerDown={(e) => {
+              pauseUntilRef.current = performance.now() + 3000;
+              handlePointerDown(e);
+            }}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
             onPointerLeave={handlePointerUp}
-            className="relative w-full h-[600px] sm:h-[640px] flex items-center justify-center overflow-x-clip overflow-y-visible select-none cursor-grab active:cursor-grabbing"
-            style={{ perspective: "2400px" }}
+            className="relative w-full h-[560px] sm:h-[640px] py-10 flex items-center justify-center overflow-x-clip overflow-y-visible select-none cursor-grab active:cursor-grabbing"
+            style={{ perspective: "2500px" }}
           >
             <div
               ref={ringRef}
-              className="relative w-[230px] sm:w-[260px] h-[320px] sm:h-[360px]"
-              style={{
-                transformStyle: "preserve-3d",
-              }}
+              className="relative w-[240px] sm:w-[275px] aspect-[3/4]"
+              style={{ transformStyle: "preserve-3d" }}
             >
               {GRAPHIC_DESIGNS.map((item, i) => {
                 const angle = i * angleStep;
-                const isSelected = activeIdx === i;
                 return (
                   <div
                     key={item.id}
                     onClick={() => {
                       if (!dragMovedRef.current) {
+                        pauseUntilRef.current = performance.now() + 3000;
                         goToCardIndex(i);
                       }
                     }}
@@ -385,46 +412,45 @@ export function SelectedWorkSection() {
                       transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
                       transformStyle: "preserve-3d",
                     }}
-                    className={`absolute inset-0 p-5 bg-[#f4f4ed] text-[#111112] border shadow-[0_24px_60px_rgba(0,0,0,0.75)] flex flex-col justify-between transition-all duration-300 cursor-pointer ${isSelected
-                        ? "border-[#0055FF] ring-2 ring-[#0055FF] shadow-[0_0_30px_rgba(0,85,255,0.35)]"
-                        : "border-[#111112] hover:border-[#0055FF]"
-                      }`}
+                    className="absolute inset-0 rounded-[26px] p-2.5 bg-white/[0.08] backdrop-blur-2xl border border-white/30 shadow-[inset_0_1px_1px_rgba(255,255,255,0.7),inset_0_-1px_2px_rgba(255,255,255,0.25),0_28px_60px_rgba(0,0,0,0.85)] hover:border-white/60 transition-colors duration-300 flex items-center justify-center overflow-hidden group"
                   >
-                    <div className="flex items-baseline justify-between">
-                      <span className="font-brier italic text-xl">
+                    {/* Liquid Glass Specular Glare Overlay */}
+                    <div
+                      className="pointer-events-none absolute inset-0 z-20 rounded-[26px] opacity-45 group-hover:opacity-70 transition-opacity"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.05) 35%, transparent 65%, rgba(255,255,255,0.2) 100%)",
+                      }}
+                    />
+
+                    {/* 3:4 IG Feed Poster Image (1080 x 1440) */}
+                    <div className="relative w-full h-full rounded-[18px] overflow-hidden bg-[#16161a] flex items-center justify-center">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                        className="w-full h-full object-cover pointer-events-none z-10"
+                      />
+                      <span className="font-brier italic text-3xl text-white/25 z-0">
                         {String(item.id).padStart(2, "0")}
                       </span>
-                      <span className="font-display text-[10px] font-bold uppercase tracking-widest opacity-60">
-                        {item.year}
-                      </span>
-                    </div>
-
-                    <div className="relative w-full flex-1 my-3 overflow-hidden bg-[#e6e6df] group-hover:bg-black/20 border border-[#111112]/10 flex flex-col items-center justify-center p-4 text-center">
-                      {item.image ? (
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-full h-full object-cover pointer-events-none"
-                        />
-                      ) : (
-                        <span className="font-brier italic text-2xl opacity-40">
-                          Artwork {String(item.id).padStart(2, "0")}
-                        </span>
-                      )}
-                    </div>
-
-                    <div>
-                      <span className="font-display text-[9px] font-bold uppercase tracking-widest opacity-60 block">
-                        {item.category}
-                      </span>
-                      <h4 className="font-display text-sm font-black uppercase truncate mt-0.5">
-                        {item.title}
-                      </h4>
                     </div>
                   </div>
                 );
               })}
             </div>
+          </div>
+
+          {/* Active Visual Indicator & Title */}
+          <div className="text-center mt-6">
+            <span className="font-display text-xs font-bold tracking-[0.2em] text-[#0055FF] uppercase block mb-1">
+              Visual {String(GRAPHIC_DESIGNS[activeIdx]?.id ?? 1).padStart(2, "0")} / 10
+            </span>
+            <h4 className="font-display text-lg sm:text-xl font-bold uppercase tracking-wide text-[#f4f4ed]">
+              {GRAPHIC_DESIGNS[activeIdx]?.title}
+            </h4>
           </div>
         </div>
 
