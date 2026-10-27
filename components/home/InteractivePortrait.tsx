@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import Image from "next/image";
 
 const PORTRAIT_IMAGES = [
@@ -15,6 +15,7 @@ interface InteractivePortraitProps {
 }
 
 export function InteractivePortrait({ onHoverChange, className = "" }: InteractivePortraitProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -27,6 +28,7 @@ export function InteractivePortrait({ onHoverChange, className = "" }: Interacti
 
   return (
     <div
+      ref={containerRef}
       onClick={handleClick}
       onMouseEnter={() => onHoverChange?.(true)}
       onMouseLeave={() => onHoverChange?.(false)}
@@ -34,14 +36,7 @@ export function InteractivePortrait({ onHoverChange, className = "" }: Interacti
       aria-label="Mohammad Rifky Wicaksana (Kaiki) — Click to switch pose"
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          handleClick();
-        }
-      }}
     >
-      {/* Base Studio Portrait Layer */}
       <div className="absolute inset-0 flex items-end justify-center pointer-events-none">
         {PORTRAIT_IMAGES.map((src, index) => (
           <Image
