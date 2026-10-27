@@ -182,7 +182,7 @@ export function InteractivePortrait({ onHoverChange, className = "" }: Interacti
         onHoverChange?.(false);
         lastMouseRef.current = null;
       }}
-      className={`relative flex flex-col items-center justify-end select-none w-[175vw] sm:w-full max-w-none h-[92svh] sm:h-[95vh] lg:h-[98vh] max-h-[1080px] aspect-square mx-auto pointer-events-auto cursor-pointer ${className}`}
+      className={`relative flex flex-col items-center justify-end select-none w-[128vw] sm:w-full max-w-none h-[82svh] sm:h-[95vh] lg:h-[98vh] max-h-[1080px] aspect-square mx-auto pointer-events-auto cursor-pointer ${className}`}
       aria-label="Mohammad Rifky Wicaksana (Kaiki) — Move cursor for X-Ray Blueprint, click to switch pose"
       role="button"
       tabIndex={0}
@@ -198,7 +198,7 @@ export function InteractivePortrait({ onHoverChange, className = "" }: Interacti
             priority={index === 0}
             unoptimized
             sizes="100vw"
-            className="object-contain object-bottom scale-[1.18] sm:scale-100 origin-bottom"
+            className="object-contain object-bottom scale-100 origin-bottom"
             style={{
               opacity: currentIndex === index ? 1 : 0,
               transition: "opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)",

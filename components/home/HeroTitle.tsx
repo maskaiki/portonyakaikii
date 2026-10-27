@@ -11,7 +11,7 @@ interface HeroTitleProps {
 
 export function HeroTitle({ shiftX, titleRef, className = "" }: HeroTitleProps) {
   const sharedPositionClass =
-    "hero-title-stage absolute top-[20%] sm:top-[23%] left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-[47%] md:left-[49%] lg:left-[50%] z-20 pointer-events-none select-none flex flex-col items-center sm:items-start will-change-transform";
+    "hero-title-stage absolute top-[31%] sm:top-[23%] left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-[47%] md:left-[49%] lg:left-[50%] z-20 pointer-events-none select-none flex flex-col items-center sm:items-start will-change-transform";
 
   const sharedTypographyStyle: React.CSSProperties = {
     fontSize: "clamp(56px, min(14.5vw, 13.5svh), 195px)",
