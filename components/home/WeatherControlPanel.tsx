@@ -95,7 +95,7 @@ export function WeatherControlPanel({
         {/* Rain / Shard Intensity */}
         <div className="rain-control">
           <div className="rain-control__label">
-            <label htmlFor="rain-intensity">CHAOS LEVEL</label>
+            <label htmlFor="rain-intensity">LEVEL</label>
             <output htmlFor="rain-intensity">{intensity}%</output>
           </div>
           <input
@@ -113,7 +113,7 @@ export function WeatherControlPanel({
         {/* Drop Speed */}
         <div className="rain-control">
           <div className="rain-control__label">
-            <label htmlFor="drop-speed">PIXEL VELOCITY</label>
+            <label htmlFor="drop-speed">VELOCITY</label>
             <output htmlFor="drop-speed">{speed}%</output>
           </div>
           <input
@@ -131,7 +131,7 @@ export function WeatherControlPanel({
         {/* Drop Size */}
         <div className="rain-control">
           <div className="rain-control__label">
-            <label htmlFor="drop-size">DRAMA SCALE</label>
+            <label htmlFor="drop-size">SCALE</label>
             <output htmlFor="drop-size">{size}%</output>
           </div>
           <input
