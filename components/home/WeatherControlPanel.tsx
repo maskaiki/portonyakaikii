@@ -32,24 +32,21 @@ export function WeatherControlPanel({
       className={`rain-panel select-none ${className}`}
       aria-labelledby="rain-panel-title"
     >
-      {/* Heading Row */}
       <div className={`rain-panel__heading ${isExpanded ? "mb-3 sm:mb-4" : "mb-0 sm:mb-4"}`}>
         <div className="flex items-center gap-2">
-          {/* Storm Lab Square Indicator (Pure Sharp Kotak) */}
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-none bg-[#00d2ff] shrink-0 shadow-[0_0_10px_rgba(0,210,255,0.9)]" />
+          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-none bg-[#0055FF] shrink-0" />
           <h2 id="rain-panel-title" className="tracking-wider text-xs sm:text-sm">
-            VIBE CHECK ✦
+            ATMOSPHERE
           </h2>
         </div>
 
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Mobile Toggle Button */}
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
             className="sm:hidden p-1 text-[#111112] hover:bg-black/5 transition-colors cursor-pointer"
             aria-expanded={isExpanded}
-            aria-label={isExpanded ? "Hide rain controls" : "Show rain controls"}
+            aria-label={isExpanded ? "Hide controls" : "Show controls"}
           >
             <svg
               className={`w-3.5 h-3.5 transition-transform duration-200 ${
@@ -64,13 +61,12 @@ export function WeatherControlPanel({
             </svg>
           </button>
 
-          {/* Pause / Play Button (Architectural Square shape from NFstyles) */}
           <button
             type="button"
             onClick={onTogglePause}
-            className={`rain-panel__pause ${isPaused ? "bg-[#00d2ff] border-[#00d2ff] shadow-[0_0_10px_rgba(0,210,255,0.6)]" : ""}`}
-            title={isPaused ? "Resume rain simulation" : "Pause rain simulation"}
-            aria-label={isPaused ? "Resume rain simulation" : "Pause rain simulation"}
+            className={`rain-panel__pause ${isPaused ? "bg-[#0055FF] text-white border-[#0055FF]" : ""}`}
+            title={isPaused ? "Resume simulation" : "Pause simulation"}
+            aria-label={isPaused ? "Resume simulation" : "Pause simulation"}
           >
             {isPaused ? (
               <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16" aria-hidden="true">
@@ -85,14 +81,13 @@ export function WeatherControlPanel({
         </div>
       </div>
 
-      {/* Sliders Area (Visible on desktop, collapsible on mobile) */}
       <div
         className={`rain-panel__controls ${
           isExpanded ? "grid pt-2 border-t border-black/10" : "hidden sm:grid"
         }`}
         id="rain-controls"
       >
-        {/* Rain / Shard Intensity */}
+        {/* 1. LEVEL */}
         <div className="rain-control">
           <div className="rain-control__label">
             <label htmlFor="rain-intensity">LEVEL</label>
@@ -110,7 +105,7 @@ export function WeatherControlPanel({
           />
         </div>
 
-        {/* Drop Speed */}
+        {/* 2. VELOCITY */}
         <div className="rain-control">
           <div className="rain-control__label">
             <label htmlFor="drop-speed">VELOCITY</label>
@@ -128,7 +123,7 @@ export function WeatherControlPanel({
           />
         </div>
 
-        {/* Drop Size */}
+        {/* 3. SCALE */}
         <div className="rain-control">
           <div className="rain-control__label">
             <label htmlFor="drop-size">SCALE</label>
