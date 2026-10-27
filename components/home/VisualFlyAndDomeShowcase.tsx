@@ -2,21 +2,19 @@
 
 import React, { useEffect, useRef } from "react";
 
-// 6 Clean Radial Trajectories for Scene 1 (Fly-Past around center KAIKI title)
 const FLY_SLOTS = [
-  { id: 1, x: -28, y: -18, image: "/assets/fly/fly-1.jpg" },
-  { id: 2, x: 28, y: 16, image: "/assets/fly/fly-2.jpg" },
-  { id: 3, x: -24, y: 20, image: "/assets/fly/fly-3.jpg" },
-  { id: 4, x: 26, y: -18, image: "/assets/fly/fly-4.jpg" },
-  { id: 5, x: 0, y: -24, image: "/assets/fly/fly-5.jpg" },
-  { id: 6, x: 0, y: 24, image: "/assets/fly/fly-6.jpg" },
+  { id: 1, x: -28, y: -18, image: "/assets/ppt/ppt-1.webp" },
+  { id: 2, x: 28, y: 16, image: "/assets/ppt/ppt-2.webp" },
+  { id: 3, x: -24, y: 20, image: "/assets/ppt/ppt-4.webp" },
+  { id: 4, x: 26, y: -18, image: "/assets/ppt/ppt-5.webp" },
+  { id: 5, x: 0, y: -24, image: "/assets/ppt/ppt-7.webp" },
+  { id: 6, x: 0, y: 24, image: "/assets/ppt/ppt-10.webp" },
 ];
 
-// 16 Visual Collection Slots for Scene 3 (public/assets/visuals/visual-1.jpg to visual-16.jpg)
 const VISUAL_COLLECTION = Array.from({ length: 16 }, (_, i) => ({
   id: i + 1,
   num: String(i + 1).padStart(2, "0"),
-  image: `/assets/visuals/visual-${i + 1}.jpg`,
+  image: `/assets/visuals/visual-${i + 1}.webp`,
 }));
 
 const DOME_ROWS = [
@@ -55,12 +53,9 @@ export function VisualFlyAndDomeShowcase() {
         const slot = FLY_SLOTS[i];
         const t = (progressRef.current + i / total) % 1;
 
-        // Controlled scale (0.2 -> 1.65) so cards never blow up into giant screen-blocking blobs
-        const scale = 0.2 + Math.pow(t, 1.8) * 1.45;
+        const scale = 0.22 + Math.pow(t, 1.8) * 1.45;
         const tx = slot.x * Math.pow(t, 1.25);
         const ty = slot.y * Math.pow(t, 1.25);
-
-        // Smooth bell-curve opacity fade in & fade out
         const opacity = Math.sin(t * Math.PI);
 
         el.style.transform = `translate3d(${tx}vw, ${ty}vh, 0px) scale(${scale})`;
@@ -79,17 +74,12 @@ export function VisualFlyAndDomeShowcase() {
   return (
     <div className="relative w-screen left-1/2 -translate-x-1/2 overflow-hidden select-none">
       
-      {/* ══════════════════════════════════════════════════════════════
-          PART A: SEAMLESS FULL-BLEED "KAIKI" Z-AXIS FLY-PAST STAGE
-         ══════════════════════════════════════════════════════════════ */}
+      {/* PART A: SEAMLESS FULL-BLEED "KAIKI" Z-AXIS FLY-PAST STAGE */}
       <div className="relative w-full h-[85vh] min-h-[560px] flex items-center justify-center overflow-hidden">
-        
-        {/* Center Giant Clean "KAIKI" Typography */}
         <h3 className="relative z-10 font-display text-[21vw] font-black uppercase leading-none tracking-tighter text-[#f4f4ed] pointer-events-none select-none">
           KAIKI
         </h3>
 
-        {/* Flying Frame Slots (Clean, no broken image icons) */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
           {FLY_SLOTS.map((slot, idx) => (
             <div
@@ -97,39 +87,28 @@ export function VisualFlyAndDomeShowcase() {
               ref={(el) => {
                 flyCardsRef.current[idx] = el;
               }}
-              className="absolute w-[180px] sm:w-[230px] aspect-square rounded-[26px] bg-[#1a1a1e] border border-white/15 shadow-[0_24px_60px_rgba(0,0,0,0.85)] overflow-hidden flex items-center justify-center will-change-transform"
+              className="absolute w-[220px] sm:w-[300px] aspect-video rounded-[20px] bg-[#141824] border border-white/25 shadow-[0_24px_60px_rgba(0,0,0,0.85)] overflow-hidden will-change-transform"
             >
               <img
                 src={slot.image}
                 alt=""
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
-                className="absolute inset-0 w-full h-full object-cover z-10"
+                className="w-full h-full object-cover block"
               />
-              <span className="font-brier italic text-2xl text-[#f4f4ed]/25 z-0">
-                0{slot.id}
-              </span>
             </div>
           ))}
         </div>
 
-        {/* Seamless Top & Bottom Fade into #111112 */}
         <div
           className="absolute inset-0 pointer-events-none z-30"
           style={{
             background:
-              "linear-gradient(to bottom, #111112 0%, transparent 18%, transparent 82%, #111112 100%)",
+              "linear-gradient(to bottom, #0d1017 0%, transparent 18%, transparent 82%, #0d1017 100%)",
           }}
         />
       </div>
 
-      {/* ══════════════════════════════════════════════════════════════
-          PART B: SEAMLESS FULL-BLEED 16-VISUAL FISHEYE DOME WALL
-         ══════════════════════════════════════════════════════════════ */}
+      {/* PART B: SEAMLESS FULL-BLEED 16-VISUAL FISHEYE DOME WALL */}
       <div className="relative w-full h-[90vh] min-h-[620px] flex items-center justify-center overflow-hidden">
-        
-        {/* 3D Fisheye Curved Rows Scrolling Right */}
         <div
           className="absolute inset-0 flex flex-col justify-center gap-4 sm:gap-5 py-4 scale-105"
           style={{
@@ -157,19 +136,13 @@ export function VisualFlyAndDomeShowcase() {
                   {[...rowItems, ...rowItems, ...rowItems, ...rowItems].map((item, i) => (
                     <div
                       key={`${item.id}-${i}`}
-                      className="relative w-[220px] sm:w-[290px] md:w-[330px] aspect-[16/10] rounded-[22px] bg-[#18181c] border border-white/10 overflow-hidden shrink-0 flex items-center justify-center group"
+                      className="relative w-[220px] sm:w-[290px] md:w-[330px] aspect-[16/10] rounded-[20px] bg-[#141824] border border-white/15 overflow-hidden shrink-0 group"
                     >
                       <img
                         src={item.image}
                         alt=""
-                        onError={(e) => {
-                          e.currentTarget.style.display = "none";
-                        }}
-                        className="absolute inset-0 w-full h-full object-cover z-10 group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover block group-hover:scale-105 transition-transform duration-500"
                       />
-                      <span className="font-brier italic text-2xl text-[#f4f4ed]/20 z-0">
-                        {item.num}
-                      </span>
                     </div>
                   ))}
                 </div>
@@ -178,16 +151,14 @@ export function VisualFlyAndDomeShowcase() {
           })}
         </div>
 
-        {/* Seamless Radial & Vertical Vignette Blending into #111112 */}
         <div
           className="absolute inset-0 pointer-events-none z-20"
           style={{
             background:
-              "radial-gradient(circle at 50% 50%, rgba(17,17,18,0.25) 10%, rgba(17,17,18,0.75) 68%, #111112 100%), linear-gradient(to bottom, #111112 0%, transparent 20%, transparent 75%, #111112 100%)",
+              "radial-gradient(circle at 50% 50%, rgba(13,16,23,0.25) 10%, rgba(13,16,23,0.78) 68%, #0d1017 100%), linear-gradient(to bottom, #0d1017 0%, transparent 20%, transparent 75%, #0d1017 100%)",
           }}
         />
 
-        {/* Clean Center Title + Single Contact Button */}
         <div className="relative z-30 max-w-2xl mx-auto px-6 flex flex-col items-center text-center">
           <h3 className="font-display text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight text-[#f4f4ed] leading-[0.95] mb-8">
             YOUR NEXT BIG <br />
@@ -204,7 +175,6 @@ export function VisualFlyAndDomeShowcase() {
             <span>↗</span>
           </a>
         </div>
-
       </div>
 
     </div>

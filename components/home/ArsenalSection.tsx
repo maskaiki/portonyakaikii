@@ -74,30 +74,69 @@ const WEBSITE_SPECS = [
 
 export function ArsenalSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const specSheetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
-      if (!gridRef.current) return;
-      const cards = gridRef.current.querySelectorAll(".arsenal-3d-card");
+      if (headerRef.current) {
+        gsap.fromTo(
+          headerRef.current,
+          { y: 50, opacity: 0.15 },
+          {
+            y: 0,
+            opacity: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: headerRef.current,
+              start: "top 88%",
+              end: "top 40%",
+              scrub: 0.4,
+            },
+          }
+        );
+      }
 
-      gsap.fromTo(
-        cards,
-        { opacity: 0, rotateX: -35, y: 50, transformPerspective: 1000 },
-        {
-          opacity: 1,
-          rotateX: 0,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: gridRef.current,
-            start: "top 80%",
-          },
-        }
-      );
+      if (gridRef.current) {
+        const cards = gridRef.current.querySelectorAll(".arsenal-3d-card");
+        gsap.fromTo(
+          cards,
+          { opacity: 0, rotateX: -25, y: 50, transformPerspective: 1000 },
+          {
+            opacity: 1,
+            rotateX: 0,
+            y: 0,
+            stagger: 0.08,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: gridRef.current,
+              start: "top 85%",
+              end: "top 45%",
+              scrub: 0.4,
+            },
+          }
+        );
+      }
+
+      if (specSheetRef.current) {
+        gsap.fromTo(
+          specSheetRef.current,
+          { x: 40, opacity: 0.3 },
+          {
+            x: 0,
+            opacity: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: specSheetRef.current,
+              start: "top 85%",
+              end: "top 40%",
+              scrub: 0.4,
+            },
+          }
+        );
+      }
     }, sectionRef);
 
     return () => ctx.revert();
@@ -132,8 +171,31 @@ export function ArsenalSection() {
     <section
       ref={sectionRef}
       id="skills"
-      className="relative w-full py-24 lg:py-36 bg-[#f4f4ed] text-[#111112] border-t border-[#111112]/15 overflow-hidden select-none"
+      className="relative w-full py-28 lg:py-40 bg-[#f4f4ed] text-[#111112] overflow-hidden select-none"
     >
+      {/* LAYERED ARCHITECTURAL TWO-TONE ICE-BLUE & BONE GRADIENT */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(135deg, #f4f4ed 0%, #e8effa 52%, #f4f4ed 52.1%, #eef3fc 100%)",
+        }}
+      />
+
+      {/* Ambient Soft Blue & Ice Spotlights */}
+      <div className="absolute top-[12%] right-[12%] w-[480px] h-[480px] rounded-full bg-[#0055FF]/8 blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-[10%] left-[8%] w-[420px] h-[420px] rounded-full bg-[#38bdf8]/10 blur-[130px] pointer-events-none" />
+
+      {/* Top 3D Paper-Cut Wave Relief Divider (Transition from dark SelectedWork) */}
+      <div className="absolute top-0 inset-x-0 w-full overflow-hidden leading-none pointer-events-none z-20">
+        <svg viewBox="0 0 1440 100" preserveAspectRatio="none" className="w-full h-12 sm:h-20">
+          <path
+            d="M0,0 L1440,0 L1440,40 C1160,95 880,10 600,60 C320,110 140,25 0,65 Z"
+            fill="#0d1017"
+          />
+        </svg>
+      </div>
+
       {/* Full-Width Architectural Grid Lines */}
       <div className="absolute inset-0 pointer-events-none grid grid-cols-4 lg:grid-cols-12 px-5 sm:px-10 lg:px-14 xl:px-20 opacity-[0.05]">
         {Array.from({ length: 12 }).map((_, i) => (
@@ -142,12 +204,15 @@ export function ArsenalSection() {
       </div>
 
       {/* Full-Bleed Widescreen Wrapper */}
-      <div className="w-full px-5 sm:px-10 lg:px-14 xl:px-20 relative z-10">
+      <div className="w-full px-5 sm:px-10 lg:px-14 xl:px-20 relative z-10 pt-8">
         
-        {/* Section Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 mb-16 border-b border-[#111112]/15">
+        {/* Section Header with Reversible Scroll In/Out */}
+        <div
+          ref={headerRef}
+          className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 mb-16 border-b border-[#111112]/15 will-change-transform"
+        >
           <div>
-            <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#111112]/50 uppercase block mb-3">
+            <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#0055FF] uppercase block mb-3">
               Arsenal &amp; Stack
             </span>
             <h2 className="font-display text-4xl sm:text-6xl lg:text-8xl font-black uppercase tracking-tight text-[#111112] leading-[0.92]">
@@ -166,7 +231,7 @@ export function ArsenalSection() {
         {/* Full-Width 12-Column Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-stretch mb-20">
           
-          {/* Left 8 Cols: 3-Column Platform Cards with 3D GSAP Tilt */}
+          {/* Left 8 Cols: 3-Column Platform Cards with 3D GSAP Tilt & Floating Icons */}
           <div ref={gridRef} className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
             {PLATFORMS.map((item, idx) => (
               <div
@@ -174,13 +239,18 @@ export function ArsenalSection() {
                 onMouseMove={handleCardTilt}
                 onMouseLeave={handleCardReset}
                 style={{ transformStyle: "preserve-3d" }}
-                className="arsenal-3d-card group p-7 sm:p-8 bg-white/80 border border-[#111112]/15 hover:border-[#111112] transition-colors flex flex-col justify-between min-h-[210px] will-change-transform"
+                className="arsenal-3d-card group p-7 sm:p-8 rounded-[24px] bg-white/80 backdrop-blur-xl border border-[#111112]/15 hover:border-[#0055FF] hover:shadow-[0_20px_50px_rgba(0,85,255,0.15)] transition-all flex flex-col justify-between min-h-[210px] will-change-transform"
               >
                 <div className="flex items-center justify-between mb-6" style={{ transform: "translateZ(25px)" }}>
-                  <div className="p-3.5 bg-[#111112] text-[#f4f4ed] group-hover:bg-[#0055FF] transition-colors">
+                  <div
+                    className="p-3.5 rounded-[14px] bg-[#111112] text-[#f4f4ed] group-hover:bg-[#0055FF] group-hover:scale-105 transition-all shadow-md"
+                    style={{
+                      animation: `bounce-down ${3.2 + idx * 0.35}s ease-in-out infinite`,
+                    }}
+                  >
                     {item.icon}
                   </div>
-                  <span className="font-brier italic text-2xl text-[#111112]/35 group-hover:text-[#0055FF]">
+                  <span className="font-brier italic text-2xl text-[#111112]/35 group-hover:text-[#0055FF] transition-colors">
                     0{idx + 1}
                   </span>
                 </div>
@@ -197,7 +267,10 @@ export function ArsenalSection() {
           </div>
 
           {/* Right 4 Cols: Architectural Spec Sheet */}
-          <div className="lg:col-span-4 p-8 sm:p-10 bg-[#111112] text-[#f4f4ed] flex flex-col justify-between shadow-[14px_14px_0px_#0055FF]">
+          <div
+            ref={specSheetRef}
+            className="lg:col-span-4 p-8 sm:p-10 rounded-[28px] bg-[#111112] text-[#f4f4ed] flex flex-col justify-between shadow-[16px_16px_0px_#0055FF] will-change-transform"
+          >
             <div>
               <span className="font-brier italic text-xl text-[#0055FF] block mb-2">
                 Under the hood
@@ -225,7 +298,7 @@ export function ArsenalSection() {
 
             <a
               href="#contact"
-              className="w-full flex items-center justify-center gap-2 py-4 px-6 font-display text-xs font-extrabold uppercase tracking-wider text-[#111112] bg-[#f4f4ed] hover:bg-[#0055FF] hover:text-white transition-colors"
+              className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-full font-display text-xs font-extrabold uppercase tracking-wider text-[#111112] bg-[#f4f4ed] hover:bg-[#0055FF] hover:text-white transition-all shadow-[0_12px_30px_rgba(0,0,0,0.5)]"
             >
               <span>Want a Website Like This? Let&rsquo;s Talk</span>
               <span>→</span>
@@ -240,7 +313,7 @@ export function ArsenalSection() {
               {[...PLATFORMS, ...PLATFORMS, ...PLATFORMS].map((plat, idx) => (
                 <div
                   key={`${plat.name}-${idx}`}
-                  className="flex items-center gap-3.5 px-7 py-4 mx-2 bg-white/80 border border-[#111112]/15 hover:border-[#111112] text-[#111112] transition-all shrink-0"
+                  className="flex items-center gap-3.5 px-7 py-4 mx-2 rounded-[16px] bg-white/80 backdrop-blur-md border border-[#111112]/15 hover:border-[#0055FF] text-[#111112] transition-all shrink-0"
                 >
                   <div className="w-5 h-5 flex items-center justify-center">
                     {plat.icon}
