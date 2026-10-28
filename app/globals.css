@@ -284,13 +284,23 @@ body::before {
 }
 
 @keyframes marquee-scroll-left {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes marquee-scroll-right {
-  0% { transform: translateX(-50%); }
-  100% { transform: translateX(0); }
+  0% {
+    transform: translateX(-50%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
 }
 
 /* ── Editorial Hollow Stroke ──────────────────────────────────── */
@@ -512,8 +522,15 @@ body::before {
 
 /* ── Scroll indicator ────────────────────────────────────────── */
 @keyframes bounce-down {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(8px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(8px);
+  }
 }
 
 .scroll-indicator {
@@ -797,24 +814,4 @@ body::before {
   text-align: right;
   color: #111112;
   opacity: 0.8;
-}
-
-/* ── Cyber Pixel Cursor & Character Tap Interaction ── */
-.cursor-pixel {
-  cursor: url('/assets/icons/pixel-cursor.svg') 14 0, pointer !important;
-}
-
-@keyframes pixelTap {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-  }
-  30% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(10px) scale(0.92);
-  }
-  70% {
-    transform: translateY(-2px) scale(1.02);
-  }
 }
