@@ -54,9 +54,11 @@ export function PptSnakeShowcase() {
     }, containerRef);
 
     let animId: number;
+    let isVisible = false;
     let lastScrollY = window.scrollY;
 
     const onScroll = () => {
+      if (!isVisible) return;
       const dy = Math.abs(window.scrollY - lastScrollY);
       lastScrollY = window.scrollY;
       speedBoostRef.current = Math.min(0.015, dy * 0.00035);
@@ -69,6 +71,7 @@ export function PptSnakeShowcase() {
     const TOTAL_CYCLE = 1 + SNAKE_TAIL_SPAN + 0.15;
 
     const render = () => {
+      if (!isVisible) return;
       animId = requestAnimationFrame(render);
 
       const baseSpeed = isHoveredRef.current ? 0.0011 : 0.0032;
@@ -101,9 +104,26 @@ export function PptSnakeShowcase() {
       });
     };
 
-    animId = requestAnimationFrame(render);
+    const targetEl = containerRef.current;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const visible = entry.isIntersecting;
+        if (visible && !isVisible) {
+          isVisible = true;
+          animId = requestAnimationFrame(render);
+        } else if (!visible && isVisible) {
+          isVisible = false;
+          cancelAnimationFrame(animId);
+        }
+      },
+      { threshold: 0.05 }
+    );
+
+    if (targetEl) observer.observe(targetEl);
+
     return () => {
       cancelAnimationFrame(animId);
+      observer.disconnect();
       window.removeEventListener("scroll", onScroll);
       ctx.revert();
     };
@@ -150,11 +170,17 @@ export function PptSnakeShowcase() {
               ref={(el) => {
                 cardsRef.current[idx] = el;
               }}
+              style={{
+                backfaceVisibility: "hidden",
+                WebkitBackfaceVisibility: "hidden",
+              }}
               className="absolute w-[340px] sm:w-[500px] md:w-[620px] lg:w-[700px] aspect-video rounded-[20px] overflow-hidden bg-[#18181c] shadow-[0_28px_70px_rgba(0,0,0,0.92)] will-change-transform"
             >
               <img
                 src={item.image}
                 alt=""
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover rounded-[20px] block"
               />
             </div>

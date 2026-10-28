@@ -276,8 +276,10 @@ export function RainSimulationCanvas({
     let lastTime = performance.now();
     let spawnAccumulator = 0;
     let uiTimer = 0;
+    let isVisible = true;
 
     const render = (now: number) => {
+      if (!isVisible) return;
       animationFrameId = requestAnimationFrame(render);
       if (isPaused) return;
 
@@ -543,11 +545,28 @@ export function RainSimulationCanvas({
       }
     };
 
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const visible = entry.isIntersecting;
+        if (visible && !isVisible) {
+          isVisible = true;
+          lastTime = performance.now();
+          animationFrameId = requestAnimationFrame(render);
+        } else if (!visible && isVisible) {
+          isVisible = false;
+          cancelAnimationFrame(animationFrameId);
+        }
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(canvas);
+
     animationFrameId = requestAnimationFrame(render);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
       resizeObserver.disconnect();
+      observer.disconnect();
     };
   }, [intensity, speed, size, isPaused]);
 

@@ -1,569 +1,668 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import * as THREE from "three";
 
-interface Vec3 {
-  x: number;
-  y: number; // Stored in DOCUMENT WORLD Y (does NOT follow scroll!)
-  z: number;
+// Generate 1024x1024 Emissive Binary Code & Circuitry Texture (Exact match to reference dragon!)
+function createCyberCodeTexture(glowHex: string): THREE.CanvasTexture {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1024;
+  canvas.height = 1024;
+  const ctx = canvas.getContext("2d")!;
+
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(0, 0, 1024, 1024);
+
+  ctx.strokeStyle = glowHex;
+  ctx.fillStyle = glowHex;
+  ctx.shadowColor = glowHex;
+  ctx.shadowBlur = 8;
+
+  // 1. Glowing PCB Circuit Traces & Nodes
+  ctx.lineWidth = 3.5;
+  for (let i = 0; i < 42; i++) {
+    const x1 = (i * 97) % 1024;
+    const y1 = (i * 131) % 1024;
+    const x2 = x1 + ((i % 2 === 0 ? 1 : -1) * 120);
+    const y2 = y1 + 140;
+
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y1);
+    ctx.lineTo(x2 + 45, y2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(x1, y1, 5.5, 0, Math.PI * 2);
+    ctx.arc(x2 + 45, y2, 5.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // 2. Glowing Binary Matrix Columns & Code Snippets on Wing & Armor UV Regions
+  ctx.font = "bold 20px monospace";
+  const snippets = [
+    "1 0 1 1 0 1 0",
+    "0 1 1 0 1 1 1",
+    "1 1 0 0 1 0 1",
+    "system(node+1){",
+    "  return 1;",
+    "}",
+    "0 0 1 0 1 1 0",
+    "init_core(0x1);",
+  ];
+
+  for (let col = 0; col < 16; col++) {
+    for (let row = 0; row < 28; row++) {
+      const text = snippets[(col + row) % snippets.length];
+      ctx.fillText(text, col * 64 + 8, row * 36 + 24);
+    }
+  }
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  return tex;
 }
 
-interface PortalFX {
-  x: number;
-  y: number; // World Y
-  radius: number;
-  maxRadius: number;
-  alpha: number;
-  color: string;
-  kind: "<>" | "[]";
+// Build a 3D Extruded "<>" or "[]" Holo-Crown above the Dragon's Head
+function create3DSymbolCrest(symbol: "<>" | "[]", colorHex: number): THREE.Group {
+  const group = new THREE.Group();
+  const mat = new THREE.MeshBasicMaterial({ color: colorHex });
+  const barGeo = new THREE.BoxGeometry(1.4, 7.5, 1.4);
+
+  if (symbol === "<>") {
+    const l1 = new THREE.Mesh(barGeo, mat);
+    l1.position.set(-4.5, 2.2, 0);
+    l1.rotation.z = -0.65;
+    const l2 = new THREE.Mesh(barGeo, mat);
+    l2.position.set(-4.5, -2.2, 0);
+    l2.rotation.z = 0.65;
+
+    const r1 = new THREE.Mesh(barGeo, mat);
+    r1.position.set(4.5, 2.2, 0);
+    r1.rotation.z = 0.65;
+    const r2 = new THREE.Mesh(barGeo, mat);
+    r2.position.set(4.5, -2.2, 0);
+    r2.rotation.z = -0.65;
+
+    group.add(l1, l2, r1, r2);
+  } else {
+    const topGeo = new THREE.BoxGeometry(3.8, 1.4, 1.4);
+    const vL = new THREE.Mesh(barGeo, mat);
+    vL.position.set(-5, 0, 0);
+    const tL = new THREE.Mesh(topGeo, mat);
+    tL.position.set(-3.8, 3.2, 0);
+    const bL = new THREE.Mesh(topGeo, mat);
+    bL.position.set(-3.8, -3.2, 0);
+
+    const vR = new THREE.Mesh(barGeo, mat);
+    vR.position.set(5, 0, 0);
+    const tR = new THREE.Mesh(topGeo, mat);
+    tR.position.set(3.8, 3.2, 0);
+    const bR = new THREE.Mesh(topGeo, mat);
+    bR.position.set(3.8, -3.2, 0);
+
+    group.add(vL, tL, bL, vR, tR, bR);
+  }
+
+  return group;
 }
 
-interface Dragon {
-  id: string;
-  headSymbol: "<>" | "[]";
-  armorDark: string;
-  armorMid: string;
-  circuitBright: string;
-  eyeGlow: string;
-  segments: Vec3[];
-  vel: Vec3;
-  target: Vec3;
-  phase: "flying" | "diving" | "inside_box" | "emerging";
-  portalEntry: { x: number; y: number } | null;
-  portalExit: { x: number; y: number } | null;
-  swallowedCount: number;
-  insideTimer: number;
-  timeOffset: number;
+interface BuiltDragonRig {
+  root: THREE.Group;
+  neckJoints: THREE.Group[];
+  tailJoints: THREE.Group[];
+  leftShoulder: THREE.Group;
+  leftElbow: THREE.Group;
+  rightShoulder: THREE.Group;
+  rightElbow: THREE.Group;
+  jaw: THREE.Group;
+  foreLegs: THREE.Group[];
+  portalRing: THREE.Mesh;
 }
 
-const CODE_STRINGS = ["01011", "10110", "00101", "<sys>", "[ram]", "11010"];
+function buildLowPolyCyberDragon(
+  symbol: "<>" | "[]",
+  glowHexStr: string,
+  glowHexNum: number,
+  armorColorHex: number
+): BuiltDragonRig {
+  const root = new THREE.Group();
+  const codeTex = createCyberCodeTexture(glowHexStr);
 
-export function CodeDragonsCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  // Matte Black Faceted Obsidian Armor with Glowing Code Circuitry
+  const armorMat = new THREE.MeshStandardMaterial({
+    color: armorColorHex,
+    roughness: 0.32,
+    metalness: 0.78,
+    flatShading: true,
+    emissive: new THREE.Color(glowHexNum),
+    emissiveMap: codeTex,
+    emissiveIntensity: 1.65,
+  });
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+  const darkPlateMat = new THREE.MeshStandardMaterial({
+    color: 0x070a12,
+    roughness: 0.4,
+    metalness: 0.85,
+    flatShading: true,
+  });
 
-    let animId: number;
-    let width = window.innerWidth;
-    let height = window.innerHeight;
+  const wingMembraneMat = new THREE.MeshStandardMaterial({
+    color: 0x080d18,
+    roughness: 0.38,
+    metalness: 0.65,
+    flatShading: true,
+    side: THREE.DoubleSide,
+    emissive: new THREE.Color(glowHexNum),
+    emissiveMap: codeTex,
+    emissiveIntensity: 2.1,
+  });
 
-    const handleResize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
+  const glowingEyeMat = new THREE.MeshBasicMaterial({
+    color: glowHexNum,
+  });
 
-    handleResize();
-    window.addEventListener("resize", handleResize);
+  // ── 1. TORSO & S-CURVE NECK (10 Articulated Faceted Segments) ─────
+  const neckJoints: THREE.Group[] = [];
+  let parentGroup = root;
 
-    // Get boxes in DOCUMENT WORLD SPACE (rect.top + window.scrollY) so dragons stay anchored to the page!
-    const getWorldBoxes = () => {
-      const scrollY = window.scrollY;
-      const selectors =
-        ".web-scroll-card, .arsenal-3d-card, .journey-row, .rain-panel, .stat-card, .project-card";
-      const els = Array.from(document.querySelectorAll(selectors));
-      const boxes: { left: number; top: number; width: number; height: number }[] = [];
+  const spineRadii = [8.5, 9.8, 10.5, 9.2, 7.6, 6.4, 5.5, 4.8, 4.4, 4.0];
+  for (let i = 0; i < spineRadii.length; i++) {
+    const joint = new THREE.Group();
+    if (i === 0) {
+      joint.position.set(0, 0, 0);
+    } else {
+      joint.position.set(0, 5.2, 3.8);
+    }
 
-      for (const el of els) {
-        const r = el.getBoundingClientRect();
-        const worldTop = r.top + scrollY;
-        // Pick boxes near the current active region of the page
-        if (
-          r.width > 140 &&
-          r.height > 60 &&
-          Math.abs(worldTop - (scrollY + height * 0.5)) < height * 1.15
-        ) {
-          boxes.push({
-            left: r.left,
-            top: worldTop,
-            width: r.width,
-            height: r.height,
-          });
-        }
-      }
-      return boxes;
-    };
+    const r = spineRadii[i];
+    // Faceted Low-Poly Octagonal Armor Segment
+    const segGeo = new THREE.CylinderGeometry(r * 0.88, r, 7.2, 7, 1);
+    segGeo.rotateX(Math.PI * 0.38);
+    const segMesh = new THREE.Mesh(segGeo, armorMat);
+    joint.add(segMesh);
 
-    // Larger Dragon Proportions (28 segments, 26px spacing)
-    const NUM_SEGMENTS = 28;
-    const SEG_DIST = 26;
+    // Front Chest Plate (Faceted Shield)
+    const chestGeo = new THREE.BoxGeometry(r * 1.35, 5.5, r * 0.7);
+    const chestMesh = new THREE.Mesh(chestGeo, armorMat);
+    chestMesh.position.set(0, -0.5, r * 0.65);
+    joint.add(chestMesh);
 
-    const createDragon = (
-      id: string,
-      headSymbol: "<>" | "[]",
-      armorDark: string,
-      armorMid: string,
-      circuitBright: string,
-      eyeGlow: string,
-      startX: number,
-      startWorldY: number,
-      timeOffset: number
-    ): Dragon => {
-      const segments: Vec3[] = [];
-      for (let i = 0; i < NUM_SEGMENTS; i++) {
-        segments.push({ x: startX - i * SEG_DIST, y: startWorldY, z: 0 });
-      }
-      return {
-        id,
-        headSymbol,
-        armorDark,
-        armorMid,
-        circuitBright,
-        eyeGlow,
-        segments,
-        vel: { x: 5, y: -2, z: 0 },
-        target: { x: width * 0.65, y: startWorldY + 120, z: 80 },
-        phase: "flying",
-        portalEntry: null,
-        portalExit: null,
-        swallowedCount: 0,
-        insideTimer: 0,
-        timeOffset,
-      };
-    };
+    // Sharp Low-Poly Dorsal Spine Spike on Back
+    const spikeGeo = new THREE.ConeGeometry(r * 0.28, 6.5, 4);
+    spikeGeo.rotateX(-Math.PI * 0.35);
+    const spikeMesh = new THREE.Mesh(spikeGeo, darkPlateMat);
+    spikeMesh.position.set(0, 1.5, -r * 0.85);
+    joint.add(spikeMesh);
 
-    const initialScrollY = window.scrollY;
-    const dragons: Dragon[] = [
-      // Dragon 1: "<>" Head — Matte Black Faceted Armor + Electric Cyan/Blue Code Circuitry
-      createDragon(
-        "dragon-angle",
-        "<>",
-        "#0c1220",
-        "#16213a",
-        "#0088FF",
-        "#00F0FF",
-        width * 0.25,
-        initialScrollY + height * 0.45,
-        0
-      ),
-      // Dragon 2: "[]" Head — Deep Obsidian Navy Armor + Royal Cobalt Code Circuitry
-      createDragon(
-        "dragon-bracket",
-        "[]",
-        "#080d1a",
-        "#111b36",
-        "#2563EB",
-        "#60A5FA",
-        width * 0.75,
-        initialScrollY + height * 1.15,
-        50
-      ),
+    parentGroup.add(joint);
+    neckJoints.push(joint);
+    parentGroup = joint;
+  }
+
+  // ── 2. SCULPTED 3D LOW-POLY DRAGON HEAD, GLOWING EYES, JAW & HORNS ─
+  const headGroup = new THREE.Group();
+  headGroup.position.set(0, 5.0, 5.5);
+  neckJoints[neckJoints.length - 1].add(headGroup);
+
+  // Upper Cranium & Snout (Faceted Low-Poly)
+  const skullGeo = new THREE.ConeGeometry(6.8, 18, 6);
+  skullGeo.rotateX(Math.PI * 0.52);
+  skullGeo.scale(0.85, 0.72, 1);
+  const skullMesh = new THREE.Mesh(skullGeo, armorMat);
+  skullMesh.position.set(0, 1.5, 6);
+  headGroup.add(skullMesh);
+
+  // Glowing Angular Eyes (Left & Right) + PointLight for Real Illumination!
+  const eyeGeo = new THREE.OctahedronGeometry(1.7, 0);
+  eyeGeo.scale(1.6, 0.65, 0.8);
+  const leftEye = new THREE.Mesh(eyeGeo, glowingEyeMat);
+  leftEye.position.set(3.8, 2.2, 5.2);
+  leftEye.rotation.y = 0.4;
+  const rightEye = new THREE.Mesh(eyeGeo, glowingEyeMat);
+  rightEye.position.set(-3.8, 2.2, 5.2);
+  rightEye.rotation.y = -0.4;
+  headGroup.add(leftEye, rightEye);
+
+  const eyeLight = new THREE.PointLight(glowHexNum, 12, 95);
+  eyeLight.position.set(0, 3, 10);
+  headGroup.add(eyeLight);
+
+  // Articulated Lower Jaw with Sharp Teeth
+  const jaw = new THREE.Group();
+  jaw.position.set(0, -1.2, 1.5);
+  const jawGeo = new THREE.ConeGeometry(5.2, 14, 5);
+  jawGeo.rotateX(Math.PI * 0.55);
+  jawGeo.scale(0.78, 0.5, 1);
+  const jawMesh = new THREE.Mesh(jawGeo, darkPlateMat);
+  jawMesh.position.set(0, -1.0, 5.5);
+  jaw.add(jawMesh);
+
+  // Teeth along Upper & Lower Jaw
+  const toothGeo = new THREE.ConeGeometry(0.45, 2.1, 4);
+  for (let t = 0; t < 4; t++) {
+    const zPos = 4 + t * 2.2;
+    const spread = 2.8 - t * 0.45;
+    for (const side of [-1, 1]) {
+      const uTooth = new THREE.Mesh(toothGeo, glowingEyeMat);
+      uTooth.position.set(side * spread, -0.4, zPos);
+      uTooth.rotation.x = Math.PI;
+      headGroup.add(uTooth);
+
+      const lTooth = new THREE.Mesh(toothGeo, glowingEyeMat);
+      lTooth.position.set(side * (spread * 0.85), 0.2, zPos - 0.5);
+      jaw.add(lTooth);
+    }
+  }
+  headGroup.add(jaw);
+
+  // 4 Swept-Back Faceted Low-Poly Horns
+  for (const side of [-1, 1]) {
+    const mainHornGeo = new THREE.ConeGeometry(2.1, 19, 5);
+    mainHornGeo.rotateX(-Math.PI * 0.36);
+    mainHornGeo.rotateZ(side * -0.28);
+    const mainHorn = new THREE.Mesh(mainHornGeo, armorMat);
+    mainHorn.position.set(side * 3.8, 6.5, -4.5);
+    headGroup.add(mainHorn);
+
+    const subHornGeo = new THREE.ConeGeometry(1.3, 11, 5);
+    subHornGeo.rotateX(-Math.PI * 0.42);
+    subHornGeo.rotateZ(side * -0.42);
+    const subHorn = new THREE.Mesh(subHornGeo, darkPlateMat);
+    subHorn.position.set(side * 4.8, 3.2, -3.0);
+    headGroup.add(subHorn);
+  }
+
+  // 3D Extruded "<>" or "[]" Crest Floating Above Forehead
+  const crest = create3DSymbolCrest(symbol, glowHexNum);
+  crest.position.set(0, 11.5, 4);
+  headGroup.add(crest);
+
+  // ── 3. DUAL-JOINTED 3D FLAPPING LOW-POLY CYBER WINGS ──────────────
+  const buildWing = (side: 1 | -1) => {
+    const shoulder = new THREE.Group();
+    shoulder.position.set(side * 8.5, 2.0, -1.0);
+
+    // Upper Wing Bone (Shoulder -> Elbow)
+    const armLen = 28;
+    const armGeo = new THREE.CylinderGeometry(1.4, 2.2, armLen, 5);
+    armGeo.rotateZ(side * -Math.PI * 0.5);
+    const armMesh = new THREE.Mesh(armGeo, darkPlateMat);
+    armMesh.position.set(side * (armLen * 0.5), 4, 0);
+    armMesh.rotation.z = side * 0.28;
+    shoulder.add(armMesh);
+
+    const elbow = new THREE.Group();
+    elbow.position.set(side * armLen, 8, 0);
+    shoulder.add(elbow);
+
+    // Outer Wing Spar & 4 Wing Fingers + Faceted Cyber Membranes
+    const fingerConfigs = [
+      { angZ: 0.12, angY: -0.05, len: 56 },
+      { angZ: -0.18, angY: -0.12, len: 52 },
+      { angZ: -0.48, angY: -0.18, len: 44 },
+      { angZ: -0.78, angY: -0.22, len: 34 },
     ];
 
-    const portals: PortalFX[] = [];
+    const tipPoints: THREE.Vector3[] = [];
 
-    const spawnPortal = (x: number, worldY: number, color: string, kind: "<>" | "[]") => {
-      portals.push({
-        x,
-        y: worldY,
-        radius: 12,
-        maxRadius: 95,
-        alpha: 1,
-        color,
-        kind,
-      });
+    fingerConfigs.forEach((fc) => {
+      const fGeo = new THREE.ConeGeometry(1.1, fc.len, 4);
+      fGeo.translate(0, fc.len * 0.5, 0);
+      const fMesh = new THREE.Mesh(fGeo, darkPlateMat);
+      fMesh.rotation.z = side * (-Math.PI * 0.5 + fc.angZ);
+      fMesh.rotation.y = side * fc.angY;
+      elbow.add(fMesh);
+
+      const dir = new THREE.Vector3(0, fc.len, 0).applyEuler(fMesh.rotation);
+      tipPoints.push(dir);
+    });
+
+    // Construct Faceted Low-Poly Wing Webbing Panels Between Fingers
+    for (let w = 0; w < tipPoints.length - 1; w++) {
+      const p1 = tipPoints[w];
+      const p2 = tipPoints[w + 1];
+      const webGeo = new THREE.BufferGeometry();
+      const verts = new Float32Array([
+        0, 0, 0,
+        p1.x, p1.y, p1.z,
+        p2.x, p2.y, p2.z,
+      ]);
+      const uvs = new Float32Array([0.5, 0, 0, 1, 1, 1]);
+      webGeo.setAttribute("position", new THREE.BufferAttribute(verts, 3));
+      webGeo.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
+      webGeo.computeVertexNormals();
+
+      const webMesh = new THREE.Mesh(webGeo, wingMembraneMat);
+      elbow.add(webMesh);
+    }
+
+    // Inner Wing Membrane connecting Elbow to Torso
+    const innerGeo = new THREE.BufferGeometry();
+    const lastTip = tipPoints[tipPoints.length - 1];
+    const innerVerts = new Float32Array([
+      0, 0, 0,
+      lastTip.x, lastTip.y, lastTip.z,
+      -side * armLen, -18, -6,
+    ]);
+    const innerUvs = new Float32Array([0.5, 0, 1, 1, 0, 1]);
+    innerGeo.setAttribute("position", new THREE.BufferAttribute(innerVerts, 3));
+    innerGeo.setAttribute("uv", new THREE.BufferAttribute(innerUvs, 2));
+    innerGeo.computeVertexNormals();
+    elbow.add(new THREE.Mesh(innerGeo, wingMembraneMat));
+
+    return { shoulder, elbow };
+  };
+
+  const leftWing = buildWing(1);
+  const rightWing = buildWing(-1);
+  neckJoints[2].add(leftWing.shoulder);
+  neckJoints[2].add(rightWing.shoulder);
+
+  // ── 4. CLAWED 3D FORELEGS & HINDLEGS (NO PEDESTAL STAND!) ─────────
+  const foreLegs: THREE.Group[] = [];
+  for (const side of [-1, 1]) {
+    const legGroup = new THREE.Group();
+    legGroup.position.set(side * 8.2, -2, 6);
+
+    const thighGeo = new THREE.CylinderGeometry(2.8, 1.8, 14, 5);
+    const thigh = new THREE.Mesh(thighGeo, armorMat);
+    thigh.position.set(0, -6, 3);
+    thigh.rotation.x = 0.45;
+    legGroup.add(thigh);
+
+    const forearmGeo = new THREE.CylinderGeometry(1.7, 1.1, 12, 5);
+    const forearm = new THREE.Mesh(forearmGeo, darkPlateMat);
+    forearm.position.set(0, -13, 8);
+    forearm.rotation.x = -0.35;
+    legGroup.add(forearm);
+
+    // 3 Sharp Claws
+    for (let c = -1; c <= 1; c++) {
+      const clawGeo = new THREE.ConeGeometry(0.6, 4.5, 4);
+      clawGeo.rotateX(Math.PI * 0.4);
+      const claw = new THREE.Mesh(clawGeo, darkPlateMat);
+      claw.position.set(c * 1.3, -18, 11.5);
+      legGroup.add(claw);
+    }
+
+    neckJoints[2].add(legGroup);
+    foreLegs.push(legGroup);
+  }
+
+  // ── 5. 18-SEGMENT ARTICULATED 3D WHIPPING TAIL + SPEARHEAD TIP ────
+  const tailJoints: THREE.Group[] = [];
+  let tailParent = neckJoints[0];
+
+  for (let i = 0; i < 18; i++) {
+    const tJoint = new THREE.Group();
+    tJoint.position.set(0, -4.6, -2.8);
+
+    const tRad = Math.max(1.1, 7.8 * (1 - i / 19));
+    const tSegGeo = new THREE.CylinderGeometry(tRad * 0.88, tRad, 5.8, 6);
+    tSegGeo.rotateX(-Math.PI * 0.22);
+    const tSegMesh = new THREE.Mesh(tSegGeo, armorMat);
+    tJoint.add(tSegMesh);
+
+    // Dorsal Tail Spike
+    if (i % 2 === 0 && i < 15) {
+      const tSpikeGeo = new THREE.ConeGeometry(tRad * 0.35, 4.5, 4);
+      tSpikeGeo.rotateX(-Math.PI * 0.4);
+      const tSpike = new THREE.Mesh(tSpikeGeo, darkPlateMat);
+      tSpike.position.set(0, 0, -tRad);
+      tJoint.add(tSpike);
+    }
+
+    // Spearhead Arrow Tail Tip at Last Segment (Exact Image 3 Match!)
+    if (i === 17) {
+      const spearGeo = new THREE.ConeGeometry(3.8, 11, 4);
+      spearGeo.rotateX(Math.PI);
+      spearGeo.scale(0.55, 1, 1.35);
+      const spearMesh = new THREE.Mesh(spearGeo, armorMat);
+      spearMesh.position.set(0, -5, -1);
+      tJoint.add(spearMesh);
+    }
+
+    tailParent.add(tJoint);
+    tailJoints.push(tJoint);
+    tailParent = tJoint;
+  }
+
+  // 3D Glowing Portal Ring for Box Entry/Exit
+  const portalGeo = new THREE.RingGeometry(18, 22, 6);
+  const portalMat = new THREE.MeshBasicMaterial({
+    color: glowHexNum,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0,
+  });
+  const portalRing = new THREE.Mesh(portalGeo, portalMat);
+
+  return {
+    root,
+    neckJoints,
+    tailJoints,
+    leftShoulder: leftWing.shoulder,
+    leftElbow: leftWing.elbow,
+    rightShoulder: rightWing.shoulder,
+    rightElbow: rightWing.elbow,
+    jaw,
+    foreLegs,
+    portalRing,
+  };
+}
+
+export function CodeDragonsCanvas() {
+  const mountRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = mountRef.current;
+    if (!container) return;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      window.innerWidth / window.innerHeight,
+      1,
+      3000
+    );
+    camera.position.set(0, 0, 560);
+
+    const renderer = new THREE.WebGLRenderer({
+      alpha: true,
+      antialias: true,
+      powerPreference: "high-performance",
+      precision: "mediump",
+      stencil: false,
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.4;
+    container.appendChild(renderer.domElement);
+
+    // Dramatic Studio Rim Lighting for Sharp Low-Poly Facets
+    scene.add(new THREE.AmbientLight(0xdbeafe, 1.6));
+
+    const sunLight = new THREE.DirectionalLight(0xffffff, 3.8);
+    sunLight.position.set(250, 400, 320);
+    scene.add(sunLight);
+
+    const rimLightLeft = new THREE.DirectionalLight(0x00d2ff, 3.2);
+    rimLightLeft.position.set(-300, 150, -100);
+    scene.add(rimLightLeft);
+
+    const rimLightRight = new THREE.DirectionalLight(0x0055ff, 2.8);
+    rimLightRight.position.set(300, -150, 180);
+    scene.add(rimLightRight);
+
+    // Build Twin 3D Low-Poly Cyber Dragons: "<>" (Electric Cyan-Blue) & "[]" (Deep Royal Cobalt)
+    const dragon1 = buildLowPolyCyberDragon("<>", "#00E5FF", 0x00e5ff, 0x101624);
+    const dragon2 = buildLowPolyCyberDragon("[]", "#3B82F6", 0x3b82f6, 0x0b101d);
+
+    scene.add(dragon1.root, dragon1.portalRing);
+    scene.add(dragon2.root, dragon2.portalRing);
+
+    const flights = [
+      {
+        rig: dragon1,
+        progress: 0.1,
+        speed: 0.00075,
+        worldPageY: 520,
+        phase: 0,
+        curve: new THREE.CatmullRomCurve3(
+          [
+            new THREE.Vector3(-320, 80, -40),
+            new THREE.Vector3(-80, 130, 95),
+            new THREE.Vector3(170, -50, 110),
+            new THREE.Vector3(330, 75, -50),
+            new THREE.Vector3(60, 140, -90),
+            new THREE.Vector3(-170, -75, 75),
+          ],
+          true,
+          "catmullrom",
+          0.5
+        ),
+      },
+      {
+        rig: dragon2,
+        progress: 0.55,
+        speed: 0.00068,
+        worldPageY: 1650,
+        phase: 2.4,
+        curve: new THREE.CatmullRomCurve3(
+          [
+            new THREE.Vector3(320, -60, -40),
+            new THREE.Vector3(75, 115, 105),
+            new THREE.Vector3(-165, -55, 95),
+            new THREE.Vector3(-330, 85, -60),
+            new THREE.Vector3(-45, -120, -95),
+            new THREE.Vector3(175, 95, 65),
+          ],
+          true,
+          "catmullrom",
+          0.5
+        ),
+      },
+    ];
+
+    const clock = new THREE.Clock();
+    let animId: number;
+    let isTabVisible = !document.hidden;
+
+    const onVisibilityChange = () => {
+      isTabVisible = !document.hidden;
     };
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
-    let t = 0;
-
-    const render = () => {
-      animId = requestAnimationFrame(render);
-      t += 0.016;
+    const animate = () => {
+      animId = requestAnimationFrame(animate);
+      if (!isTabVisible) return;
 
       const scrollY = window.scrollY;
-      const docHeight = Math.max(
-        document.documentElement.scrollHeight,
-        height * 3
-      );
 
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, width, height);
+      // When user scrolled past dragons' flight altitudes, skip rendering
+      if (scrollY > 3800) {
+        return;
+      }
 
-      // Translate canvas by -scrollY so all dragon positions are in WORLD coordinates (never stuck to screen!)
-      ctx.save();
-      ctx.translate(0, -scrollY);
+      const t = clock.getElapsedTime();
 
-      // 1. Render Active Box Portals in World Space
-      for (let i = portals.length - 1; i >= 0; i--) {
-        const p = portals[i];
-        p.radius += (p.maxRadius - p.radius) * 0.11;
-        p.alpha -= 0.02;
-        if (p.alpha <= 0.02) {
-          portals.splice(i, 1);
-          continue;
-        }
+      for (const f of flights) {
+        f.progress = (f.progress + f.speed) % 1;
+        const pos = f.curve.getPointAt(f.progress);
+        const tangent = f.curve.getTangentAt(f.progress).normalize();
 
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(t * 2.2);
-        ctx.strokeStyle = p.color;
-        ctx.globalAlpha = p.alpha;
-        ctx.lineWidth = 3;
+        // World-space Y anchor so dragons stay in their page section and NEVER stick to scroll!
+        const worldY = pos.y + (scrollY - f.worldPageY) * 0.72;
+        const flapCycle = t * 5.2 + f.phase;
+        const wingLift = Math.sin(flapCycle) * 11;
 
-        ctx.beginPath();
-        if (p.kind === "<>") {
-          for (let k = 0; k < 6; k++) {
-            const ang = (k * Math.PI) / 3;
-            const px = Math.cos(ang) * p.radius;
-            const py = Math.sin(ang) * (p.radius * 0.65);
-            if (k === 0) ctx.moveTo(px, py);
-            else ctx.lineTo(px, py);
-          }
-          ctx.closePath();
+        f.rig.root.position.set(pos.x, worldY + wingLift, pos.z);
+
+        // Smooth 3D Aerodynamic Banking, Pitching & Heading
+        const targetYaw = Math.atan2(tangent.x, tangent.z) * 0.45;
+        const targetPitch = -tangent.y * 0.4 + Math.cos(flapCycle) * 0.08;
+        const targetRoll = -tangent.x * 0.35;
+
+        f.rig.root.rotation.set(targetPitch, targetYaw, targetRoll);
+
+        // 1. Natural 2-Joint Wing Flapping Physics (Shoulder + Lagging Elbow Flex)
+        const shoulderAngle = Math.sin(flapCycle) * 0.62;
+        const elbowAngle = Math.sin(flapCycle - 0.75) * 0.48;
+
+        f.rig.leftShoulder.rotation.z = shoulderAngle;
+        f.rig.leftElbow.rotation.z = elbowAngle;
+        f.rig.rightShoulder.rotation.z = -shoulderAngle;
+        f.rig.rightElbow.rotation.z = -elbowAngle;
+
+        // 2. Serpentine S-Curve Neck Undulation & Breathing Jaw
+        f.rig.neckJoints.forEach((joint, idx) => {
+          joint.rotation.x = Math.sin(flapCycle - idx * 0.35) * 0.07;
+          joint.rotation.y = Math.cos(t * 2.5 + idx * 0.4) * 0.06;
+        });
+        f.rig.jaw.rotation.x = 0.18 + Math.max(0, Math.sin(t * 3.2 + f.phase)) * 0.28;
+
+        // 3. Foreleg Aerodynamic Tucking
+        f.rig.foreLegs.forEach((leg, lIdx) => {
+          leg.rotation.x = 0.25 + Math.sin(flapCycle + lIdx) * 0.14;
+        });
+
+        // 4. 18-Segment Whipping Tail Physics
+        f.rig.tailJoints.forEach((tJoint, idx) => {
+          tJoint.rotation.x = Math.sin(flapCycle - idx * 0.38) * 0.095;
+          tJoint.rotation.z = Math.cos(t * 3.2 + f.phase - idx * 0.32) * 0.085 - tangent.x * 0.04;
+        });
+
+        // 5. Box-to-Box Portal Dive & Emerge Scaling at Curve Ends
+        let scale = 1.15;
+        const pMat = f.rig.portalRing.material as THREE.MeshBasicMaterial;
+        if (f.progress > 0.91) {
+          const k = (1 - f.progress) / 0.09;
+          scale = 1.15 * k;
+          pMat.opacity = Math.sin(k * Math.PI) * 0.85;
+          f.rig.portalRing.position.set(pos.x, worldY, pos.z);
+          f.rig.portalRing.rotation.z = t * 3;
+        } else if (f.progress < 0.09) {
+          const k = f.progress / 0.09;
+          scale = 1.15 * k;
+          pMat.opacity = Math.sin(k * Math.PI) * 0.85;
+          f.rig.portalRing.position.set(pos.x, worldY, pos.z);
+          f.rig.portalRing.rotation.z = t * 3;
         } else {
-          ctx.strokeRect(-p.radius * 0.85, -p.radius * 0.55, p.radius * 1.7, p.radius * 1.1);
+          pMat.opacity = 0;
         }
-        ctx.stroke();
-        ctx.restore();
+
+        f.rig.root.scale.setScalar(Math.max(0.001, scale));
       }
 
-      // 2. Update & Render Low-Poly 3D Cyber Dragons
-      for (const d of dragons) {
-        const head = d.segments[0];
-        const time = t + d.timeOffset;
-
-        // If the user scrolled very far away (> 2.2 screens), let the dragon patrol near the new world region via a portal
-        if (d.phase === "flying" && Math.abs(head.y - (scrollY + height * 0.5)) > height * 2.1) {
-          const newY = scrollY + height * (0.25 + Math.random() * 0.5);
-          d.portalExit = { x: width * (0.2 + Math.random() * 0.6), y: newY };
-          for (const seg of d.segments) {
-            seg.x = d.portalExit.x;
-            seg.y = d.portalExit.y;
-            seg.z = -50;
-          }
-          spawnPortal(d.portalExit.x, d.portalExit.y, d.circuitBright, d.headSymbol);
-          d.swallowedCount = NUM_SEGMENTS;
-          d.phase = "emerging";
-          d.target = {
-            x: width * (0.2 + Math.random() * 0.6),
-            y: newY + (Math.random() - 0.5) * 350,
-            z: 110,
-          };
-        }
-
-        if (d.phase === "flying") {
-          const distToTarget = Math.hypot(d.target.x - head.x, d.target.y - head.y);
-          if (distToTarget < 120) {
-            const boxes = getWorldBoxes();
-            if (boxes.length >= 2 && Math.random() < 0.52) {
-              const entryBox = boxes[Math.floor(Math.random() * boxes.length)];
-              let exitBox = boxes[Math.floor(Math.random() * boxes.length)];
-              if (exitBox === entryBox && boxes.length > 1) {
-                exitBox = boxes[(boxes.indexOf(entryBox) + 1) % boxes.length];
-              }
-
-              d.portalEntry = {
-                x: entryBox.left + entryBox.width * (0.25 + Math.random() * 0.5),
-                y: entryBox.top + entryBox.height * 0.5,
-              };
-              d.portalExit = {
-                x: exitBox.left + exitBox.width * (0.25 + Math.random() * 0.5),
-                y: exitBox.top + exitBox.height * 0.5,
-              };
-              d.target = { x: d.portalEntry.x, y: d.portalEntry.y, z: -70 };
-              d.phase = "diving";
-            } else {
-              // Pick a new 3D waypoint in the current world neighborhood
-              const baseRegionY = Math.min(
-                docHeight - 300,
-                Math.max(250, scrollY + height * 0.5 + (Math.random() - 0.5) * height * 1.1)
-              );
-              d.target = {
-                x: width * (0.12 + Math.random() * 0.76),
-                y: baseRegionY,
-                z: (Math.random() - 0.5) * 240,
-              };
-            }
-          }
-        } else if (d.phase === "diving" && d.portalEntry) {
-          const dist = Math.hypot(d.portalEntry.x - head.x, d.portalEntry.y - head.y);
-          if (dist < 42) {
-            if (d.swallowedCount === 0) {
-              spawnPortal(d.portalEntry.x, d.portalEntry.y, d.circuitBright, d.headSymbol);
-            }
-            d.swallowedCount += 1.2;
-            if (d.swallowedCount >= NUM_SEGMENTS) {
-              d.phase = "inside_box";
-              d.insideTimer = 32;
-            }
-          }
-        } else if (d.phase === "inside_box") {
-          d.insideTimer -= 1;
-          if (d.insideTimer <= 0 && d.portalExit) {
-            for (const seg of d.segments) {
-              seg.x = d.portalExit.x;
-              seg.y = d.portalExit.y;
-              seg.z = -60;
-            }
-            spawnPortal(d.portalExit.x, d.portalExit.y, d.circuitBright, d.headSymbol);
-            d.swallowedCount = NUM_SEGMENTS;
-            d.phase = "emerging";
-            d.target = {
-              x: width * (0.15 + Math.random() * 0.7),
-              y: d.portalExit.y + (Math.random() - 0.5) * 420,
-              z: 130,
-            };
-          }
-          continue;
-        } else if (d.phase === "emerging") {
-          d.swallowedCount -= 1.15;
-          if (d.swallowedCount <= 0) {
-            d.swallowedCount = 0;
-            d.phase = "flying";
-          }
-        }
-
-        // 3D Flight & Serpentine Undulation
-        const dx = d.target.x - head.x;
-        const dy = d.target.y - head.y;
-        const dz = d.target.z - head.z;
-        const dist = Math.max(1, Math.hypot(dx, dy, dz));
-
-        const speed = d.phase === "diving" ? 8.2 : 6.2;
-        const waveX = Math.cos(time * 3.6) * 2.2;
-        const waveY = Math.sin(time * 3.6) * 2.2;
-        const waveZ = Math.sin(time * 2.2) * 2.4;
-
-        d.vel.x += ((dx / dist) * speed + waveX - d.vel.x) * 0.075;
-        d.vel.y += ((dy / dist) * speed + waveY - d.vel.y) * 0.075;
-        d.vel.z += ((dz / dist) * speed + waveZ - d.vel.z) * 0.075;
-
-        head.x += d.vel.x;
-        head.y += d.vel.y;
-        head.z += d.vel.z;
-
-        // 3D Inverse Kinematics Spine
-        for (let i = 1; i < NUM_SEGMENTS; i++) {
-          const prev = d.segments[i - 1];
-          const curr = d.segments[i];
-          const sdx = prev.x - curr.x;
-          const sdy = prev.y - curr.y;
-          const sdz = prev.z - curr.z;
-          const sDist = Math.max(0.001, Math.hypot(sdx, sdy, sdz));
-
-          const slither = Math.sin(time * 5.2 - i * 0.42) * 2.4;
-          const perpX = -sdy / sDist;
-          const perpY = sdx / sDist;
-
-          curr.x = prev.x - (sdx / sDist) * SEG_DIST + perpX * slither;
-          curr.y = prev.y - (sdy / sDist) * SEG_DIST + perpY * slither;
-          curr.z = prev.z - (sdz / sDist) * SEG_DIST;
-        }
-
-        const focalLength = 800;
-        const startIdx = d.phase === "diving" ? Math.floor(d.swallowedCount) : 0;
-        const endIdx =
-          d.phase === "emerging"
-            ? NUM_SEGMENTS - Math.floor(d.swallowedCount)
-            : NUM_SEGMENTS;
-
-        // Draw from Tail to Head
-        for (let i = endIdx - 1; i >= startIdx; i--) {
-          const seg = d.segments[i];
-          const nextSeg = d.segments[Math.max(0, i - 1)];
-          const angle = Math.atan2(nextSeg.y - seg.y, nextSeg.x - seg.x);
-
-          const scale3D = Math.max(0.5, Math.min(1.6, focalLength / (focalLength - seg.z)));
-          const taper = 1 - (i / NUM_SEGMENTS) * 0.72;
-          const s = scale3D * taper;
-
-          ctx.save();
-          ctx.translate(seg.x, seg.y);
-          ctx.rotate(angle);
-
-          // ── 1. LARGE LOW-POLY CYBER WINGS WITH GLOWING CODE (At Shoulder Segment i === 5) ──
-          if (i === 5) {
-            const flap = Math.sin(time * 5.2) * 0.38;
-            const wingSpan = 135 * scale3D;
-            const wingChord = 68 * scale3D;
-
-            for (const side of [-1, 1]) {
-              ctx.save();
-              ctx.scale(1, side * (0.72 + flap * 0.28));
-
-              // Outer Wing Facet (Matte Black Armor)
-              ctx.beginPath();
-              ctx.moveTo(10 * scale3D, 0);
-              ctx.lineTo(-18 * scale3D, wingSpan * 0.55);
-              ctx.lineTo(-55 * scale3D, wingSpan);
-              ctx.lineTo(-wingChord, wingSpan * 0.68);
-              ctx.lineTo(-wingChord * 0.85, wingSpan * 0.35);
-              ctx.lineTo(-22 * scale3D, 0);
-              ctx.closePath();
-              ctx.fillStyle = d.armorDark;
-              ctx.fill();
-              ctx.strokeStyle = d.circuitBright;
-              ctx.lineWidth = 1.6 * scale3D;
-              ctx.stroke();
-
-              // Inner Wing Facet (Polygon Shading)
-              ctx.beginPath();
-              ctx.moveTo(10 * scale3D, 0);
-              ctx.lineTo(-55 * scale3D, wingSpan);
-              ctx.lineTo(-28 * scale3D, wingSpan * 0.28);
-              ctx.closePath();
-              ctx.fillStyle = d.armorMid;
-              ctx.fill();
-
-              // Glowing Binary & Code Traces on Wing Membrane (Exact Image 2 Style!)
-              ctx.strokeStyle = d.circuitBright;
-              ctx.lineWidth = 1.1 * scale3D;
-              ctx.beginPath();
-              ctx.moveTo(-18 * scale3D, wingSpan * 0.55);
-              ctx.lineTo(-wingChord * 0.75, wingSpan * 0.58);
-              ctx.moveTo(-12 * scale3D, wingSpan * 0.32);
-              ctx.lineTo(-wingChord * 0.65, wingSpan * 0.32);
-              ctx.stroke();
-
-              ctx.fillStyle = d.eyeGlow;
-              ctx.font = `700 ${Math.max(8, Math.round(10 * scale3D))}px monospace`;
-              ctx.fillText("010110", -44 * scale3D, wingSpan * 0.48);
-              ctx.fillText(d.headSymbol, -36 * scale3D, wingSpan * 0.26);
-
-              ctx.restore();
-            }
-          }
-
-          // ── 2. SPEARHEAD DRAGON TAIL TIP (i === NUM_SEGMENTS - 1) ──
-          if (i === NUM_SEGMENTS - 1) {
-            const tailLen = 28 * scale3D;
-            ctx.beginPath();
-            ctx.moveTo(8 * scale3D, 0);
-            ctx.lineTo(-tailLen * 0.5, -10 * scale3D);
-            ctx.lineTo(-tailLen, 0);
-            ctx.lineTo(-tailLen * 0.5, 10 * scale3D);
-            ctx.closePath();
-            ctx.fillStyle = d.armorDark;
-            ctx.fill();
-            ctx.strokeStyle = d.circuitBright;
-            ctx.lineWidth = 1.8 * scale3D;
-            ctx.stroke();
-          } else if (i > 0) {
-            // ── 3. LOW-POLY FACETED ARMOR BODY SEGMENT & DORSAL SPIKES ──
-            const segW = 24 * s;
-            const segL = SEG_DIST * 1.15;
-
-            // Left Armor Facet (Lit)
-            ctx.beginPath();
-            ctx.moveTo(segL * 0.5, 0);
-            ctx.lineTo(0, -segW);
-            ctx.lineTo(-segL * 0.6, -segW * 0.65);
-            ctx.lineTo(-segL * 0.5, 0);
-            ctx.closePath();
-            ctx.fillStyle = d.armorMid;
-            ctx.fill();
-            ctx.strokeStyle = d.circuitBright;
-            ctx.lineWidth = 1.2 * s;
-            ctx.stroke();
-
-            // Right Armor Facet (Shaded)
-            ctx.beginPath();
-            ctx.moveTo(segL * 0.5, 0);
-            ctx.lineTo(0, segW);
-            ctx.lineTo(-segL * 0.6, segW * 0.65);
-            ctx.lineTo(-segL * 0.5, 0);
-            ctx.closePath();
-            ctx.fillStyle = d.armorDark;
-            ctx.fill();
-            ctx.strokeStyle = d.circuitBright;
-            ctx.lineWidth = 1.2 * s;
-            ctx.stroke();
-
-            // Glowing Center Spine Circuit Line & Dorsal Spike
-            ctx.beginPath();
-            ctx.moveTo(-segL * 0.5, 0);
-            ctx.lineTo(segL * 0.5, 0);
-            ctx.strokeStyle = d.eyeGlow;
-            ctx.lineWidth = 2.2 * s;
-            ctx.stroke();
-
-            // Binary Code Etching on Larger Body Segments
-            if (i % 3 === 0 && i < 16) {
-              ctx.fillStyle = d.eyeGlow;
-              ctx.font = `700 ${Math.max(7, Math.round(9 * s))}px monospace`;
-              ctx.fillText(CODE_STRINGS[i % CODE_STRINGS.length], -10 * s, -4 * s);
-            }
-          } else {
-            // ── 4. SCULPTED LOW-POLY 3D DRAGON HEAD WITH "<>" OR "[]" SNOUT ──
-            const hs = scale3D * 1.35;
-
-            // Swept-Back Low-Poly Horns
-            for (const side of [-1, 1]) {
-              ctx.beginPath();
-              ctx.moveTo(-4 * hs, side * 12 * hs);
-              ctx.lineTo(-38 * hs, side * 30 * hs);
-              ctx.lineTo(-24 * hs, side * 10 * hs);
-              ctx.closePath();
-              ctx.fillStyle = d.armorDark;
-              ctx.fill();
-              ctx.strokeStyle = d.circuitBright;
-              ctx.lineWidth = 1.6 * hs;
-              ctx.stroke();
-            }
-
-            // Faceted Cranium / Skull Armor
-            ctx.beginPath();
-            ctx.moveTo(30 * hs, 0);
-            ctx.lineTo(6 * hs, -20 * hs);
-            ctx.lineTo(-20 * hs, -16 * hs);
-            ctx.lineTo(-26 * hs, 0);
-            ctx.lineTo(-20 * hs, 16 * hs);
-            ctx.lineTo(6 * hs, 20 * hs);
-            ctx.closePath();
-            ctx.fillStyle = d.armorMid;
-            ctx.fill();
-            ctx.strokeStyle = d.circuitBright;
-            ctx.lineWidth = 2 * hs;
-            ctx.stroke();
-
-            // Glowing Cyan/Blue Angular Dragon Eyes (Exact Image 2 Style!)
-            ctx.fillStyle = d.eyeGlow;
-            ctx.beginPath();
-            ctx.moveTo(10 * hs, -7 * hs);
-            ctx.lineTo(2 * hs, -12 * hs);
-            ctx.lineTo(0, -6 * hs);
-            ctx.closePath();
-            ctx.moveTo(10 * hs, 7 * hs);
-            ctx.lineTo(2 * hs, 12 * hs);
-            ctx.lineTo(0, 6 * hs);
-            ctx.closePath();
-            ctx.fill();
-
-            // Prominent 3D Extruded "<>" or "[]" Head Emblem at the Snout
-            ctx.font = `900 ${Math.round(28 * hs)}px var(--font-display), monospace`;
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillStyle = "#050b16";
-            ctx.fillText(d.headSymbol, 16 * hs - 2, 2);
-            ctx.fillStyle = d.eyeGlow;
-            ctx.fillText(d.headSymbol, 16 * hs, 0);
-          }
-
-          ctx.restore();
-        }
-      }
-
-      ctx.restore();
+      renderer.render(scene, camera);
     };
 
-    animId = requestAnimationFrame(render);
+    animId = requestAnimationFrame(animate);
+
+    const onResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener("resize", onResize);
+
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      renderer.dispose();
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
     };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
+    <div
+      ref={mountRef}
       className="fixed inset-0 pointer-events-none z-[45] w-full h-full"
       aria-hidden="true"
     />

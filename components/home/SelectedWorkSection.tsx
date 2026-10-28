@@ -13,7 +13,7 @@ const WEB_PROJECTS = [
     title: "Personal Portfolio Website",
     description:
       "Interactive single-scroll portfolio website built with kinetic typography, real-time canvas physics, and responsive front-end architecture.",
-    previewImage: "/assets/about/obj-frontend.png",
+    previewImage: "/assets/about/obj-frontend.webp",
     liveUrl: "https://www.heyitskaikii.my.id",
     tags: ["Next.js", "Tailwind CSS", "GSAP"],
   },
@@ -23,7 +23,7 @@ const WEB_PROJECTS = [
     title: "Web Project Showcase Two",
     description:
       "Clean, modern front-end web build designed for personal branding and digital portfolio presentation.",
-    previewImage: "/assets/about/obj-design.png",
+    previewImage: "/assets/about/obj-design.webp",
     liveUrl: "#",
     tags: ["Front-End", "Responsive UI", "Web Design"],
   },
@@ -33,7 +33,7 @@ const WEB_PROJECTS = [
     title: "Web Project Showcase Three",
     description:
       "Lightweight interactive landing page crafted with smooth transitions and mobile-first layout structure.",
-    previewImage: "/assets/about/obj-photo.png",
+    previewImage: "/assets/about/obj-photo.webp",
     liveUrl: "#",
     tags: ["React", "TypeScript", "Interactive"],
   },
@@ -87,8 +87,8 @@ function Web3DCard({ web, index }: { web: (typeof WEB_PROJECTS)[0]; index: numbe
       ref={cardRef}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      style={{ transformStyle: "preserve-3d" }}
-      className="web-scroll-card group flex flex-col justify-between p-7 sm:p-8 rounded-[24px] bg-[#141824]/80 backdrop-blur-xl border border-white/15 hover:border-[#0055FF] transition-colors shadow-[0_20px_50px_rgba(0,0,0,0.6)] will-change-transform"
+      style={{ transformStyle: "preserve-3d", backfaceVisibility: "hidden" }}
+      className="web-scroll-card group flex flex-col justify-between p-7 sm:p-8 rounded-[24px] bg-[#131722]/90 border border-white/15 hover:border-[#0055FF] transition-colors shadow-[0_20px_50px_rgba(0,0,0,0.6)] will-change-transform"
     >
       <div style={{ transform: "translateZ(28px)" }}>
         {/* Preview Frame with Subtle Continuous Floating Loop on Inner Image */}
@@ -102,6 +102,8 @@ function Web3DCard({ web, index }: { web: (typeof WEB_PROJECTS)[0]; index: numbe
             <img
               src={web.previewImage}
               alt={web.title}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700"
             />
           </div>
@@ -148,8 +150,11 @@ export function SelectedWorkSection() {
   const headerRef = useRef<HTMLDivElement>(null);
   const webGridRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
+  const cylinderStageRef = useRef<HTMLDivElement>(null);
   const videoStageRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const activeNumRef = useRef<HTMLSpanElement>(null);
+  const activeTitleRef = useRef<HTMLParagraphElement>(null);
 
   const rotationRef = useRef({ y: 0 });
   const targetYRef = useRef(0);
@@ -157,18 +162,53 @@ export function SelectedWorkSection() {
   const dragMovedRef = useRef(false);
   const startXRef = useRef(0);
   const pauseUntilRef = useRef(0);
+  const activeIdxRef = useRef(0);
 
-  const [activeIdx, setActiveIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
   const count = GRAPHIC_DESIGNS.length;
   const angleStep = 360 / count;
   const radius = 580;
 
-  // Continuous Auto-Spin Loop (Pauses on user interaction, never snaps back!)
+  // Direct DOM highlight update to prevent expensive React component re-renders during 60fps spin
+  const updateActiveCardVisuals = useCallback(
+    (activeIdx: number) => {
+      if (activeNumRef.current) {
+        activeNumRef.current.textContent = `Visual ${String(activeIdx + 1).padStart(2, "0")} / ${count}`;
+      }
+      if (activeTitleRef.current) {
+        activeTitleRef.current.textContent = GRAPHIC_DESIGNS[activeIdx]?.title || "";
+      }
+      if (ringRef.current) {
+        const cards = ringRef.current.children;
+        for (let i = 0; i < cards.length; i++) {
+          const card = cards[i] as HTMLElement;
+          if (i === activeIdx) {
+            card.classList.add(
+              "border-white/80",
+              "shadow-[inset_0_1px_2px_rgba(255,255,255,0.85),0_26px_60px_rgba(0,85,255,0.35)]"
+            );
+            card.classList.remove("border-white/20", "shadow-[0_20px_45px_rgba(0,0,0,0.8)]");
+          } else {
+            card.classList.remove(
+              "border-white/80",
+              "shadow-[inset_0_1px_2px_rgba(255,255,255,0.85),0_26px_60px_rgba(0,85,255,0.35)]"
+            );
+            card.classList.add("border-white/20", "shadow-[0_20px_45px_rgba(0,0,0,0.8)]");
+          }
+        }
+      }
+    },
+    [count]
+  );
+
+  // Continuous Auto-Spin Loop (Pauses when off-screen, zero React state re-renders!)
   useEffect(() => {
     let rafId: number;
+    let isVisible = false;
+
     const tick = (now: number) => {
+      if (!isVisible) return;
       rafId = requestAnimationFrame(tick);
       if (!isDraggingRef.current && now > pauseUntilRef.current) {
         targetYRef.current -= 0.15;
@@ -179,11 +219,34 @@ export function SelectedWorkSection() {
       }
       const norm = Math.round(-rotationRef.current.y / angleStep);
       const wrapped = ((norm % count) + count) % count;
-      setActiveIdx((prev) => (prev !== wrapped ? wrapped : prev));
+      if (activeIdxRef.current !== wrapped) {
+        activeIdxRef.current = wrapped;
+        updateActiveCardVisuals(wrapped);
+      }
     };
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
-  }, [angleStep, count]);
+
+    const targetEl = cylinderStageRef.current || sectionRef.current;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const visible = entry.isIntersecting;
+        if (visible && !isVisible) {
+          isVisible = true;
+          rafId = requestAnimationFrame(tick);
+        } else if (!visible && isVisible) {
+          isVisible = false;
+          cancelAnimationFrame(rafId);
+        }
+      },
+      { threshold: 0.05 }
+    );
+
+    if (targetEl) observer.observe(targetEl);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      observer.disconnect();
+    };
+  }, [angleStep, count, updateActiveCardVisuals]);
 
   const goToCardIndex = useCallback(
     (targetIdx: number) => {
@@ -421,6 +484,7 @@ export function SelectedWorkSection() {
 
           {/* Exact 3:4 Unclipped Liquid Glass 3D Cylinder Stage */}
           <div
+            ref={cylinderStageRef}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
@@ -436,7 +500,7 @@ export function SelectedWorkSection() {
             >
               {GRAPHIC_DESIGNS.map((item, i) => {
                 const angle = i * angleStep;
-                const isCurrent = i === activeIdx;
+                const isInitial = i === 0;
                 return (
                   <div
                     key={item.id}
@@ -448,11 +512,13 @@ export function SelectedWorkSection() {
                     style={{
                       transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
                       transformStyle: "preserve-3d",
+                      backfaceVisibility: "hidden",
+                      WebkitBackfaceVisibility: "hidden",
                     }}
-                    className={`absolute inset-0 w-full h-full rounded-[24px] p-2 bg-white/[0.1] backdrop-blur-2xl border transition-all duration-300 overflow-hidden group ${
-                      isCurrent
-                        ? "border-white/75 shadow-[inset_0_1px_2px_rgba(255,255,255,0.85),0_30px_70px_rgba(0,85,255,0.3)]"
-                        : "border-white/25 shadow-[inset_0_1px_1px_rgba(255,255,255,0.5),0_24px_55px_rgba(0,0,0,0.85)]"
+                    className={`graphic-cylinder-card absolute inset-0 w-full h-full rounded-[24px] p-2 bg-[#121622]/90 border transition-[border-color,box-shadow] duration-200 overflow-hidden group will-change-transform ${
+                      isInitial
+                        ? "border-white/80 shadow-[inset_0_1px_2px_rgba(255,255,255,0.85),0_26px_60px_rgba(0,85,255,0.35)]"
+                        : "border-white/20 shadow-[0_20px_45px_rgba(0,0,0,0.8)]"
                     }`}
                   >
                     {/* Liquid Glass Specular Sheen */}
@@ -469,6 +535,8 @@ export function SelectedWorkSection() {
                       <img
                         src={item.image}
                         alt={item.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover pointer-events-none block"
                       />
                     </div>
@@ -480,11 +548,11 @@ export function SelectedWorkSection() {
 
           {/* Active Poster Title Readout */}
           <div className="text-center mt-2">
-            <span className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-[#0055FF] block">
-              Visual {String(activeIdx + 1).padStart(2, "0")} / {count}
+            <span ref={activeNumRef} className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-[#0055FF] block">
+              Visual 01 / {count}
             </span>
-            <p className="font-display text-lg sm:text-xl font-black uppercase text-[#f4f4ed] mt-1">
-              {GRAPHIC_DESIGNS[activeIdx]?.title}
+            <p ref={activeTitleRef} className="font-display text-lg sm:text-xl font-black uppercase text-[#f4f4ed] mt-1">
+              {GRAPHIC_DESIGNS[0]?.title}
             </p>
           </div>
         </div>

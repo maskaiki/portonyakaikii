@@ -243,7 +243,7 @@ export function AboutSection() {
           <div className="lg:col-span-5">
             <TiltedCard className="relative aspect-[4/4.6] w-full overflow-hidden border-2 border-[#111112] bg-[#111112] shadow-[14px_14px_0px_#111112] group">
               <Image
-                src="/assets/about/kaiki-candid.jpg"
+                src="/assets/about/kaiki-candid.webp"
                 alt="Kaiki — Mohammad Rifky Wicaksana"
                 fill
                 className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"

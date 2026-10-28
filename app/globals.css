@@ -96,16 +96,16 @@ body {
   overflow-x: hidden;
 }
 
-/* Film grain overlay for premium texture */
+/* Film grain overlay - lightweight noise without SVG dynamic filter recomp */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-size: 200px 200px;
+  opacity: 0.025;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 4px 4px;
 }
 
 ::selection {
@@ -797,4 +797,24 @@ body::before {
   text-align: right;
   color: #111112;
   opacity: 0.8;
+}
+
+/* ── Cyber Pixel Cursor & Character Tap Interaction ── */
+.cursor-pixel {
+  cursor: url('/assets/icons/pixel-cursor.svg') 14 0, pointer !important;
+}
+
+@keyframes pixelTap {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  30% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(10px) scale(0.92);
+  }
+  70% {
+    transform: translateY(-2px) scale(1.02);
+  }
 }
