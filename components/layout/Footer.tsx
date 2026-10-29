@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import Image from "next/image";
 import gsap from "gsap";
 import WebThreads from "@/components/shared/WebThreads";
 import CloverMark from "@/components/shared/CloverMark";
@@ -15,11 +14,18 @@ const CORE_PILLARS = [
   "CAPCUT",
 ];
 
+const NAV_LINKS = [
+  { num: "01", label: "Explore", href: "#hero" },
+  { num: "02", label: "About", href: "#about" },
+  { num: "03", label: "Work", href: "#work" },
+  { num: "04", label: "Arsenal", href: "#skills" },
+  { num: "05", label: "Journey", href: "#journey" },
+];
+
 export function Footer() {
   const [copied, setCopied] = useState(false);
   const email = "mwrifky@gmail.com";
 
-  const bustRef = useRef<HTMLDivElement>(null);
   const cloverRef = useRef<HTMLDivElement>(null);
   const bgTitleRef = useRef<HTMLHeadingElement>(null);
 
@@ -38,23 +44,11 @@ export function Footer() {
     const nx = (e.clientX - rect.left) / rect.width - 0.5;
     const ny = (e.clientY - rect.top) / rect.height - 0.5;
 
-    if (bustRef.current) {
-      gsap.to(bustRef.current, {
-        x: nx * 36,
-        y: ny * 24,
-        rotateY: nx * 18,
-        rotateX: -ny * 14,
-        duration: 0.5,
-        ease: "power2.out",
-        transformPerspective: 1000,
-      });
-    }
-
     if (cloverRef.current) {
       gsap.to(cloverRef.current, {
-        x: -nx * 24,
-        y: -ny * 18,
-        rotateZ: nx * 16,
+        x: -nx * 20,
+        y: -ny * 16,
+        rotateZ: nx * 12,
         duration: 0.65,
         ease: "power2.out",
       });
@@ -90,7 +84,7 @@ export function Footer() {
           />
 
           {/* Interactive WebGL2 WebThreads Layer across the Footer Horizon */}
-          <div className="absolute inset-x-0 bottom-0 h-[480px] sm:h-[540px] z-[2]">
+          <div className="absolute inset-x-0 bottom-0 h-[520px] sm:h-[580px] z-[2]">
             <WebThreads
               colors={["#0055FF", "#38bdf8", "#60a5fa", "#f4f4ed"]}
               coreColor="#ffffff"
@@ -168,60 +162,48 @@ export function Footer() {
               </a>
             </div>
 
-            {/* Full-Width Three-Column Layout: Left Navigation | Center CloverMark + 3D Bust | Right Socials */}
-            <div className="w-full grid grid-cols-1 md:grid-cols-3 items-center gap-8 mb-12 pt-12 border-t border-white/10">
-              {/* Left Column: SECTIONS */}
+            {/* Full-Width Three-Column Layout: Left Navigation | Center Info & Details | Right Socials */}
+            <div className="w-full grid grid-cols-1 md:grid-cols-3 items-center gap-10 md:gap-8 mb-12 pt-12 border-t border-white/10">
+              {/* Left Column: SITEMAP / NAVIGATION */}
               <div className="flex flex-col items-center md:items-start text-center md:text-left pointer-events-auto">
-                <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#f4f4ed]/65 mb-4">
-                  Navigation
+                <span className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-[#38bdf8] mb-5">
+                  {"// 01 NAVIGATION"}
                 </span>
-                <nav className="flex flex-col gap-2">
-                  <a
-                    href="#hero"
-                    className="font-display text-2xl md:text-4xl font-black uppercase !text-[#f4f4ed] hover:!text-[#0055FF] hover:translate-x-2 transition-all"
-                  >
-                    Explore
-                  </a>
-                  <a
-                    href="#about"
-                    className="font-display text-2xl md:text-4xl font-black uppercase !text-[#f4f4ed] hover:!text-[#0055FF] hover:translate-x-2 transition-all"
-                  >
-                    About
-                  </a>
-                  <a
-                    href="#work"
-                    className="font-display text-2xl md:text-4xl font-black uppercase !text-[#f4f4ed] hover:!text-[#0055FF] hover:translate-x-2 transition-all"
-                  >
-                    Work
-                  </a>
-                  <a
-                    href="#skills"
-                    className="font-display text-2xl md:text-4xl font-black uppercase !text-[#f4f4ed] hover:!text-[#0055FF] hover:translate-x-2 transition-all"
-                  >
-                    Arsenal
-                  </a>
-                  <a
-                    href="#journey"
-                    className="font-display text-2xl md:text-4xl font-black uppercase !text-[#f4f4ed] hover:!text-[#0055FF] hover:translate-x-2 transition-all"
-                  >
-                    Journey
-                  </a>
+                <nav className="flex flex-col gap-3 sm:gap-4">
+                  {NAV_LINKS.map((item) => (
+                    <a
+                      key={item.num}
+                      href={item.href}
+                      className="group flex items-baseline gap-3.5 font-display text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-black uppercase tracking-tight !text-[#f4f4ed] hover:!text-[#38bdf8] hover:translate-x-2 transition-all drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]"
+                    >
+                      <span className="font-mono text-xs sm:text-sm font-semibold text-[#38bdf8]/60 group-hover:text-[#38bdf8] transition-colors">
+                        {item.num}
+                      </span>
+                      <span>{item.label}</span>
+                    </a>
+                  ))}
                 </nav>
               </div>
 
-              {/* Center Column: CloverMark (PlasmaWave) Halo + 3D Parallax Kaiki Bust */}
-              <div
-                className="flex flex-col items-center justify-center relative py-4"
-                style={{ perspective: "1000px" }}
-              >
-                {/* Masked PlasmaWave CloverMark Emblem Behind Bust */}
+              {/* Center Column: CloverMark (PlasmaWave) Halo & Keterangan Status */}
+              <div className="flex flex-col items-center justify-center text-center px-2 sm:px-4 py-4 pointer-events-auto">
+                {/* Live Availability Badge */}
+                <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#10b981]/15 border border-[#10b981]/30 text-[#10b981] font-display text-xs font-bold tracking-widest uppercase mb-5 backdrop-blur-sm drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10b981] opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#10b981]" />
+                  </span>
+                  <span>Available for Work &amp; Collab</span>
+                </div>
+
+                {/* Masked PlasmaWave CloverMark Emblem */}
                 <div
                   ref={cloverRef}
-                  className="absolute inset-0 flex items-center justify-center pointer-events-auto will-change-transform opacity-95 drop-shadow-[0_0_40px_rgba(0,85,255,0.45)]"
+                  className="relative flex items-center justify-center will-change-transform opacity-95 drop-shadow-[0_0_40px_rgba(0,85,255,0.45)] my-2"
                 >
                   <CloverMark
-                    size={340}
-                    className="w-[270px] sm:w-[330px] md:w-[360px]"
+                    size={210}
+                    className="w-[170px] sm:w-[195px] md:w-[220px]"
                     plasmaProps={{
                       color1: "#0055FF",
                       color2: "#38bdf8",
@@ -229,43 +211,43 @@ export function Footer() {
                       backgroundColor: "#0c0b10",
                       speed: 0.9,
                       scale: 2.1,
-                      intensity: 1.2,
+                      intensity: 1.25,
                     }}
                   />
                 </div>
 
-                {/* Foreground 3D Kaiki Bust */}
-                <div
-                  ref={bustRef}
-                  style={{ transformStyle: "preserve-3d" }}
-                  className="relative z-10 w-64 h-64 md:w-80 md:h-80 select-none will-change-transform pointer-events-none"
-                >
-                  <Image
-                    src="/assets/shared/kaiki-footer.webp"
-                    alt="Mohammad Rifky Wicaksana (Kaiki)"
-                    fill
-                    sizes="(max-width: 768px) 256px, 320px"
-                    className="object-contain filter grayscale contrast-125"
-                  />
+                {/* Keterangan Details */}
+                <div className="mt-5 flex flex-col items-center gap-2 max-w-sm drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+                  <span className="font-display text-sm sm:text-base font-extrabold uppercase tracking-widest text-[#f4f4ed]">
+                    Mohammad Rifky Wicaksana
+                  </span>
+                  <p className="font-sans text-xs sm:text-sm text-[#f4f4ed]/75 leading-relaxed">
+                    Front-End Engineering &bull; Next.js 16 &bull; Creative WebGL &bull; Canva &bull; CapCut
+                  </p>
+                  <div className="flex items-center gap-2 font-mono text-xs text-[#38bdf8] tracking-wider uppercase mt-1">
+                    <span>Malang &amp; Surabaya, ID</span>
+                    <span className="text-white/30">&bull;</span>
+                    <span>UTC+7 (WIB)</span>
+                  </div>
                 </div>
               </div>
 
-              {/* Right Column: SOCIALS */}
+              {/* Right Column: SOCIALS & CHANNELS */}
               <div className="flex flex-col items-center md:items-end text-center md:text-right pointer-events-auto">
-                <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#f4f4ed]/65 mb-4">
-                  Socials
+                <span className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-[#38bdf8] mb-5">
+                  {"// 02 CONNECT & SOCIALS"}
                 </span>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-5 sm:gap-6">
                   <a
                     href="https://instagram.com/mrifkywicaksana"
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex flex-col items-center md:items-end !text-[#f4f4ed] hover:!text-[#0055FF] transition-colors"
+                    className="group flex flex-col items-center md:items-end !text-[#f4f4ed] hover:!text-[#38bdf8] transition-colors"
                   >
-                    <span className="font-display text-xl md:text-3xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform">
+                    <span className="font-display text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
                       Instagram ↗
                     </span>
-                    <span className="font-brier italic text-sm text-[#f4f4ed]/75 mt-1">
+                    <span className="font-mono text-xs sm:text-sm font-semibold text-[#38bdf8] mt-1.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                       @mrifkywicaksana
                     </span>
                   </a>
@@ -274,12 +256,12 @@ export function Footer() {
                     href="https://github.com/maskaiki"
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex flex-col items-center md:items-end !text-[#f4f4ed] hover:!text-[#0055FF] transition-colors"
+                    className="group flex flex-col items-center md:items-end !text-[#f4f4ed] hover:!text-[#38bdf8] transition-colors"
                   >
-                    <span className="font-display text-xl md:text-3xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform">
+                    <span className="font-display text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
                       GitHub ↗
                     </span>
-                    <span className="font-brier italic text-sm text-[#f4f4ed]/75 mt-1">
+                    <span className="font-mono text-xs sm:text-sm font-semibold text-[#38bdf8] mt-1.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                       maskaiki
                     </span>
                   </a>
@@ -288,22 +270,22 @@ export function Footer() {
                     href="https://www.linkedin.com/search/results/all/?keywords=Mohammad%20Rifky%20Wicaksana"
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex flex-col items-center md:items-end !text-[#f4f4ed] hover:!text-[#0055FF] transition-colors"
+                    className="group flex flex-col items-center md:items-end !text-[#f4f4ed] hover:!text-[#38bdf8] transition-colors"
                   >
-                    <span className="font-display text-xl md:text-3xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform">
+                    <span className="font-display text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
                       LinkedIn ↗
                     </span>
-                    <span className="font-brier italic text-sm text-[#f4f4ed]/75 mt-1">
+                    <span className="font-mono text-xs sm:text-sm font-semibold text-[#38bdf8] mt-1.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                       Mohammad Rifky Wicaksana
                     </span>
                   </a>
 
-                  <div className="flex flex-col items-center md:items-end text-[#f4f4ed]/60">
-                    <span className="font-display text-xl md:text-3xl font-black uppercase leading-none">
+                  <div className="flex flex-col items-center md:items-end text-[#f4f4ed]/70">
+                    <span className="font-display text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-black uppercase leading-none drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
                       TikTok
                     </span>
-                    <span className="font-brier italic text-xs mt-1">
-                      Coming soon
+                    <span className="font-mono text-xs sm:text-sm text-[#f4f4ed]/50 mt-1.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                      @maskaiki &bull; Coming soon
                     </span>
                   </div>
                 </div>
@@ -315,7 +297,7 @@ export function Footer() {
               {CORE_PILLARS.map((pillar, i) => (
                 <span
                   key={i}
-                  className="font-display text-[11px] font-bold tracking-[0.18em] text-[#f4f4ed]/70 uppercase"
+                  className="font-display text-xs sm:text-sm font-black tracking-[0.22em] text-[#f4f4ed]/85 hover:text-[#38bdf8] transition-colors uppercase"
                 >
                   {pillar}
                 </span>
