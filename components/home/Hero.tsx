@@ -11,13 +11,13 @@ import { InteractivePortrait } from "./InteractivePortrait";
 import { BottomIntro } from "./BottomIntro";
 import { ProductCallout } from "./ProductCallout";
 import { ReticleFocus } from "./ReticleFocus";
+import { HeroGhostBuddy } from "./HeroGhostBuddy";
 
 export function Hero() {
   const [intensity, setIntensity] = useState(25);
   const [speed, setSpeed] = useState(80);
   const [size, setSize] = useState(30);
   const [isPaused, setIsPaused] = useState(false);
-  const [wetness, setWetness] = useState(0);
   const [portraitHovered, setPortraitHovered] = useState(false);
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -124,13 +124,15 @@ export function Hero() {
       {/* LAYER 2 (z-20): Direct Difference-Blend HeroTitle (Unwrapped so mix-blend-mode: difference blends with Portrait & Background!) */}
       <HeroTitle shiftX={titleShiftX} titleRef={titleStageRef} />
 
+      {/* Interactive Glass Ghost Buddy Mascot */}
+      <HeroGhostBuddy />
+
       {/* LAYER 3 (z-30): Real-time Rain Particle Simulation Canvas */}
       <RainSimulationCanvas
         intensity={intensity}
         speed={speed}
         size={size}
         isPaused={isPaused}
-        onWetnessChange={setWetness}
       />
 
       {/* Left HUD Wrapper */}
@@ -155,24 +157,6 @@ export function Hero() {
 
       {/* Right HUD Wrapper */}
       <div ref={rightHudRef} className="absolute inset-y-0 right-0 w-full pointer-events-none z-[35]">
-        <aside
-          className="surface-readout-panel absolute top-20 sm:top-24 right-5 sm:right-10 lg:right-14 xl:right-20 pointer-events-none select-none hidden md:flex"
-          aria-label={`Creative energy: ${wetness} percent.`}
-        >
-          <div className="surface-readout__measurement" aria-hidden="true">
-            <svg className="surface-readout__drop" viewBox="0 0 24 32" fill="currentColor">
-              <path d="M12 0C9 6 1 16 1 21a11 11 0 0 0 22 0C23 16 15 6 12 0Z" />
-            </svg>
-            <div className="surface-readout__value">
-              <span>{String(wetness).padStart(2, "0")}</span>
-              <span className="surface-readout__unit">%</span>
-            </div>
-          </div>
-          <p className="surface-readout-caption">
-            Creative<br />energy
-          </p>
-        </aside>
-
         <div className="absolute bottom-5 sm:bottom-8 right-5 sm:right-10 lg:right-14 xl:right-20 pointer-events-auto hidden md:flex">
           <ProductCallout />
         </div>

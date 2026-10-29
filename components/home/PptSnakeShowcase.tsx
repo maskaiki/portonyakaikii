@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -176,11 +177,11 @@ export function PptSnakeShowcase() {
               }}
               className="absolute w-[340px] sm:w-[500px] md:w-[620px] lg:w-[700px] aspect-video rounded-[20px] overflow-hidden bg-[#18181c] shadow-[0_28px_70px_rgba(0,0,0,0.92)] will-change-transform"
             >
-              <img
+              <Image
                 src={item.image}
-                alt=""
-                loading="lazy"
-                decoding="async"
+                alt={item.title}
+                fill
+                sizes="(max-width: 768px) 340px, 700px"
                 className="w-full h-full object-cover rounded-[20px] block"
               />
             </div>

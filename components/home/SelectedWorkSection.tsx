@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { PptSnakeShowcase } from "./PptSnakeShowcase";
@@ -94,17 +95,17 @@ function Web3DCard({ web, index }: { web: (typeof WEB_PROJECTS)[0]; index: numbe
         {/* Preview Frame with Subtle Continuous Floating Loop on Inner Image */}
         <div className="relative w-full aspect-[16/10] rounded-[16px] overflow-hidden mb-6 bg-[#0d111a] border border-white/10 flex flex-col items-center justify-center">
           <div
-            className="w-full h-full"
+            className="w-full h-full relative"
             style={{
               animation: `bounce-down ${3.2 + index * 0.4}s ease-in-out infinite`,
             }}
           >
-            <img
+            <Image
               src={web.previewImage}
               alt={web.title}
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700"
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-cover scale-105 group-hover:scale-110 transition-transform duration-700"
             />
           </div>
         </div>
@@ -408,7 +409,7 @@ export function SelectedWorkSection() {
       </div>
 
       <div className="w-full px-5 sm:px-10 lg:px-14 xl:px-20 relative z-10 space-y-32 pt-8">
-        
+
         {/* Section Header with Scroll In/Out */}
         <div
           ref={headerRef}
@@ -515,11 +516,10 @@ export function SelectedWorkSection() {
                       backfaceVisibility: "hidden",
                       WebkitBackfaceVisibility: "hidden",
                     }}
-                    className={`graphic-cylinder-card absolute inset-0 w-full h-full rounded-[24px] p-2 bg-[#121622]/90 border transition-[border-color,box-shadow] duration-200 overflow-hidden group will-change-transform ${
-                      isInitial
+                    className={`graphic-cylinder-card absolute inset-0 w-full h-full rounded-[24px] p-2 bg-[#121622]/90 border transition-[border-color,box-shadow] duration-200 overflow-hidden group will-change-transform ${isInitial
                         ? "border-white/80 shadow-[inset_0_1px_2px_rgba(255,255,255,0.85),0_26px_60px_rgba(0,85,255,0.35)]"
                         : "border-white/20 shadow-[0_20px_45px_rgba(0,0,0,0.8)]"
-                    }`}
+                      }`}
                   >
                     {/* Liquid Glass Specular Sheen */}
                     <div
@@ -532,12 +532,12 @@ export function SelectedWorkSection() {
 
                     {/* Full-Width & Full-Height 3:4 Poster Image (Zero Right-Side Clipping!) */}
                     <div className="relative w-full h-full rounded-[18px] overflow-hidden bg-[#10131a]">
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.title}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover pointer-events-none block"
+                        fill
+                        sizes="(max-width: 768px) 260px, 300px"
+                        className="object-cover pointer-events-none block"
                       />
                     </div>
                   </div>

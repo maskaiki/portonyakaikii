@@ -246,6 +246,7 @@ export function AboutSection() {
                 src="/assets/about/kaiki-candid.webp"
                 alt="Kaiki — Mohammad Rifky Wicaksana"
                 fill
+                sizes="(max-width: 768px) 100vw, 33vw"
                 className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
               />
               <div

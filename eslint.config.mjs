@@ -5,5 +5,14 @@ import nextTs from "eslint-config-next/typescript";
 export default defineConfig([
   ...nextVitals,
   ...nextTs,
-  globalIgnores([".claude/**", ".next/**", "node_modules/**", "lenis/**", "experience.tsx", "NFengine.tsx", "NFstyles.tsx", "NK*.tsx"]),
+  globalIgnores([
+    ".claude/**",
+    ".next/**",
+    "node_modules/**",
+    "lenis/**",
+    "Agent-Reach/**",
+    "How-to-Clone-Website---Claude-Skills-main/**",
+    "liquid-glass-js/**",
+    "work/**",
+  ]),
 ]);

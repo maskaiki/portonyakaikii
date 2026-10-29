@@ -214,7 +214,7 @@ function buildLowPolyCyberDragon(
   skullMesh.position.set(0, 1.5, 6);
   headGroup.add(skullMesh);
 
-  // Glowing Angular Eyes (Left & Right) + PointLight for Real Illumination!
+  // Glowing Angular Eyes (Left & Right)
   const eyeGeo = new THREE.OctahedronGeometry(1.7, 0);
   eyeGeo.scale(1.6, 0.65, 0.8);
   const leftEye = new THREE.Mesh(eyeGeo, glowingEyeMat);
@@ -224,10 +224,6 @@ function buildLowPolyCyberDragon(
   rightEye.position.set(-3.8, 2.2, 5.2);
   rightEye.rotation.y = -0.4;
   headGroup.add(leftEye, rightEye);
-
-  const eyeLight = new THREE.PointLight(glowHexNum, 12, 95);
-  eyeLight.position.set(0, 3, 10);
-  headGroup.add(eyeLight);
 
   // Articulated Lower Jaw with Sharp Teeth
   const jaw = new THREE.Group();
@@ -477,7 +473,7 @@ export function CodeDragonsCanvas() {
       stencil: false,
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
+    renderer.setPixelRatio(1);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.4;
     container.appendChild(renderer.domElement);

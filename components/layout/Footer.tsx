@@ -161,6 +161,7 @@ export function Footer() {
                     src="/assets/shared/kaiki-footer.webp"
                     alt="Mohammad Rifky Wicaksana (Kaiki)"
                     fill
+                    sizes="(max-width: 768px) 256px, 320px"
                     className="object-contain filter grayscale contrast-125"
                   />
                 </div>

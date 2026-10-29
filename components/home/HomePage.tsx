@@ -3,7 +3,9 @@
 import { Hero } from "./Hero";
 import { TickerSection } from "./TickerSection";
 import { AboutSection } from "./AboutSection";
+import { PortaleSection } from "./PortaleSection";
 import { SelectedWorkSection } from "./SelectedWorkSection";
+import { CatWorkflowSection } from "./CatWorkflowSection";
 import { ArsenalSection } from "./ArsenalSection";
 import { JourneySection } from "./JourneySection";
 
@@ -19,8 +21,14 @@ export default function HomePage() {
       {/* 02. ABOUT — "I Make Front-End For People" & Personal Side */}
       <AboutSection />
 
+      {/* Portale 3D Glass Portal & Creator Card Transition */}
+      <PortaleSection />
+
       {/* 03. WORK — 3 Webs, 10 Graphic Designs (3D), 1 Video Edit */}
       <SelectedWorkSection />
+
+      {/* Cat Workflow 10.5s Motion Explainer */}
+      <CatWorkflowSection />
 
       {/* 04. ARSENAL — Built With & Platforms Marquee */}
       <ArsenalSection />

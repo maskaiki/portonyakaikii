@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import Image from "next/image";
 
 const FLY_SLOTS = [
   { id: 1, x: -28, y: -18, image: "/assets/ppt/ppt-1.webp" },
@@ -116,11 +117,11 @@ export function VisualFlyAndDomeShowcase() {
               }}
               className="absolute w-[220px] sm:w-[300px] aspect-video rounded-[20px] bg-[#141824] border border-white/25 shadow-[0_24px_60px_rgba(0,0,0,0.85)] overflow-hidden will-change-transform"
             >
-              <img
+              <Image
                 src={slot.image}
                 alt=""
-                loading="lazy"
-                decoding="async"
+                fill
+                sizes="(max-width: 768px) 220px, 300px"
                 className="w-full h-full object-cover block"
               />
             </div>
@@ -174,11 +175,11 @@ export function VisualFlyAndDomeShowcase() {
                       }}
                       className="relative w-[220px] sm:w-[290px] md:w-[330px] aspect-[16/10] rounded-[20px] bg-[#141824] border border-white/15 overflow-hidden shrink-0 group will-change-transform"
                     >
-                      <img
+                      <Image
                         src={item.image}
                         alt=""
-                        loading="lazy"
-                        decoding="async"
+                        fill
+                        sizes="(max-width: 768px) 220px, 330px"
                         className="w-full h-full object-cover block group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
