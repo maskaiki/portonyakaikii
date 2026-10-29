@@ -5,8 +5,8 @@ import Image from "next/image";
 
 const PORTRAIT_IMAGES = [
   "/assets/hero/kaiki-portrait-young.webp",
-  "/assets/hero/kaiki-portrait-reach.webp",
-  "/assets/hero/kaiki-portrait-watch.webp",
+  "/assets/hero/kaiki-portrait-reach.webp?v=halfbody",
+  "/assets/hero/kaiki-portrait-watch.webp?v=halfbody",
 ] as const;
 
 interface InteractivePortraitProps {
@@ -58,6 +58,7 @@ export function InteractivePortrait({
     >
       <div className="absolute inset-0 flex items-end justify-center pointer-events-none">
         {PORTRAIT_IMAGES.map((src, index) => {
+          // Pose 2 & 3 baru dimuat saat user hover/sentuh/klik agar initial load tetap ringan
           if (index > 0 && !preloadOthers && currentIndex === 0) {
             return null;
           }
@@ -71,8 +72,8 @@ export function InteractivePortrait({
               priority={isFirst}
               fetchPriority={isFirst ? "high" : "low"}
               decoding={isFirst ? "sync" : "async"}
-              quality={70}
-              sizes="(max-width: 640px) 240px, (max-width: 1024px) 480px, 720px"
+              unoptimized
+              sizes="100vw"
               className="object-contain object-bottom scale-100 origin-bottom"
               style={
                 preloadOthers
