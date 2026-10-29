@@ -490,11 +490,31 @@ export function CatWorkflowSection() {
     const ro = new ResizeObserver(fit);
     ro.observe(viewport);
 
-    // Performance booster: Only render when the section is in the viewport!
     let isVisible = false;
+    let t0: number | null = null;
+    let raf = 0;
+
+    const tick = (now: number) => {
+      if (!isVisible) {
+        raf = 0;
+        return;
+      }
+      if (t0 === null) t0 = now;
+      renderFrame(((now - t0) / 1000) % LOOP);
+      raf = requestAnimationFrame(tick);
+    };
+
+    // Performance booster: Only render when the section is in the viewport!
     const io = new IntersectionObserver(
       ([entry]) => {
+        const wasVisible = isVisible;
         isVisible = entry.isIntersecting;
+        if (isVisible && !wasVisible && !raf) {
+          raf = requestAnimationFrame(tick);
+        } else if (!isVisible && raf) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+        }
       },
       { threshold: 0.05 }
     );
@@ -644,16 +664,8 @@ export function CatWorkflowSection() {
       }
     };
 
-    let t0: number | null = null;
-    let raf = 0;
-    const tick = (now: number) => {
-      if (t0 === null) t0 = now;
-      if (isVisible) {
-        renderFrame(((now - t0) / 1000) % LOOP);
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
+    // Render initial static frame at mount
+    renderFrame(0);
 
     return () => {
       cancelAnimationFrame(raf);

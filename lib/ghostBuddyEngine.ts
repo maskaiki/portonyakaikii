@@ -865,7 +865,6 @@ export function startGhostBuddy(canvas: HTMLCanvasElement): () => void {
 
   const activationEvents = ["pointermove", "pointerdown", "touchstart", "scroll", "wheel", "keydown"] as const;
   const removeActivationListeners = () => {
-    clearTimeout(idleTimer);
     activationEvents.forEach((evt) => {
       window.removeEventListener(evt, startLoop);
     });
@@ -874,8 +873,6 @@ export function startGhostBuddy(canvas: HTMLCanvasElement): () => void {
   activationEvents.forEach((evt) => {
     window.addEventListener(evt, startLoop, { passive: true, once: true });
   });
-
-  const idleTimer = setTimeout(startLoop, 4000);
 
   const io = new IntersectionObserver(([e]) => {
     isVisible = e.isIntersecting;

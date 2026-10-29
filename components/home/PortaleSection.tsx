@@ -129,6 +129,7 @@ export function PortaleSection() {
           opacity: 1,
           duration: 1.2,
           ease: "power3.out",
+          immediateRender: false,
           clearProps: "filter",
         },
         0
@@ -145,6 +146,7 @@ export function PortaleSection() {
           duration: 0.65,
           stagger: 0.07,
           ease: "power2.out",
+          immediateRender: false,
           clearProps: "filter",
         },
         0.18

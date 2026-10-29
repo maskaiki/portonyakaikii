@@ -29,7 +29,11 @@ const PLATFORMS = [
     role: "Source Code & Version Control",
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-        <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+        />
       </svg>
     ),
   },
@@ -55,7 +59,15 @@ const PLATFORMS = [
     name: "CapCut",
     role: "Video Editing & Short-Form Cuts",
     icon: (
-      <svg viewBox="0 0 192 192" fill="none" stroke="currentColor" strokeWidth="16" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+      <svg
+        viewBox="0 0 192 192"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="16"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="w-6 h-6"
+      >
         <path d="M170 42 22 124v14c0 6.627 5.373 12 12 12h78c6.627 0 12-5.373 12-12v-9.5" />
         <path d="M170 150 22 68V54c0-6.627 5.373-12 12-12h78c6.627 0 12 5.373 12 12v9.5" />
       </svg>
@@ -84,11 +96,12 @@ export function ArsenalSection() {
       if (headerRef.current) {
         gsap.fromTo(
           headerRef.current,
-          { y: 50, opacity: 0.15 },
+          { y: 50, opacity: 0.25 },
           {
             y: 0,
             opacity: 1,
             ease: "power2.out",
+            immediateRender: false,
             scrollTrigger: {
               trigger: headerRef.current,
               start: "top 88%",
@@ -103,13 +116,14 @@ export function ArsenalSection() {
         const cards = gridRef.current.querySelectorAll(".arsenal-3d-card");
         gsap.fromTo(
           cards,
-          { opacity: 0, rotateX: -25, y: 50, transformPerspective: 1000 },
+          { opacity: 0.25, rotateX: -25, y: 50, transformPerspective: 1000 },
           {
             opacity: 1,
             rotateX: 0,
             y: 0,
             stagger: 0.08,
             ease: "power2.out",
+            immediateRender: false,
             scrollTrigger: {
               trigger: gridRef.current,
               start: "top 85%",
@@ -123,11 +137,12 @@ export function ArsenalSection() {
       if (specSheetRef.current) {
         gsap.fromTo(
           specSheetRef.current,
-          { x: 40, opacity: 0.3 },
+          { x: 40, opacity: 0.35 },
           {
             x: 0,
             opacity: 1,
             ease: "power2.out",
+            immediateRender: false,
             scrollTrigger: {
               trigger: specSheetRef.current,
               start: "top 85%",
@@ -186,9 +201,13 @@ export function ArsenalSection() {
       <div className="absolute top-[12%] right-[12%] w-[480px] h-[480px] rounded-full bg-[#0055FF]/8 blur-[140px] pointer-events-none" />
       <div className="absolute bottom-[10%] left-[8%] w-[420px] h-[420px] rounded-full bg-[#38bdf8]/10 blur-[130px] pointer-events-none" />
 
-      {/* Top 3D Paper-Cut Wave Relief Divider (Transition from dark SelectedWork) */}
+      {/* Top 3D Paper-Cut Wave Relief Divider */}
       <div className="absolute top-0 inset-x-0 w-full overflow-hidden leading-none pointer-events-none z-20">
-        <svg viewBox="0 0 1440 100" preserveAspectRatio="none" className="w-full h-12 sm:h-20">
+        <svg
+          viewBox="0 0 1440 100"
+          preserveAspectRatio="none"
+          className="w-full h-12 sm:h-20"
+        >
           <path
             d="M0,0 L1440,0 L1440,40 C1160,95 880,10 600,60 C320,110 140,25 0,65 Z"
             fill="#0d1017"
@@ -199,14 +218,16 @@ export function ArsenalSection() {
       {/* Full-Width Architectural Grid Lines */}
       <div className="absolute inset-0 pointer-events-none grid grid-cols-4 lg:grid-cols-12 px-5 sm:px-10 lg:px-14 xl:px-20 opacity-[0.05]">
         {Array.from({ length: 12 }).map((_, i) => (
-          <div key={i} className="border-r border-[#111112] h-full first:border-l" />
+          <div
+            key={i}
+            className="border-r border-[#111112] h-full first:border-l"
+          />
         ))}
       </div>
 
       {/* Full-Bleed Widescreen Wrapper */}
       <div className="w-full px-5 sm:px-10 lg:px-14 xl:px-20 relative z-10 pt-8">
-        
-        {/* Section Header with Reversible Scroll In/Out */}
+        {/* Section Header */}
         <div
           ref={headerRef}
           className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 mb-16 border-b border-[#111112]/15 will-change-transform"
@@ -223,16 +244,19 @@ export function ArsenalSection() {
             </h2>
           </div>
 
-          <p className="max-w-md font-sans text-sm sm:text-base text-[#111112]/70 leading-relaxed">
-            How this portfolio website was engineered and the exact platforms I use every day to build websites, graphics, and videos.
+          <p className="max-w-md font-sans text-sm sm:text-base text-[#111112]/80 leading-relaxed">
+            How this portfolio website was engineered and the exact platforms I
+            use every day to build websites, graphics, and videos.
           </p>
         </div>
 
         {/* Full-Width 12-Column Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-stretch mb-20">
-          
-          {/* Left 8 Cols: 3-Column Platform Cards with 3D GSAP Tilt & Floating Icons */}
-          <div ref={gridRef} className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+          {/* Left 8 Cols: 3-Column Platform Cards */}
+          <div
+            ref={gridRef}
+            className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
+          >
             {PLATFORMS.map((item, idx) => (
               <div
                 key={item.name}
@@ -241,16 +265,21 @@ export function ArsenalSection() {
                 style={{ transformStyle: "preserve-3d" }}
                 className="arsenal-3d-card group p-7 sm:p-8 rounded-[24px] bg-white/80 backdrop-blur-xl border border-[#111112]/15 hover:border-[#0055FF] hover:shadow-[0_20px_50px_rgba(0,85,255,0.15)] transition-all flex flex-col justify-between min-h-[210px] will-change-transform"
               >
-                <div className="flex items-center justify-between mb-6" style={{ transform: "translateZ(25px)" }}>
+                <div
+                  className="flex items-center justify-between mb-6"
+                  style={{ transform: "translateZ(25px)" }}
+                >
                   <div
                     className="p-3.5 rounded-[14px] bg-[#111112] text-[#f4f4ed] group-hover:bg-[#0055FF] group-hover:scale-105 transition-all shadow-md"
                     style={{
-                      animation: `bounce-down ${3.2 + idx * 0.35}s ease-in-out infinite`,
+                      animation: `bounce-down ${
+                        3.2 + idx * 0.35
+                      }s ease-in-out infinite`,
                     }}
                   >
                     {item.icon}
                   </div>
-                  <span className="font-brier italic text-2xl text-[#111112]/35 group-hover:text-[#0055FF] transition-colors">
+                  <span className="font-brier italic text-2xl text-[#111112]/55 group-hover:text-[#0055FF] transition-colors">
                     0{idx + 1}
                   </span>
                 </div>
@@ -258,7 +287,7 @@ export function ArsenalSection() {
                   <h3 className="font-display text-2xl font-black uppercase text-[#111112]">
                     {item.name}
                   </h3>
-                  <p className="font-sans text-xs sm:text-sm text-[#111112]/70 mt-1.5 leading-relaxed">
+                  <p className="font-sans text-xs sm:text-sm text-[#111112]/80 mt-1.5 leading-relaxed">
                     {item.role}
                   </p>
                 </div>
@@ -272,20 +301,24 @@ export function ArsenalSection() {
             className="lg:col-span-4 p-8 sm:p-10 rounded-[28px] bg-[#111112] text-[#f4f4ed] flex flex-col justify-between shadow-[16px_16px_0px_#0055FF] will-change-transform"
           >
             <div>
-              <span className="font-brier italic text-xl text-[#0055FF] block mb-2">
+              <span className="font-brier italic text-xl text-[#60a5fa] block mb-2">
                 Under the hood
               </span>
               <h3 className="font-display text-3xl sm:text-4xl font-black uppercase text-[#f4f4ed] mb-3">
                 HOW THIS WEB WAS BUILT
               </h3>
-              <p className="font-sans text-sm text-[#f4f4ed]/65 leading-relaxed mb-6">
-                Built by combining modern front-end frameworks with AI-assisted workflows in Antigravity and Google AI Studio.
+              <p className="font-sans text-sm text-[#f4f4ed]/80 leading-relaxed mb-6">
+                Built by combining modern front-end frameworks with AI-assisted
+                workflows in Antigravity and Google AI Studio.
               </p>
 
               <div className="space-y-3.5 py-5 border-t border-b border-white/15 mb-8">
                 {WEBSITE_SPECS.map((spec) => (
-                  <div key={spec.label} className="flex flex-col sm:flex-row sm:justify-between py-1 text-xs gap-1">
-                    <span className="font-display font-bold uppercase tracking-wider text-[#f4f4ed]/45">
+                  <div
+                    key={spec.label}
+                    className="flex flex-col sm:flex-row sm:justify-between py-1 text-xs gap-1"
+                  >
+                    <span className="font-display font-bold uppercase tracking-wider text-[#f4f4ed]/75">
                       {spec.label}
                     </span>
                     <span className="font-sans font-semibold text-[#f4f4ed] sm:text-right">
@@ -298,7 +331,7 @@ export function ArsenalSection() {
 
             <a
               href="#contact"
-              className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-full font-display text-xs font-extrabold uppercase tracking-wider text-[#111112] bg-[#f4f4ed] hover:bg-[#0055FF] hover:text-white transition-all shadow-[0_12px_30px_rgba(0,0,0,0.5)]"
+              className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-full font-display text-xs font-extrabold uppercase tracking-wider !text-[#111112] bg-[#f4f4ed] hover:bg-[#0055FF] hover:!text-white transition-all shadow-[0_12px_30px_rgba(0,0,0,0.5)]"
             >
               <span>Want a Website Like This? Let&rsquo;s Talk</span>
               <span>→</span>
@@ -326,7 +359,6 @@ export function ArsenalSection() {
             </div>
           </div>
         </div>
-
       </div>
     </section>
   );

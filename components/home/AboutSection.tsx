@@ -256,7 +256,7 @@ export function AboutSection() {
                 alt="Kaiki — Mohammad Rifky Wicaksana"
                 fill
                 quality={75}
-                sizes="(max-width: 640px) 360px, (max-width: 1024px) 420px, 450px"
+                sizes="(max-width: 640px) 340px, 384px"
                 className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
               />
               <div

@@ -65,8 +65,14 @@ export function Navigation() {
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
-      setScrolled(y > 40);
+      // Saat di bagian atas halaman, lewati pembacaan offsetTop agar 0ms Forced Reflow!
+      if (y <= 40) {
+        setScrolled(false);
+        setActiveSection("hero");
+        return;
+      }
 
+      setScrolled(true);
       const sections = ["hero", "about", "work", "skills", "journey", "contact"];
       const scrollPos = y + 260;
 
@@ -79,7 +85,6 @@ export function Navigation() {
       }
     };
 
-    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -93,7 +98,6 @@ export function Navigation() {
 
   return (
     <>
-      {/* Full-Width Edge-to-Edge Header (No top blue loading bar) */}
       <header className="fixed top-3 sm:top-5 inset-x-0 z-50 px-5 sm:px-10 lg:px-14 xl:px-20 flex items-center justify-between pointer-events-none transition-all duration-300">
         {/* Left: Magnetic RW Monogram */}
         <MagneticButton
@@ -198,7 +202,7 @@ export function Navigation() {
             className="fixed inset-0 z-40 bg-[#111112] text-[#f4f4ed] flex flex-col justify-between px-6 sm:px-12 lg:px-20 py-24 overflow-y-auto"
           >
             <div className="w-full pt-8">
-              <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#f4f4ed]/40 uppercase mb-8 block">
+              <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#f4f4ed]/70 uppercase mb-8 block">
                 Navigation
               </span>
               <nav className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
@@ -215,7 +219,7 @@ export function Navigation() {
                     <span className="font-display text-5xl sm:text-7xl font-black uppercase text-[#f4f4ed] group-hover:text-[#0055FF] group-hover:translate-x-4 transition-all duration-300">
                       {label}
                     </span>
-                    <span className="font-brier italic text-2xl text-[#f4f4ed]/40 group-hover:text-[#0055FF]">
+                    <span className="font-brier italic text-2xl text-[#f4f4ed]/60 group-hover:text-[#0055FF]">
                       0{i + 1}
                     </span>
                   </motion.a>
@@ -224,7 +228,7 @@ export function Navigation() {
             </div>
 
             <div className="w-full pt-8 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <p className="font-sans text-sm text-[#f4f4ed]/60">
+              <p className="font-sans text-sm text-[#f4f4ed]/75">
                 Mohammad Rifky Wicaksana — Visual Front-End Creator
               </p>
               <a

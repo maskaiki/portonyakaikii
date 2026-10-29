@@ -26,7 +26,9 @@ export function DeferredCodeDragons() {
     const cleanup = () => {
       window.removeEventListener("scroll", activate);
       window.removeEventListener("pointermove", activate);
+      window.removeEventListener("pointerdown", activate);
       window.removeEventListener("touchstart", activate);
+      window.removeEventListener("wheel", activate);
       window.removeEventListener("keydown", activate);
     };
 
@@ -35,7 +37,15 @@ export function DeferredCodeDragons() {
       passive: true,
       once: true,
     });
+    window.addEventListener("pointerdown", activate, {
+      passive: true,
+      once: true,
+    });
     window.addEventListener("touchstart", activate, {
+      passive: true,
+      once: true,
+    });
+    window.addEventListener("wheel", activate, {
       passive: true,
       once: true,
     });
@@ -44,16 +54,11 @@ export function DeferredCodeDragons() {
       once: true,
     });
 
-    // Fallback: jika tidak ada interaksi, muat saat idle setelah LCP selesai
-    const timer = setTimeout(activate, 3500);
-
     return () => {
       cleanup();
-      clearTimeout(timer);
     };
   }, []);
 
   if (!shouldMount) return null;
   return <CodeDragonsCanvas />;
 }
-

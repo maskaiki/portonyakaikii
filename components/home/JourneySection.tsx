@@ -60,6 +60,7 @@ export function JourneySection() {
             y: 0,
             opacity: 1,
             ease: "power2.out",
+            immediateRender: false,
             scrollTrigger: {
               trigger: headerRef.current,
               start: "top 88%",
@@ -77,6 +78,7 @@ export function JourneySection() {
           {
             scaleY: 1,
             ease: "none",
+            immediateRender: false,
             scrollTrigger: {
               trigger: rowsRef.current,
               start: "top 70%",
@@ -98,6 +100,7 @@ export function JourneySection() {
               rotateX: 0,
               y: 0,
               ease: "power2.out",
+              immediateRender: false,
               scrollTrigger: {
                 trigger: row,
                 start: "top 88%",

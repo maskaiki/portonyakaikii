@@ -542,10 +542,11 @@ export function RainSimulationCanvas({
     };
 
     window.addEventListener("pointermove", startLoop, { passive: true, once: true });
+    window.addEventListener("pointerdown", startLoop, { passive: true, once: true });
     window.addEventListener("touchstart", startLoop, { passive: true, once: true });
     window.addEventListener("scroll", startLoop, { passive: true, once: true });
     window.addEventListener("wheel", startLoop, { passive: true, once: true });
-    const warmTimer = setTimeout(startLoop, 2800);
+    window.addEventListener("keydown", startLoop, { passive: true, once: true });
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -568,13 +569,14 @@ export function RainSimulationCanvas({
     return () => {
       isLoopActive = false;
       cancelAnimationFrame(animationFrameId);
-      clearTimeout(warmTimer);
       resizeObserver.disconnect();
       observer.disconnect();
       window.removeEventListener("pointermove", startLoop);
+      window.removeEventListener("pointerdown", startLoop);
       window.removeEventListener("touchstart", startLoop);
       window.removeEventListener("scroll", startLoop);
       window.removeEventListener("wheel", startLoop);
+      window.removeEventListener("keydown", startLoop);
     };
   }, [intensity, speed, size, isPaused]);
 

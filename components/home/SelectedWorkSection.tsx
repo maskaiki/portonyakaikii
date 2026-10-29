@@ -274,6 +274,7 @@ export function SelectedWorkSection() {
             y: 0,
             opacity: 1,
             ease: "power2.out",
+            immediateRender: false,
             scrollTrigger: {
               trigger: headerRef.current,
               start: "top 88%",
@@ -295,6 +296,7 @@ export function SelectedWorkSection() {
             rotateX: 0,
             stagger: 0.12,
             ease: "power2.out",
+            immediateRender: false,
             scrollTrigger: {
               trigger: webGridRef.current,
               start: "top 85%",
@@ -314,6 +316,7 @@ export function SelectedWorkSection() {
             scale: 1,
             opacity: 1,
             ease: "power2.out",
+            immediateRender: false,
             scrollTrigger: {
               trigger: videoStageRef.current,
               start: "top 85%",

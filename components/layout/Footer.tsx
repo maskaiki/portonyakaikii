@@ -78,7 +78,7 @@ export function Footer() {
 
           <div className="relative z-10 pt-16 pb-12 px-6 sm:px-12 lg:px-16 xl:px-24 flex flex-col items-center">
             
-            <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#f4f4ed]/50 uppercase mb-3">
+            <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#f4f4ed]/75 uppercase mb-3">
               Contact &amp; Collab
             </span>
 
@@ -100,7 +100,7 @@ export function Footer() {
               WEB.
             </h2>
 
-            <p className="font-sans text-sm sm:text-base text-[#f4f4ed]/65 max-w-xl text-center mb-8">
+            <p className="font-sans text-sm sm:text-base text-[#f4f4ed]/80 max-w-xl text-center mb-8">
               Want a standout front-end portfolio website like this, Canva graphic design, or CapCut video edits? Copy my email below or reach out on socials.
             </p>
 
@@ -128,7 +128,7 @@ export function Footer() {
               
               {/* Left Column: SECTIONS (Flush Left) */}
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#f4f4ed]/40 mb-4">
+                <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#f4f4ed]/75 mb-4">
                   Navigation
                 </span>
                 <nav className="flex flex-col gap-2">
@@ -169,7 +169,7 @@ export function Footer() {
 
               {/* Right Column: SOCIALS (Flush Right) */}
               <div className="flex flex-col items-center md:items-end text-center md:text-right">
-                <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#f4f4ed]/40 mb-4">
+                <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#f4f4ed]/75 mb-4">
                   Socials
                 </span>
                 <div className="flex flex-col gap-4">
@@ -182,7 +182,7 @@ export function Footer() {
                     <span className="font-display text-xl md:text-3xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform">
                       Instagram ↗
                     </span>
-                    <span className="font-brier italic text-sm text-[#f4f4ed]/60 mt-1">
+                    <span className="font-brier italic text-sm text-[#f4f4ed]/75 mt-1">
                       @mrifkywicaksana
                     </span>
                   </a>
@@ -196,7 +196,7 @@ export function Footer() {
                     <span className="font-display text-xl md:text-3xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform">
                       GitHub ↗
                     </span>
-                    <span className="font-brier italic text-sm text-[#f4f4ed]/60 mt-1">
+                    <span className="font-brier italic text-sm text-[#f4f4ed]/75 mt-1">
                       maskaiki
                     </span>
                   </a>
@@ -210,12 +210,12 @@ export function Footer() {
                     <span className="font-display text-xl md:text-3xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform">
                       LinkedIn ↗
                     </span>
-                    <span className="font-brier italic text-sm text-[#f4f4ed]/60 mt-1">
+                    <span className="font-brier italic text-sm text-[#f4f4ed]/75 mt-1">
                       Mohammad Rifky Wicaksana
                     </span>
                   </a>
 
-                  <div className="flex flex-col items-center md:items-end text-[#f4f4ed]/35">
+                  <div className="flex flex-col items-center md:items-end text-[#f4f4ed]/65">
                     <span className="font-display text-xl md:text-3xl font-black uppercase leading-none">
                       TikTok
                     </span>
@@ -233,7 +233,7 @@ export function Footer() {
               {CORE_PILLARS.map((pillar, i) => (
                 <span
                   key={i}
-                  className="font-display text-[11px] font-bold tracking-[0.18em] text-[#f4f4ed]/40 uppercase"
+                  className="font-display text-[11px] font-bold tracking-[0.18em] text-[#f4f4ed]/70 uppercase"
                 >
                   {pillar}
                 </span>

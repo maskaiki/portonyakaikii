@@ -50,7 +50,7 @@ export function TickerSection() {
         }}
       />
 
-      <div className="relative w-full flex flex-col gap-4 md:gap-6 select-none">
+      <div className="relative w-full flex flex-col gap-4 md:gap-6 select-none" aria-hidden="true">
         {/* Row 1: Editorial Serif Italic */}
         <div className="marquee-row">
           <div ref={row1Ref} className=" will-change-transform">

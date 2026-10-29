@@ -15,7 +15,7 @@ export function BottomIntro({ className = "" }: BottomIntroProps) {
       className={`z-25 flex flex-col items-start text-left select-none max-w-[calc(100vw-32px)] sm:max-w-[500px] lg:max-w-[620px] ${className}`}
     >
       {/* Clean Editorial Role Label (No glowing box, no //) */}
-      <span className="font-display text-[11px] sm:text-xs font-extrabold tracking-[0.2em] text-[#111112]/60 uppercase mb-1.5 sm:mb-2">
+      <span className="font-display text-[11px] sm:text-xs font-extrabold tracking-[0.2em] text-[#111112]/75 uppercase mb-1.5 sm:mb-2">
         Visual Front-End Creator
       </span>
 

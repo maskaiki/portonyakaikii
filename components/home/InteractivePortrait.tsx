@@ -71,7 +71,7 @@ export function InteractivePortrait({
               priority={isFirst}
               fetchPriority={isFirst ? "high" : "low"}
               quality={75}
-              sizes="(max-width: 640px) 390px, (max-width: 1024px) 640px, 900px"
+              sizes="(max-width: 640px) 380px, (max-width: 1024px) 580px, 750px"
               className="object-contain object-bottom scale-100 origin-bottom"
               style={{
                 opacity: currentIndex === index ? 1 : 0,
