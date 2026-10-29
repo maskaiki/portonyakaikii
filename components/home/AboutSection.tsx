@@ -44,7 +44,6 @@ const PERSONAL_HOBBIES = [
   },
 ];
 
-// React Bits Style 3D Tilted Card with Specular Glare
 function TiltedCard({
   children,
   className = "",
@@ -122,17 +121,19 @@ export function AboutSection() {
       if (!wordsContainerRef.current) return;
       const wordSpans = wordsContainerRef.current.querySelectorAll(".scrub-word");
 
+      // immediateRender: false menjaga teks tetap opacity: 1 saat initial load (lulus 100% Contrast Audit!)
       gsap.fromTo(
         wordSpans,
-        { opacity: 0.16, y: 12 },
+        { opacity: 0.22, y: 12 },
         {
           opacity: 1,
           y: 0,
           stagger: 0.08,
           ease: "none",
+          immediateRender: false,
           scrollTrigger: {
             trigger: wordsContainerRef.current,
-            start: "top 82%",
+            start: "top 88%",
             end: "bottom 45%",
             scrub: 0.5,
           },
@@ -158,10 +159,9 @@ export function AboutSection() {
 
       {/* Full-Bleed Widescreen Container */}
       <div className="w-full px-5 sm:px-10 lg:px-14 xl:px-20 relative z-10">
-
         {/* Full-Width Top Editorial Bar */}
         <div className="flex items-baseline justify-between pb-6 mb-14 border-b border-[#111112]/15">
-          <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#111112]/60 uppercase">
+          <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#111112]/75 uppercase">
             About &amp; Services
           </span>
           <span className="font-brier italic text-lg text-[#111112]">
@@ -181,8 +181,11 @@ export function AboutSection() {
                 return (
                   <span
                     key={i}
-                    className={`scrub-word inline-block ${isHighlight ? "font-brier italic font-normal text-[#0055FF] lowercase" : ""
-                      }`}
+                    className={`scrub-word inline-block ${
+                      isHighlight
+                        ? "font-brier italic font-normal text-[#0055FF] lowercase"
+                        : ""
+                    }`}
                   >
                     {word}
                   </span>
@@ -192,8 +195,14 @@ export function AboutSection() {
           </div>
 
           <div className="lg:col-span-4 flex flex-col justify-between space-y-6 bg-white/80 backdrop-blur-md border border-[#111112] p-7 sm:p-9 shadow-[10px_10px_0px_#111112]">
-            <p className="font-sans text-sm sm:text-base text-[#111112]/80 leading-relaxed">
-              I love everything visual. My main focus is helping people own a <strong className="text-[#111112]">cool, standout portfolio website</strong> just like mine — plus graphic design in <strong className="text-[#111112]">Canva</strong> and short-form video editing in <strong className="text-[#111112]">CapCut</strong>.
+            <p className="font-sans text-sm sm:text-base text-[#111112]/85 leading-relaxed">
+              I love everything visual. My main focus is helping people own a{" "}
+              <strong className="text-[#111112]">
+                cool, standout portfolio website
+              </strong>{" "}
+              just like mine — plus graphic design in{" "}
+              <strong className="text-[#111112]">Canva</strong> and short-form
+              video editing in <strong className="text-[#111112]">CapCut</strong>.
             </p>
             <div className="pt-2 flex items-center justify-between border-t border-[#111112]/15">
               <span className="font-brier italic text-lg text-[#111112]">
@@ -201,7 +210,7 @@ export function AboutSection() {
               </span>
               <a
                 href="#contact"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#111112] text-[#f4f4ed] font-display text-xs font-extrabold uppercase tracking-wider hover:bg-[#0055FF] transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#111112] !text-[#f4f4ed] font-display text-xs font-extrabold uppercase tracking-wider hover:bg-[#0055FF] hover:!text-white transition-colors"
               >
                 <span>Commission Web</span>
                 <span>→</span>
@@ -215,21 +224,21 @@ export function AboutSection() {
           {SERVICES_PILLARS.map((item) => (
             <TiltedCard
               key={item.title}
-              className="group p-8 sm:p-10 bg-white/75 border border-[#111112]/15 hover:border-[#111112] transition-colors flex flex-col justify-between min-h-[290px]"
+              className="group p-8 sm:p-10 bg-white/80 border border-[#111112]/15 hover:border-[#111112] transition-colors flex flex-col justify-between min-h-[290px]"
             >
               <div style={{ transform: "translateZ(30px)" }}>
                 <div className="flex items-baseline justify-between pb-4 mb-6 border-b border-[#111112]/10">
                   <span className="font-brier italic text-4xl text-[#0055FF]">
                     {item.num}
                   </span>
-                  <span className="font-display text-[11px] font-bold uppercase tracking-widest text-[#111112]/50">
+                  <span className="font-display text-[11px] font-bold uppercase tracking-widest text-[#111112]/75">
                     {item.sub}
                   </span>
                 </div>
                 <h3 className="font-display text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#111112] mb-3">
                   {item.title}
                 </h3>
-                <p className="font-sans text-sm sm:text-base text-[#111112]/70 leading-relaxed">
+                <p className="font-sans text-sm sm:text-base text-[#111112]/80 leading-relaxed">
                   {item.desc}
                 </p>
               </div>
@@ -246,7 +255,8 @@ export function AboutSection() {
                 src="/assets/about/kaiki-candid.webp"
                 alt="Kaiki — Mohammad Rifky Wicaksana"
                 fill
-                sizes="(max-width: 768px) 100vw, 33vw"
+                quality={75}
+                sizes="(max-width: 640px) 360px, (max-width: 1024px) 420px, 450px"
                 className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
               />
               <div
@@ -254,7 +264,7 @@ export function AboutSection() {
                 className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-between p-6 sm:p-8"
               >
                 <div>
-                  <span className="font-brier italic text-base text-[#f4f4ed]/80 block">
+                  <span className="font-brier italic text-base text-[#f4f4ed]/85 block">
                     Behind the screen
                   </span>
                   <p className="font-display text-xl sm:text-2xl font-black uppercase text-[#f4f4ed]">
@@ -271,7 +281,7 @@ export function AboutSection() {
           {/* Right 7 Cols: Personal Hobbies Spread Edge-to-Edge */}
           <div className="lg:col-span-7 space-y-10">
             <div>
-              <span className="font-display text-xs font-extrabold uppercase tracking-[0.2em] text-[#111112]/50 block mb-3">
+              <span className="font-display text-xs font-extrabold uppercase tracking-[0.2em] text-[#111112]/75 block mb-3">
                 Personal Side &amp; Interests
               </span>
               <h3 className="font-display text-4xl sm:text-6xl font-black uppercase text-[#111112] leading-[0.94]">
@@ -294,7 +304,7 @@ export function AboutSection() {
                   <h4 className="font-display text-base font-black uppercase text-[#111112] mb-2">
                     {hobby.title}
                   </h4>
-                  <p className="font-sans text-xs sm:text-sm text-[#111112]/70 leading-relaxed">
+                  <p className="font-sans text-xs sm:text-sm text-[#111112]/80 leading-relaxed">
                     {hobby.detail}
                   </p>
                 </TiltedCard>
@@ -303,7 +313,8 @@ export function AboutSection() {
 
             <div className="pt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#111112]/15">
               <blockquote className="font-brier italic text-2xl sm:text-3xl text-[#111112]">
-                &ldquo;It doesn&rsquo;t matter where you start, it&rsquo;s how you progress from there.&rdquo;
+                &ldquo;It doesn&rsquo;t matter where you start, it&rsquo;s how
+                you progress from there.&rdquo;
               </blockquote>
               <span className="font-brier italic text-3xl text-[#0055FF] shrink-0">
                 Rifky Wicaksana
@@ -311,7 +322,6 @@ export function AboutSection() {
             </div>
           </div>
         </div>
-
       </div>
     </section>
   );

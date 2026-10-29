@@ -29,13 +29,88 @@ export function PortaleSection() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    const state = { p: 0 };
-    let rafId: number;
+    const state = {
+      p: 0,
+      W: typeof window !== "undefined" ? window.innerWidth : 1440,
+      H: typeof window !== "undefined" ? window.innerHeight : 900,
+    };
 
     const ctx = gsap.context(() => {
-      if (!pinRef.current || !cardTurnWrapRef.current || !cardFloatRef.current) return;
+      if (!pinRef.current || !cardTurnWrapRef.current || !cardFloatRef.current)
+        return;
 
-      // Second Screen Reveal Timeline (M4 from Portale Spec)
+      const updatePortal = (p: number) => {
+        if (
+          !bgBoxRef.current ||
+          !lightPlaneRef.current ||
+          !portalPlaneRef.current ||
+          !portalFillRef.current ||
+          !portalRimRef.current ||
+          !heroCopyRef.current ||
+          !readyScreenRef.current
+        )
+          return;
+
+        const W = state.W;
+        const H = state.H;
+
+        const cw = Math.min(W * 0.24, 310);
+        const ch = cw * (1024 / 652);
+        const cx = W * 0.5;
+        const cy = H * 0.5;
+
+        const base: Quad = [
+          { x: cx - cw * 0.48, y: cy - ch * 0.52 },
+          { x: cx + cw * 0.52, y: cy - ch * 0.44 },
+          { x: cx + cw * 0.52, y: cy + ch * 0.46 },
+          { x: cx - cw * 0.48, y: cy + ch * 0.54 },
+        ];
+
+        const d = 1 + 0.18 * inOut(segment(p, 0, 0.7));
+        bgBoxRef.current.style.transform = `scale(${d})`;
+
+        const inPhoto = scaleQuad(base, { x: cx, y: cy }, d);
+        const h =
+          ((inPhoto[3].y - inPhoto[0].y + inPhoto[2].y - inPhoto[1].y) / 2) *
+          1.06;
+        const turned = lerpQuad(
+          inPhoto,
+          rectQuad(cx, cy, (h * 652) / 1024, h),
+          inOut(segment(p, 0, 0.45))
+        );
+
+        const coverH = Math.max(H, (W * 1024) / 652) * 1.25;
+        const cover = rectQuad(W / 2, H / 2, (coverH * 652) / 1024, coverH);
+        const quad = lerpQuad(turned, cover, Math.pow(segment(p, 0.5, 0.82), 3));
+
+        const mat3d = quadToMatrix3d(652, 1024, quad);
+        lightPlaneRef.current.style.transform = mat3d;
+        portalPlaneRef.current.style.transform = mat3d;
+
+        lightPlaneRef.current.style.opacity = String(1 - segment(p, 0.15, 0.45));
+        portalRimRef.current.style.opacity = String(segment(p, 0.08, 0.4));
+        portalFillRef.current.style.opacity = String(segment(p, 0.35, 0.62));
+
+        heroCopyRef.current.style.transform = `translateY(${
+          -120 * segment(p, 0.2, 0.8)
+        }px)`;
+
+        const readyAlpha = segment(p, 0.78, 0.82);
+        readyScreenRef.current.style.opacity = String(readyAlpha);
+        readyScreenRef.current.style.visibility =
+          readyAlpha > 0 ? "visible" : "hidden";
+      };
+
+      // Cache dimensi menggunakan ResizeObserver (Nol Forced Reflow!)
+      const ro = new ResizeObserver(([entry]) => {
+        if (!entry) return;
+        state.W = entry.contentRect.width || window.innerWidth;
+        state.H = entry.contentRect.height || window.innerHeight;
+        updatePortal(state.p);
+      });
+      ro.observe(pinRef.current);
+
+      // Second Screen Reveal Timeline
       const readyTl = gsap.timeline({ paused: true });
       readyTl.fromTo(
         cardTurnWrapRef.current,
@@ -75,7 +150,6 @@ export function PortaleSection() {
         0.18
       );
 
-      // Continuous Floating Motion on the Creator Card
       gsap.to(cardFloatRef.current, {
         yPercent: -2.2,
         rotationZ: 1.2,
@@ -85,21 +159,29 @@ export function PortaleSection() {
         repeat: -1,
       });
 
-      // Pointer 3D Tilt on the Floating Card
-      const rY = gsap.quickTo(cardFloatRef.current, "rotationY", { duration: 0.7, ease: "power2.out" });
-      const rX = gsap.quickTo(cardFloatRef.current, "rotationX", { duration: 0.7, ease: "power2.out" });
-
-      const onMove = (e: PointerEvent) => {
-        const nx = (e.clientX / window.innerWidth - 0.5) * 2;
-        const ny = (e.clientY / window.innerHeight - 0.5) * 2;
-        rY(nx * 10);
-        rX(-ny * 8);
-      };
-      window.addEventListener("pointermove", onMove);
+      const rY = gsap.quickTo(cardFloatRef.current, "rotationY", {
+        duration: 0.7,
+        ease: "power2.out",
+      });
+      const rX = gsap.quickTo(cardFloatRef.current, "rotationX", {
+        duration: 0.7,
+        ease: "power2.out",
+      });
 
       let revealed = false;
 
-      // Pinned ScrollTrigger driving p: 0 -> 1 (M3 from Portale Spec)
+      const onMove = (e: PointerEvent) => {
+        if (!revealed) return;
+        const nx = (e.clientX / state.W - 0.5) * 2;
+        const ny = (e.clientY / state.H - 0.5) * 2;
+        rY(nx * 10);
+        rX(-ny * 8);
+      };
+      window.addEventListener("pointermove", onMove, { passive: true });
+
+      // Render state awal sekali saat mount
+      updatePortal(0);
+
       ScrollTrigger.create({
         trigger: pinRef.current,
         start: "top top",
@@ -109,6 +191,7 @@ export function PortaleSection() {
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           state.p = self.progress;
+          updatePortal(state.p);
           if (state.p >= 0.78 && !revealed) {
             revealed = true;
             readyTl.timeScale(1).play();
@@ -119,72 +202,9 @@ export function PortaleSection() {
         },
       });
 
-      const updatePortal = () => {
-        rafId = requestAnimationFrame(updatePortal);
-        if (
-          !pinRef.current ||
-          !bgBoxRef.current ||
-          !lightPlaneRef.current ||
-          !portalPlaneRef.current ||
-          !portalFillRef.current ||
-          !portalRimRef.current ||
-          !heroCopyRef.current ||
-          !readyScreenRef.current
-        )
-          return;
-
-        const p = state.p;
-        const W = pinRef.current.clientWidth;
-        const H = pinRef.current.clientHeight;
-
-        // Perspective Skewed Glass Monolith Corners in the Center
-        const cw = Math.min(W * 0.24, 310);
-        const ch = cw * (1024 / 652);
-        const cx = W * 0.5;
-        const cy = H * 0.5;
-
-        const base: Quad = [
-          { x: cx - cw * 0.48, y: cy - ch * 0.52 },
-          { x: cx + cw * 0.52, y: cy - ch * 0.44 },
-          { x: cx + cw * 0.52, y: cy + ch * 0.46 },
-          { x: cx - cw * 0.48, y: cy + ch * 0.54 },
-        ];
-
-        const d = 1 + 0.18 * inOut(segment(p, 0, 0.7));
-        bgBoxRef.current.style.transform = `scale(${d})`;
-
-        const inPhoto = scaleQuad(base, { x: cx, y: cy }, d);
-        const h = ((inPhoto[3].y - inPhoto[0].y + inPhoto[2].y - inPhoto[1].y) / 2) * 1.06;
-        const turned = lerpQuad(
-          inPhoto,
-          rectQuad(cx, cy, (h * 652) / 1024, h),
-          inOut(segment(p, 0, 0.45))
-        );
-
-        const coverH = Math.max(H, (W * 1024) / 652) * 1.25;
-        const cover = rectQuad(W / 2, H / 2, (coverH * 652) / 1024, coverH);
-        const quad = lerpQuad(turned, cover, Math.pow(segment(p, 0.5, 0.82), 3));
-
-        const mat3d = quadToMatrix3d(652, 1024, quad);
-        lightPlaneRef.current.style.transform = mat3d;
-        portalPlaneRef.current.style.transform = mat3d;
-
-        lightPlaneRef.current.style.opacity = String(1 - segment(p, 0.15, 0.45));
-        portalRimRef.current.style.opacity = String(segment(p, 0.08, 0.4));
-        portalFillRef.current.style.opacity = String(segment(p, 0.35, 0.62));
-
-        heroCopyRef.current.style.transform = `translateY(${-120 * segment(p, 0.2, 0.8)}px)`;
-
-        const readyAlpha = segment(p, 0.78, 0.82);
-        readyScreenRef.current.style.opacity = String(readyAlpha);
-        readyScreenRef.current.style.visibility = readyAlpha > 0 ? "visible" : "hidden";
-      };
-
-      rafId = requestAnimationFrame(updatePortal);
-
       return () => {
+        ro.disconnect();
         window.removeEventListener("pointermove", onMove);
-        cancelAnimationFrame(rafId);
       };
     }, wrapperRef);
 
@@ -205,7 +225,8 @@ export function PortaleSection() {
           <div
             className="absolute inset-0 opacity-20"
             style={{
-              backgroundImage: "url('/assets/shared/67dbeba158707fa1cd5e5e45_blobs_footer_1.svg')",
+              backgroundImage:
+                "url('/assets/shared/67dbeba158707fa1cd5e5e45_blobs_footer_1.svg')",
               backgroundSize: "cover",
             }}
           />
@@ -228,7 +249,7 @@ export function PortaleSection() {
                   <div className="border border-white/60 rounded-sm" />
                 </div>
                 <span className="font-display text-5xl font-black tracking-tighter">
-                  RW // KAIKI
+                  RW / KAIKI
                 </span>
               </div>
 
@@ -260,7 +281,8 @@ export function PortaleSection() {
             </div>
 
             <p className="font-sans text-base sm:text-lg text-white/80 max-w-md leading-snug">
-              Scroll down to step inside the glass portal — where front-end engineering, visual design, and motion converge.
+              Scroll down to step inside the glass portal — where front-end
+              engineering, visual design, and motion converge.
             </p>
           </div>
         </div>
@@ -287,14 +309,12 @@ export function PortaleSection() {
           ref={readyScreenRef}
           className="absolute inset-0 z-30 bg-[#f4f4ed] text-[#151515] opacity-0 invisible overflow-hidden"
         >
-          {/* Giant Pale Background Wordmark */}
           <div className="absolute inset-x-6 top-1/2 -translate-y-1/2 text-center pointer-events-none select-none">
             <span className="font-display text-[19vw] font-black uppercase tracking-tighter text-[#99B6D2]/20 leading-none">
               KAIKI STUDIO
             </span>
           </div>
 
-          {/* Headline 1 (Sits UNDER the floating 3D card at z-0) */}
           <h3 className="absolute left-6 sm:left-14 top-[14%] sm:top-[16%] z-0 font-display text-5xl sm:text-7xl lg:text-[6.2rem] font-black uppercase tracking-tight text-[#151515] leading-none">
             {"Everything Ready".split(" ").map((w, i) => (
               <span key={i} className="portale-word inline-block mr-4">
@@ -303,19 +323,21 @@ export function PortaleSection() {
             ))}
           </h3>
 
-          {/* Center Floating 3D Creator Card (z-10, between the two headlines!) */}
           <div
             className="absolute left-1/2 top-[46%] -translate-x-1/2 -translate-y-1/2 w-[88vw] max-w-[640px] aspect-[16/10] z-10 pointer-events-none"
             style={{ perspective: "1200px" }}
           >
-            <div ref={cardTurnWrapRef} className="w-full h-full will-change-transform">
+            <div
+              ref={cardTurnWrapRef}
+              className="w-full h-full will-change-transform"
+            >
               <div
                 ref={cardFloatRef}
                 className="w-full h-full rounded-[28px] p-8 sm:p-12 bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#0055FF] text-white shadow-[0_35px_90px_rgba(0,40,120,0.45)] border border-white/30 flex flex-col justify-between will-change-transform"
               >
                 <div className="flex items-center justify-between">
                   <span className="px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md font-display text-xs font-bold uppercase tracking-wider">
-                    Creator Pass // Verified
+                    Creator Pass · Verified
                   </span>
                   <span className="font-display text-3xl font-black tracking-tight">
                     RW
@@ -339,7 +361,6 @@ export function PortaleSection() {
             </div>
           </div>
 
-          {/* Headline 2 (Sits OVER the floating 3D card at z-20!) */}
           <h3 className="absolute right-6 sm:right-14 bottom-[22%] sm:bottom-[20%] z-20 font-display text-5xl sm:text-7xl lg:text-[6.2rem] font-black uppercase tracking-tight text-[#151515] leading-none text-right">
             {"Before You Launch".split(" ").map((w, i) => (
               <span key={i} className="portale-word inline-block ml-4">
@@ -348,11 +369,12 @@ export function PortaleSection() {
             ))}
           </h3>
 
-          {/* Bottom Copy & CTA */}
           <div className="absolute inset-x-6 sm:inset-x-14 bottom-8 z-20 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
             <div className="space-y-4 max-w-md">
               <p className="font-sans text-sm sm:text-base text-[#151515]/80 leading-relaxed">
-                Commission your custom portfolio website, graphic design layouts, and video edits — crafted end-to-end so you launch with confidence.
+                Commission your custom portfolio website, graphic design
+                layouts, and video edits — crafted end-to-end so you launch with
+                confidence.
               </p>
               <a
                 href="#contact"
@@ -363,7 +385,7 @@ export function PortaleSection() {
               </a>
             </div>
 
-            <span className="font-sans text-sm text-[#717171]">
+            <span className="font-sans text-sm text-[#555555]">
               Scroll down for works ↓
             </span>
           </div>
@@ -372,4 +394,3 @@ export function PortaleSection() {
     </div>
   );
 }
-

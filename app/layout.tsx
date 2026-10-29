@@ -1,5 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { bodyFont, displayFont, serifFont } from "@/lib/fonts";
+import {
+  bodyFont,
+  displayFont,
+  serifFont,
+  manropeFont,
+  barcodeFont,
+} from "@/lib/fonts";
 import { SiteShell } from "@/components/layout";
 import "./globals.css";
 
@@ -26,7 +32,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${displayFont.variable} ${bodyFont.variable} ${serifFont.variable}`}>
+    <html
+      lang="en"
+      className={`${displayFont.variable} ${bodyFont.variable} ${serifFont.variable} ${manropeFont.variable} ${barcodeFont.variable}`}
+    >
       <body>
         <SiteShell>{children}</SiteShell>
       </body>

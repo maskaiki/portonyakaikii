@@ -1,16 +1,9 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-
-const FLY_SLOTS = [
-  { id: 1, x: -28, y: -18, image: "/assets/ppt/ppt-1.webp" },
-  { id: 2, x: 28, y: 16, image: "/assets/ppt/ppt-2.webp" },
-  { id: 3, x: -24, y: 20, image: "/assets/ppt/ppt-4.webp" },
-  { id: 4, x: 26, y: -18, image: "/assets/ppt/ppt-5.webp" },
-  { id: 5, x: 0, y: -24, image: "/assets/ppt/ppt-7.webp" },
-  { id: 6, x: 0, y: 24, image: "/assets/ppt/ppt-10.webp" },
-];
+import gsap from "gsap";
+import { startMegaMendungStage } from "@/lib/megaMendungEngine";
 
 const VISUAL_COLLECTION = Array.from({ length: 16 }, (_, i) => ({
   id: i + 1,
@@ -25,109 +18,183 @@ const DOME_ROWS = [
   VISUAL_COLLECTION.slice(12, 16),
 ];
 
+// 14 Lapisan Ekstrusi Z-Axis untuk membentuk dinding 3D pada teks "KAIKI"
+const EXTRUSION_LAYERS = Array.from({ length: 14 }, (_, i) => {
+  const depth = (i + 1) * 2.6;
+  // Gradasi dinding 3D: Ice Cyan rim -> Editorial Cobalt -> Deep Midnight Obsidian
+  const color =
+    i < 2
+      ? "#38bdf8"
+      : i < 6
+      ? "#0055FF"
+      : i < 10
+      ? "#1e3a8a"
+      : "#090d18";
+  return { depth, color };
+});
+
 export function VisualFlyAndDomeShowcase() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const flyCardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const progressRef = useRef(0);
-  const scrollBoostRef = useRef(0);
-  const [isVisible, setIsVisible] = React.useState(false);
+  const megaCanvasRef = useRef<HTMLCanvasElement>(null);
+  const wordmark3DRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [shinePos, setShinePos] = useState({ x: 50, y: 50 });
 
+  // 1. Jalankan Engine Awan Mega Mendung (sama seperti HeroGhostBuddy)
   useEffect(() => {
-    let animId: number;
-    let visible = false;
-    let lastY = window.scrollY;
+    if (!megaCanvasRef.current) return;
+    return startMegaMendungStage(megaCanvasRef.current);
+  }, []);
 
-    const onScroll = () => {
-      if (!visible) return;
-      const dy = Math.abs(window.scrollY - lastY);
-      lastY = window.scrollY;
-      scrollBoostRef.current = Math.min(0.015, dy * 0.00035);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-
-    const animate = () => {
-      if (!visible) return;
-      animId = requestAnimationFrame(animate);
-      progressRef.current = (progressRef.current + 0.0018 + scrollBoostRef.current) % 1;
-      scrollBoostRef.current *= 0.92;
-
-      const total = FLY_SLOTS.length;
-
-      flyCardsRef.current.forEach((el, i) => {
-        if (!el) return;
-        const slot = FLY_SLOTS[i];
-        const t = (progressRef.current + i / total) % 1;
-
-        const scale = 0.22 + Math.pow(t, 1.8) * 1.45;
-        const tx = slot.x * Math.pow(t, 1.25);
-        const ty = slot.y * Math.pow(t, 1.25);
-        const opacity = Math.sin(t * Math.PI);
-
-        el.style.transform = `translate3d(${tx}vw, ${ty}vh, 0px) scale(${scale})`;
-        el.style.opacity = String(Math.max(0, Math.min(1, opacity)));
-        el.style.zIndex = String(Math.round(t * 30));
-      });
-    };
-
+  // 2. Observer Visibilitas & Idle 3D Breathing untuk Teks "KAIKI"
+  useEffect(() => {
     const targetEl = containerRef.current;
+    if (!targetEl) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        visible = entry.isIntersecting;
-        setIsVisible(visible);
-        if (visible) {
-          animId = requestAnimationFrame(animate);
-        } else {
-          cancelAnimationFrame(animId);
-        }
+        setIsVisible(entry.isIntersecting);
       },
       { threshold: 0.05 }
     );
 
-    if (targetEl) observer.observe(targetEl);
-
-    return () => {
-      cancelAnimationFrame(animId);
-      observer.disconnect();
-      window.removeEventListener("scroll", onScroll);
-    };
+    observer.observe(targetEl);
+    return () => observer.disconnect();
   }, []);
+
+  // 3. Interaksi Tilt 3D & Specular Light Sweep pada Teks "KAIKI"
+  const handleStageMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width;
+    const py = (e.clientY - rect.top) / rect.height;
+    const nx = px - 0.5;
+    const ny = py - 0.5;
+
+    setShinePos({ x: px * 100, y: py * 100 });
+
+    if (wordmark3DRef.current) {
+      gsap.to(wordmark3DRef.current, {
+        rotateY: nx * 24,
+        rotateX: -ny * 20,
+        duration: 0.55,
+        ease: "power2.out",
+        transformPerspective: 1400,
+      });
+    }
+  };
+
+  const handleStageMouseLeave = () => {
+    setShinePos({ x: 50, y: 50 });
+    if (wordmark3DRef.current) {
+      gsap.to(wordmark3DRef.current, {
+        rotateY: 0,
+        rotateX: 0,
+        duration: 0.9,
+        ease: "elastic.out(1, 0.5)",
+      });
+    }
+  };
 
   return (
     <div
       ref={containerRef}
       className="relative w-screen left-1/2 -translate-x-1/2 overflow-hidden select-none"
     >
-      {/* PART A: SEAMLESS FULL-BLEED "KAIKI" Z-AXIS FLY-PAST STAGE */}
-      <div className="relative w-full h-[85vh] min-h-[560px] flex items-center justify-center overflow-hidden">
-        <h3 className="relative z-10 font-display text-[21vw] font-black uppercase leading-none tracking-tighter text-[#f4f4ed] pointer-events-none select-none">
-          KAIKI
-        </h3>
+      {/* ── PART A: 3D SCULPTED "KAIKI" MONUMENT & PROCEDURAL MEGA MENDUNG STAGE ── */}
+      <div
+        onMouseMove={handleStageMouseMove}
+        onMouseLeave={handleStageMouseLeave}
+        className="relative w-full h-[88vh] min-h-[600px] flex flex-col items-center justify-center overflow-hidden"
+        style={{ perspective: "1400px" }}
+      >
+        {/* Ambient Center Cobalt & Ice Glow */}
+        <div
+          className="absolute inset-0 pointer-events-none z-0"
+          style={{
+            background:
+              "radial-gradient(circle at 50% 50%, rgba(0,85,255,0.18) 0%, rgba(56,189,248,0.08) 38%, rgba(13,16,23,0) 72%)",
+          }}
+        />
 
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
-          {FLY_SLOTS.map((slot, idx) => (
-            <div
-              key={slot.id}
-              ref={(el) => {
-                flyCardsRef.current[idx] = el;
-              }}
+        {/* LAYER 1 (z-10): Procedural Glass Mega Mendung Clouds Canvas (Flanking Edges) */}
+        <canvas
+          ref={megaCanvasRef}
+          className="absolute inset-0 w-full h-full z-10 pointer-events-auto"
+          style={{ width: "100%", height: "100%" }}
+          aria-label="Interactive Glass Mega Mendung Clouds framing the 3D KAIKI monument"
+        />
+
+        {/* LAYER 2 (z-20): 3D Extruded & Textured "KAIKI" Wordmark */}
+        <div className="relative z-20 pointer-events-none flex flex-col items-center justify-center px-4">
+          <span className="font-brier italic text-lg sm:text-2xl text-[#38bdf8] tracking-wide mb-2 sm:mb-4 drop-shadow-[0_4px_20px_rgba(0,85,255,0.6)]">
+            Crafted in Malang, Indonesia
+          </span>
+
+          <div
+            ref={wordmark3DRef}
+            className="relative flex items-center justify-center will-change-transform"
+            style={{
+              transformStyle: "preserve-3d",
+              transform: "rotateX(6deg) rotateY(-8deg)",
+            }}
+          >
+            {/* Deep 3D Ambient Floor Shadow Plane */}
+            <span
+              aria-hidden="true"
+              className="absolute font-display text-[20vw] sm:text-[21vw] font-black uppercase leading-none tracking-tighter text-black/80 blur-2xl select-none"
               style={{
-                backfaceVisibility: "hidden",
-                WebkitBackfaceVisibility: "hidden",
+                transform: "translateZ(-56px) translateY(24px) scale(0.98)",
               }}
-              className="absolute w-[220px] sm:w-[300px] aspect-video rounded-[20px] bg-[#141824] border border-white/25 shadow-[0_24px_60px_rgba(0,0,0,0.85)] overflow-hidden will-change-transform"
             >
-              <Image
-                src={slot.image}
-                alt=""
-                fill
-                sizes="(max-width: 768px) 220px, 300px"
-                className="w-full h-full object-cover block"
-              />
-            </div>
-          ))}
+              KAIKI
+            </span>
+
+            {/* 14 Stepped 3D Z-Extrusion Side Walls */}
+            {EXTRUSION_LAYERS.map((layer, idx) => (
+              <span
+                key={idx}
+                aria-hidden="true"
+                className="absolute font-display text-[20vw] sm:text-[21vw] font-black uppercase leading-none tracking-tighter select-none"
+                style={{
+                  color: layer.color,
+                  transform: `translateZ(-${layer.depth}px)`,
+                  WebkitTextStroke:
+                    idx === 0
+                      ? "2px rgba(186,230,253,0.75)"
+                      : "1px rgba(15,23,42,0.5)",
+                  textShadow:
+                    idx === EXTRUSION_LAYERS.length - 1
+                      ? "0 28px 65px rgba(0, 85, 255, 0.45)"
+                      : "none",
+                }}
+              >
+                KAIKI
+              </span>
+            ))}
+
+            {/* Front Chiseled 3D Textured Face (Metallic Bone + Liquid Glass Scanlines + Dynamic Cursor Specular) */}
+            <h3
+              className="relative font-display text-[20vw] sm:text-[21vw] font-black uppercase leading-none tracking-tighter select-none"
+              style={{
+                transform: "translateZ(4px)",
+                backgroundImage: `
+                  radial-gradient(circle at ${shinePos.x}% ${shinePos.y}%, rgba(255,255,255,0.98) 0%, rgba(186,230,253,0.75) 22%, rgba(244,244,237,0) 52%),
+                  repeating-linear-gradient(135deg, rgba(255,255,255,0.16) 0px, rgba(255,255,255,0.16) 2px, rgba(0,85,255,0.12) 2px, rgba(0,85,255,0.12) 6px),
+                  linear-gradient(180deg, #ffffff 0%, #f4f4ed 36%, #bae6fd 68%, #38bdf8 86%, #f4f4ed 100%)
+                `,
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                color: "transparent",
+                WebkitTextStroke: "1.5px rgba(255,255,255,0.78)",
+                filter: "drop-shadow(0 4px 12px rgba(0,85,255,0.35))",
+              }}
+            >
+              KAIKI
+            </h3>
+          </div>
         </div>
 
+        {/* Top & Bottom Seamless Vignette Blends */}
         <div
           className="absolute inset-0 pointer-events-none z-30"
           style={{
@@ -137,7 +204,7 @@ export function VisualFlyAndDomeShowcase() {
         />
       </div>
 
-      {/* PART B: SEAMLESS FULL-BLEED 16-VISUAL FISHEYE DOME WALL */}
+      {/* ── PART B: SEAMLESS FULL-BLEED 16-VISUAL FISHEYE DOME WALL ── */}
       <div className="relative w-full h-[90vh] min-h-[620px] flex items-center justify-center overflow-hidden">
         <div
           className="absolute inset-0 flex flex-col justify-center gap-4 sm:gap-5 py-4 scale-105"

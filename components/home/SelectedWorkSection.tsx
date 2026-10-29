@@ -589,7 +589,15 @@ export function SelectedWorkSection() {
                   loop
                   playsInline
                   className="w-full h-full object-cover"
-                />
+                >
+                  <track
+                    kind="captions"
+                    src="data:text/vtt;charset=utf-8,WEBVTT"
+                    srcLang="en"
+                    label="English"
+                    default
+                  />
+                </video>
 
                 {!isPlaying && (
                   <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-6 text-center">

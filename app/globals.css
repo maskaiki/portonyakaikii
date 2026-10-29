@@ -1,12 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Libre+Barcode+128&family=Manrope:wght@200..800&display=swap");
 @import "tailwindcss";
 
 .font-manrope {
-  font-family: 'Manrope', var(--font-display), sans-serif;
+  font-family: var(--font-manrope), var(--font-display), sans-serif;
 }
 
 .font-barcode {
-  font-family: 'Libre Barcode 128', monospace;
+  font-family: var(--font-barcode), monospace;
 }
 
 .negative-blend {
@@ -122,13 +121,12 @@ body::before {
 }
 
 :where(a) {
-  color: var(--accent-blue);
   text-decoration: none;
   transition: color var(--duration-fast) var(--ease-standard);
 }
 
 :where(a:hover) {
-  color: var(--text-primary);
+  opacity: 0.92;
 }
 
 :where(button) {

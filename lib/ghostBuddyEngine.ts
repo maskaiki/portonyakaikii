@@ -752,6 +752,10 @@ export function startGhostBuddy(canvas: HTMLCanvasElement): () => void {
   };
 
   resize();
+  if (w.view.W > 0 && w.view.H > 0) {
+    update(w, 0.016);
+    draw(w);
+  }
   requestAnimationFrame(resize);
 
   const ro = new ResizeObserver(resize);
@@ -831,25 +835,63 @@ export function startGhostBuddy(canvas: HTMLCanvasElement): () => void {
   document.addEventListener("pointerleave", onLeave);
 
   let isVisible = true;
-  const io = new IntersectionObserver(([e]) => {
-    isVisible = e.isIntersecting;
-  });
-  io.observe(canvas);
-
+  let isLooping = false;
+  let raf = 0;
   let last = performance.now();
-  let raf = requestAnimationFrame(loop);
+
   function loop(now: number) {
+    if (!isVisible) {
+      raf = 0;
+      return;
+    }
     const dt = Math.min(0.033, Math.max(0.001, (now - last) / 1000));
     last = now;
-    if (isVisible && w.view.W > 0 && w.view.H > 0) {
+    if (w.view.W > 0 && w.view.H > 0) {
       update(w, dt);
       draw(w);
     }
     raf = requestAnimationFrame(loop);
   }
 
+  const startLoop = () => {
+    if (isLooping) return;
+    isLooping = true;
+    removeActivationListeners();
+    if (isVisible && !raf) {
+      last = performance.now();
+      raf = requestAnimationFrame(loop);
+    }
+  };
+
+  const activationEvents = ["pointermove", "pointerdown", "touchstart", "scroll", "wheel", "keydown"] as const;
+  const removeActivationListeners = () => {
+    clearTimeout(idleTimer);
+    activationEvents.forEach((evt) => {
+      window.removeEventListener(evt, startLoop);
+    });
+  };
+
+  activationEvents.forEach((evt) => {
+    window.addEventListener(evt, startLoop, { passive: true, once: true });
+  });
+
+  const idleTimer = setTimeout(startLoop, 4000);
+
+  const io = new IntersectionObserver(([e]) => {
+    isVisible = e.isIntersecting;
+    if (isVisible && isLooping && !raf) {
+      last = performance.now();
+      raf = requestAnimationFrame(loop);
+    } else if (!isVisible && raf) {
+      cancelAnimationFrame(raf);
+      raf = 0;
+    }
+  });
+  io.observe(canvas);
+
   return () => {
-    cancelAnimationFrame(raf);
+    removeActivationListeners();
+    if (raf) cancelAnimationFrame(raf);
     ro.disconnect();
     io.disconnect();
     window.removeEventListener("resize", resize);

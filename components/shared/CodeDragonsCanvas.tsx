@@ -3,58 +3,52 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-// Generate 1024x1024 Emissive Binary Code & Circuitry Texture (Exact match to reference dragon!)
 function createCyberCodeTexture(glowHex: string): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
-  canvas.width = 1024;
-  canvas.height = 1024;
+  canvas.width = 512;
+  canvas.height = 512;
   const ctx = canvas.getContext("2d")!;
 
   ctx.fillStyle = "#000000";
-  ctx.fillRect(0, 0, 1024, 1024);
+  ctx.fillRect(0, 0, 512, 512);
 
   ctx.strokeStyle = glowHex;
   ctx.fillStyle = glowHex;
-  ctx.shadowColor = glowHex;
-  ctx.shadowBlur = 8;
+  // Tanpa ctx.shadowBlur (karena material Three.js sudah memakai emissiveIntensity tinggi!)
 
-  // 1. Glowing PCB Circuit Traces & Nodes
-  ctx.lineWidth = 3.5;
-  for (let i = 0; i < 42; i++) {
-    const x1 = (i * 97) % 1024;
-    const y1 = (i * 131) % 1024;
-    const x2 = x1 + ((i % 2 === 0 ? 1 : -1) * 120);
-    const y2 = y1 + 140;
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 24; i++) {
+    const x1 = (i * 53) % 512;
+    const y1 = (i * 71) % 512;
+    const x2 = x1 + (i % 2 === 0 ? 1 : -1) * 60;
+    const y2 = y1 + 70;
 
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y1);
-    ctx.lineTo(x2 + 45, y2);
+    ctx.lineTo(x2 + 22, y2);
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.arc(x1, y1, 5.5, 0, Math.PI * 2);
-    ctx.arc(x2 + 45, y2, 5.5, 0, Math.PI * 2);
+    ctx.arc(x1, y1, 3, 0, Math.PI * 2);
+    ctx.arc(x2 + 22, y2, 3, 0, Math.PI * 2);
     ctx.fill();
   }
 
-  // 2. Glowing Binary Matrix Columns & Code Snippets on Wing & Armor UV Regions
-  ctx.font = "bold 20px monospace";
+  ctx.font = "bold 12px monospace";
   const snippets = [
-    "1 0 1 1 0 1 0",
-    "0 1 1 0 1 1 1",
-    "1 1 0 0 1 0 1",
-    "system(node+1){",
+    "1 0 1 1 0 1",
+    "0 1 1 0 1 1",
+    "system(node){",
     "  return 1;",
     "}",
-    "0 0 1 0 1 1 0",
-    "init_core(0x1);",
+    "init_core();",
   ];
 
-  for (let col = 0; col < 16; col++) {
-    for (let row = 0; row < 28; row++) {
+  for (let col = 0; col < 8; col++) {
+    for (let row = 0; row < 14; row++) {
       const text = snippets[(col + row) % snippets.length];
-      ctx.fillText(text, col * 64 + 8, row * 36 + 24);
+      ctx.fillText(text, col * 64 + 6, row * 36 + 18);
     }
   }
 
@@ -544,25 +538,40 @@ export function CodeDragonsCanvas() {
     ];
 
     const clock = new THREE.Clock();
-    let animId: number;
+    let animId: number = 0;
+    let isRunning = false;
     let isTabVisible = !document.hidden;
+
+    const startLoopIfNeeded = () => {
+      if (!isRunning && isTabVisible && window.scrollY <= 3800) {
+        isRunning = true;
+        animId = requestAnimationFrame(animate);
+      }
+    };
+
+    const onScroll = () => {
+      if (window.scrollY <= 3800) {
+        startLoopIfNeeded();
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     const onVisibilityChange = () => {
       isTabVisible = !document.hidden;
+      if (isTabVisible) {
+        startLoopIfNeeded();
+      }
     };
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     const animate = () => {
-      animId = requestAnimationFrame(animate);
-      if (!isTabVisible) return;
-
-      const scrollY = window.scrollY;
-
-      // When user scrolled past dragons' flight altitudes, skip rendering
-      if (scrollY > 3800) {
+      if (!isTabVisible || window.scrollY > 3800) {
+        isRunning = false;
         return;
       }
+      animId = requestAnimationFrame(animate);
 
+      const scrollY = window.scrollY;
       const t = clock.getElapsedTime();
 
       for (const f of flights) {
@@ -636,7 +645,7 @@ export function CodeDragonsCanvas() {
       renderer.render(scene, camera);
     };
 
-    animId = requestAnimationFrame(animate);
+    startLoopIfNeeded();
 
     const onResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -646,8 +655,10 @@ export function CodeDragonsCanvas() {
     window.addEventListener("resize", onResize);
 
     return () => {
+      isRunning = false;
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       renderer.dispose();
       if (container.contains(renderer.domElement)) {

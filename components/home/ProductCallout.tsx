@@ -48,7 +48,7 @@ export function ProductCallout({ className = "" }: ProductCalloutProps) {
       {/* Clean Storm Lab Architectural Glass Card */}
       <div
         onClick={() => setActiveIdx((prev) => (prev + 1) % DISCIPLINES.length)}
-        className="relative w-48 sm:w-52 p-4 border border-white/85 bg-white/45 backdrop-blur-xl cursor-pointer transition-all duration-300 hover:bg-white/65 shadow-[0_16px_40px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(255,255,255,0.9)]"
+        className="relative w-48 sm:w-52 p-4 border border-white/85 bg-white/55 backdrop-blur-xl cursor-pointer transition-colors duration-300 hover:bg-white/75 shadow-[0_16px_40px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(255,255,255,0.9)]"
       >
         {/* Storm Lab Top-Right Solid Square Tick */}
         <div
@@ -56,9 +56,9 @@ export function ProductCallout({ className = "" }: ProductCalloutProps) {
           aria-hidden="true"
         />
 
-        <div className="flex items-baseline justify-between border-b border-[#111112]/10 pb-2 mb-3">
-          <span className="font-display text-[10px] font-extrabold tracking-[0.16em] uppercase text-[#111112]/50">
-             Focus Area
+        <div className="flex items-baseline justify-between border-b border-[#111112]/15 pb-2 mb-3">
+          <span className="font-display text-[10px] font-extrabold tracking-[0.16em] uppercase text-[#111112]/75">
+            Focus Area
           </span>
           <span className="font-brier italic text-sm text-[#111112]">
             {current.index}
@@ -77,19 +77,22 @@ export function ProductCallout({ className = "" }: ProductCalloutProps) {
               <p className="font-display text-sm font-black uppercase text-[#111112] tracking-tight leading-none">
                 {current.title}
               </p>
-              <p className="font-sans text-[11px] text-[#111112]/65 mt-1">
+              <p className="font-sans text-[11px] text-[#111112]/75 mt-1">
                 {current.sub}
               </p>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <div className="flex items-center gap-1.5 mt-3 pt-2 border-t border-[#111112]/10">
+        {/* GPU-Composited scaleX indicator (Zero non-composited width animations!) */}
+        <div className="flex items-center gap-1.5 mt-3 pt-2 border-t border-[#111112]/15">
           {DISCIPLINES.map((_, i) => (
             <span
               key={i}
-              className={`h-[2px] transition-all duration-300 ${
-                i === activeIdx ? "w-6 bg-[#111112]" : "w-2 bg-[#111112]/20"
+              className={`h-[2px] w-6 origin-left transition-transform duration-300 will-change-transform ${
+                i === activeIdx
+                  ? "scale-x-100 bg-[#111112]"
+                  : "scale-x-[0.35] bg-[#111112]/30"
               }`}
             />
           ))}

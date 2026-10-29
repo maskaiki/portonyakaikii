@@ -116,7 +116,7 @@ export function Footer() {
 
               <a
                 href={`mailto:${email}`}
-                className="inline-flex items-center gap-2 px-7 py-4 bg-[#18181a] border border-white/20 hover:border-white text-xs font-display font-extrabold uppercase tracking-wider text-[#f4f4ed] transition-colors"
+                className="inline-flex items-center gap-2 px-7 py-4 bg-[#18181a] border border-white/20 hover:border-white text-xs font-display font-extrabold uppercase tracking-wider !text-[#f4f4ed] transition-colors"
               >
                 <span>Send Email</span>
                 <span>↗</span>

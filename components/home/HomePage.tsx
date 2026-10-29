@@ -1,13 +1,29 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Hero } from "./Hero";
 import { TickerSection } from "./TickerSection";
 import { AboutSection } from "./AboutSection";
-import { PortaleSection } from "./PortaleSection";
-import { SelectedWorkSection } from "./SelectedWorkSection";
-import { CatWorkflowSection } from "./CatWorkflowSection";
-import { ArsenalSection } from "./ArsenalSection";
-import { JourneySection } from "./JourneySection";
+
+const PortaleSection = dynamic(() =>
+  import("./PortaleSection").then((m) => ({ default: m.PortaleSection }))
+);
+const SelectedWorkSection = dynamic(() =>
+  import("./SelectedWorkSection").then((m) => ({
+    default: m.SelectedWorkSection,
+  }))
+);
+const CatWorkflowSection = dynamic(() =>
+  import("./CatWorkflowSection").then((m) => ({
+    default: m.CatWorkflowSection,
+  }))
+);
+const ArsenalSection = dynamic(() =>
+  import("./ArsenalSection").then((m) => ({ default: m.ArsenalSection }))
+);
+const JourneySection = dynamic(() =>
+  import("./JourneySection").then((m) => ({ default: m.JourneySection }))
+);
 
 export default function HomePage() {
   return (
@@ -24,7 +40,7 @@ export default function HomePage() {
       {/* Portale 3D Glass Portal & Creator Card Transition */}
       <PortaleSection />
 
-      {/* 03. WORK — 3 Webs, 10 Graphic Designs (3D), 1 Video Edit */}
+      {/* 03. WORK — 3 Webs, 10 Graphic Designs (3D), 1 Video Edit & Mega Mendung KAIKI */}
       <SelectedWorkSection />
 
       {/* Cat Workflow 10.5s Motion Explainer */}

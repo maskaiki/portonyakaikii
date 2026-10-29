@@ -3,9 +3,9 @@
 import { useEffect, useRef } from "react";
 
 interface RainSimulationCanvasProps {
-  intensity: number; // 0 - 100
-  speed: number;     // 0 - 100
-  size: number;      // 0 - 100
+  intensity: number;
+  speed: number;
+  size: number;
   isPaused: boolean;
   onWetnessChange?: (wetness: number) => void;
   className?: string;
@@ -18,7 +18,7 @@ interface Drop {
   len: number;
   width: number;
   opacity: number;
-  layer: number; // 0: background, 1: midground (collides), 2: foreground
+  layer: number;
   angleSin: number;
   angleCos: number;
   active: boolean;
@@ -57,7 +57,6 @@ interface ImpactRing {
   active: boolean;
 }
 
-// Storm Lab Wetness Shedding Model (ported 1:1 from class h0 in NFengine.tsx)
 class StormWetnessModel {
   value = 0;
   pendingWater = 0;
@@ -112,17 +111,17 @@ export function RainSimulationCanvas({
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
-    let animationFrameId: number;
+    let animationFrameId = 0;
     let width = 0;
     let height = 0;
 
     const handleResize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       width = canvas.parentElement?.clientWidth || window.innerWidth;
       height = canvas.parentElement?.clientHeight || window.innerHeight;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
-      ctx.scale(dpr, dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
     handleResize();
@@ -131,13 +130,11 @@ export function RainSimulationCanvas({
       resizeObserver.observe(canvas.parentElement);
     }
 
-    // Trajectory vector matching NFengine: _s = (-0.55, -1, -0.3).normalize()
-    // In 2D: normalized angle with dx = -0.481, dy = 0.877 (~28.8° slant downwards to the left)
     const BASE_ANGLE_SIN = -0.481;
     const BASE_ANGLE_COS = Math.sqrt(1 - BASE_ANGLE_SIN * BASE_ANGLE_SIN);
 
-    // Optimized pool sizes for smooth 60fps execution
-    const MAX_DROPS = 340;
+    const isMobile = width < 768;
+    const MAX_DROPS = isMobile ? 160 : 320;
     const drops: Drop[] = [];
     for (let i = 0; i < MAX_DROPS; i++) {
       drops.push({
@@ -154,7 +151,7 @@ export function RainSimulationCanvas({
       });
     }
 
-    const MAX_SPLASHES = 320;
+    const MAX_SPLASHES = isMobile ? 120 : 280;
     const splashes: Splash[] = [];
     for (let i = 0; i < MAX_SPLASHES; i++) {
       splashes.push({
@@ -171,7 +168,7 @@ export function RainSimulationCanvas({
       });
     }
 
-    const MAX_BEADS = 160;
+    const MAX_BEADS = isMobile ? 60 : 140;
     const beads: Bead[] = [];
     for (let i = 0; i < MAX_BEADS; i++) {
       beads.push({
@@ -186,7 +183,7 @@ export function RainSimulationCanvas({
       });
     }
 
-    const MAX_RINGS = 80;
+    const MAX_RINGS = 60;
     const rings: ImpactRing[] = [];
     for (let i = 0; i < MAX_RINGS; i++) {
       rings.push({
@@ -204,11 +201,10 @@ export function RainSimulationCanvas({
     let ringCursor = 0;
 
     const wetnessModel = wetnessModelRef.current;
-    // Set exposure based on NFengine formula: t/100 * (.3 + n/100 * .7) * (.5 + i/100)
-    const exposure = (intensity / 100) * (0.3 + (speed / 100) * 0.7) * (0.5 + size / 100);
+    const exposure =
+      (intensity / 100) * (0.3 + (speed / 100) * 0.7) * (0.5 + size / 100);
     wetnessModel.setExposure(exposure);
 
-    // Burst generator on body hit (reflecting Storm Lab's burst() method)
     const spawnBodyHit = (
       x: number,
       y: number,
@@ -217,52 +213,46 @@ export function RainSimulationCanvas({
       dropWidth: number,
       dropSpeedScale: number
     ) => {
-      // Impact wetness model
       wetnessModel.impact(0.025 + (size / 100) * 0.075 * 1.5);
 
-      // 1. Spatter droplets (4 to 8 particles bouncing off normal)
-      const splashCount = 4 + Math.round(size / 25);
+      const splashCount = 3 + Math.round(size / 30);
       for (let i = 0; i < splashCount; i++) {
         const s = splashes[splashCursor % MAX_SPLASHES];
         splashCursor++;
 
-        // Tangent perpendicular to normal
         const tanX = -normY;
         const tanY = normX;
         const spread = (Math.random() - 0.5) * 4.2;
         const bounce = (Math.random() * 2.6 + 1.2) * dropSpeedScale;
 
-        // Bounces off surface normal + wind push
         s.x = x + normX * 2;
         s.y = y + normY * 2;
         s.vx = normX * bounce + tanX * spread - 0.6;
-        s.vy = normY * bounce + tanY * spread - 1.4; // upward arc against gravity
+        s.vy = normY * bounce + tanY * spread - 1.4;
         s.life = 0;
         s.maxLife = Math.random() * 24 + 14;
         s.size = (Math.random() * 1.8 + 1.2) * (dropWidth / 2);
         s.opacity = 0.75 + Math.random() * 0.25;
         s.color =
           Math.random() < 0.6
-            ? "rgba(0, 210, 255, 0.9)" // electric cyan droplet
-            : "rgba(225, 245, 255, 0.95)"; // bright water gleam
+            ? "rgba(0, 210, 255, 0.9)"
+            : "rgba(225, 245, 255, 0.95)";
         s.active = true;
       }
 
-      // 2. Surface Bead (clinging droplet that slides down subject's body)
-      if (Math.random() < 0.75) {
+      if (Math.random() < 0.65) {
         const b = beads[beadCursor % MAX_BEADS];
         beadCursor++;
         b.x = x + (Math.random() - 0.5) * 6;
         b.y = y + (Math.random() - 0.5) * 4;
-        b.slideSpeed = Math.random() * 18 + 8; // slides downwards
+        b.slideSpeed = Math.random() * 18 + 8;
         b.life = 0;
-        b.maxLife = Math.random() * 45 + 30; // lasts 0.8 - 1.4s
+        b.maxLife = Math.random() * 45 + 30;
         b.radius = Math.random() * 2.2 + 1.4;
         b.opacity = 0.85;
         b.active = true;
       }
 
-      // 3. Impact Ripple Ring
       const r = rings[ringCursor % MAX_RINGS];
       ringCursor++;
       r.x = x;
@@ -274,62 +264,53 @@ export function RainSimulationCanvas({
     };
 
     let lastTime = performance.now();
-    let spawnAccumulator = 0;
+    let spawnAccumulator = 24; // Pre-seed initial drops for frame 0
     let uiTimer = 0;
     let isVisible = true;
+    let isLoopActive = false;
 
-    const render = (now: number) => {
-      if (!isVisible) return;
-      animationFrameId = requestAnimationFrame(render);
-      if (isPaused) return;
-
-      const dt = Math.min((now - lastTime) / 1000, 0.1);
-      lastTime = now;
-
+    const stepSimulation = (dt: number) => {
       ctx.clearRect(0, 0, width, height);
 
       const normalizedIntensity = intensity / 100;
       const normalizedSpeed = speed / 100;
       const normalizedSize = size / 100;
 
-      // Dynamics formulas aligned with NFengine.tsx
       const targetActiveDrops = Math.floor(normalizedIntensity * MAX_DROPS);
-      const baseVelocity = 680 + normalizedSpeed * 1150; // punchy, crisp speed
-      const baseLength = 28 + normalizedSize * 48 + normalizedSpeed * 22; // visible aerodynamic streaks
-      const baseThickness = 1.8 + normalizedSize * 3.0; // rich, impactful droplet thickness
+      const baseVelocity = 680 + normalizedSpeed * 1150;
+      const baseLength = 28 + normalizedSize * 48 + normalizedSpeed * 22;
+      const baseThickness = 1.8 + normalizedSize * 3.0;
 
-      // Silhouette geometry of Kaiki's portrait for collision
       const centerX = width * 0.5;
-      const portraitTopY = height * 0.07; // head top
+      const portraitTopY = height * 0.07;
       const headHeight = height * 0.17;
-      const headRadius = width * 0.082; // rounded head dome
+      const headRadius = width * 0.082;
       const neckRadius = width * 0.06;
       const shoulderTopY = portraitTopY + headHeight + height * 0.04;
       const shoulderBottomY = shoulderTopY + height * 0.16;
-      const shoulderMaxRadius = width * 0.245; // wide shoulders
+      const shoulderMaxRadius = width * 0.245;
       const torsoRadius = width * 0.25;
 
-      // Spawn rain drops continuously
       spawnAccumulator += targetActiveDrops * dt * 2.0;
       while (spawnAccumulator > 1) {
         spawnAccumulator -= 1;
         const freeDrop = drops.find((d) => !d.active);
         if (freeDrop) {
-          // Layer depth: 0: Far background, 1: Midground (body hit), 2: Foreground
           const randLayer = Math.random();
           freeDrop.layer = randLayer < 0.25 ? 0 : randLayer < 0.82 ? 1 : 2;
 
-          const layerScale = freeDrop.layer === 0 ? 0.65 : freeDrop.layer === 1 ? 1.0 : 1.45;
+          const layerScale =
+            freeDrop.layer === 0 ? 0.65 : freeDrop.layer === 1 ? 1.0 : 1.45;
           const individualVariation = 0.75 + Math.random() * 0.5;
 
-          // Storm Lab wind angle: ~ -28.8° + slight individual variation
           const windAngle = BASE_ANGLE_SIN + (Math.random() - 0.5) * 0.07;
           freeDrop.angleSin = windAngle;
           freeDrop.angleCos = Math.sqrt(1 - windAngle * windAngle);
 
-          // Spawn across top and right field
           freeDrop.x = Math.random() * (width + 550) - 100;
-          freeDrop.y = -baseLength * layerScale - Math.random() * 80;
+          freeDrop.y = isLoopActive
+            ? -baseLength * layerScale - Math.random() * 80
+            : Math.random() * height * 0.85;
 
           freeDrop.speed = baseVelocity * layerScale * individualVariation;
           freeDrop.len = baseLength * layerScale * individualVariation;
@@ -345,7 +326,6 @@ export function RainSimulationCanvas({
         }
       }
 
-      // ── Update & Render Drops ──────────────────────────────────────
       ctx.lineCap = "round";
       for (const d of drops) {
         if (!d.active) continue;
@@ -355,50 +335,51 @@ export function RainSimulationCanvas({
         d.x += d.angleSin * dist;
         d.y += d.angleCos * dist;
 
-        // Collision Check (Midground drops only hit Kaiki's physical body)
         if (d.layer === 1 && d.y >= portraitTopY && d.y <= height) {
           const dxFromCenter = Math.abs(d.x - centerX);
           let isHit = false;
           let normX = 0;
           let normY = -1;
 
-          // 1. Head dome
           if (d.y <= portraitTopY + headHeight) {
-            const dyHead = (d.y - (portraitTopY + headHeight * 0.5)) / (headHeight * 0.5);
+            const dyHead =
+              (d.y - (portraitTopY + headHeight * 0.5)) / (headHeight * 0.5);
             const dxHead = dxFromCenter / headRadius;
-            if (dxHead * dxHead + dyHead * dyHead <= 1.05 && prevY <= portraitTopY + headHeight) {
+            if (
+              dxHead * dxHead + dyHead * dyHead <= 1.05 &&
+              prevY <= portraitTopY + headHeight
+            ) {
               isHit = true;
               normX = (d.x - centerX) / headRadius;
               normY = -0.85;
             }
-          }
-          // 2. Sloped Shoulders
-          else if (d.y > portraitTopY + headHeight && d.y <= shoulderBottomY) {
-            const shoulderProgress = (d.y - shoulderTopY) / (shoulderBottomY - shoulderTopY);
+          } else if (
+            d.y > portraitTopY + headHeight &&
+            d.y <= shoulderBottomY
+          ) {
+            const shoulderProgress =
+              (d.y - shoulderTopY) / (shoulderBottomY - shoulderTopY);
             const currentShoulderWidth =
-              neckRadius + (shoulderMaxRadius - neckRadius) * Math.min(1, Math.max(0, shoulderProgress));
+              neckRadius +
+              (shoulderMaxRadius - neckRadius) *
+                Math.min(1, Math.max(0, shoulderProgress));
 
             if (dxFromCenter <= currentShoulderWidth && prevY <= d.y) {
               isHit = true;
-              normX = (d.x - centerX) > 0 ? 0.7 : -0.7;
+              normX = d.x - centerX > 0 ? 0.7 : -0.7;
               normY = -0.7;
             }
-          }
-          // 3. Upper Torso & Chest / Shirt (gentle impact rate to keep portrait pristine)
-          else if (d.y > shoulderBottomY && d.y <= height) {
-            if (dxFromCenter <= torsoRadius) {
-              if (Math.random() < 0.05) {
-                isHit = true;
-                normX = (d.x - centerX) > 0 ? 0.3 : -0.3;
-                normY = -0.95;
-              }
+          } else if (d.y > shoulderBottomY && d.y <= height) {
+            if (dxFromCenter <= torsoRadius && Math.random() < 0.05) {
+              isHit = true;
+              normX = d.x - centerX > 0 ? 0.3 : -0.3;
+              normY = -0.95;
             }
           }
 
           if (isHit) {
             d.active = false;
-            const isTorsoHit = d.y > shoulderBottomY;
-            if (isTorsoHit) {
+            if (d.y > shoulderBottomY) {
               const s = splashes[splashCursor % MAX_SPLASHES];
               splashCursor++;
               s.x = d.x;
@@ -412,13 +393,19 @@ export function RainSimulationCanvas({
               s.color = "rgba(0, 210, 255, 0.7)";
               s.active = true;
             } else {
-              spawnBodyHit(d.x, d.y, normX, normY, d.width, d.speed / baseVelocity);
+              spawnBodyHit(
+                d.x,
+                d.y,
+                normX,
+                normY,
+                d.width,
+                d.speed / baseVelocity
+              );
             }
             continue;
           }
         }
 
-        // Out of bounds
         if (d.y > height + d.len || d.x < -150) {
           d.active = false;
           if (d.y >= height && Math.random() < 0.3) {
@@ -427,7 +414,6 @@ export function RainSimulationCanvas({
           continue;
         }
 
-        // Draw Rain Streak with tapered aerodynamic gradient
         const headX = d.x;
         const headY = d.y;
         const tailX = d.x - d.angleSin * d.len;
@@ -446,87 +432,79 @@ export function RainSimulationCanvas({
         ctx.lineTo(headX, headY);
         ctx.stroke();
 
-        // Droplet Head Bead (glistening spherical water point at leading edge)
         if (d.width > 2.0) {
           ctx.fillStyle = `rgba(0, 210, 255, ${d.opacity * 0.85})`;
           ctx.beginPath();
           ctx.arc(headX, headY, d.width * 0.7, 0, Math.PI * 2);
           ctx.fill();
 
-          // Shiny water glint dot
           ctx.fillStyle = `rgba(230, 250, 255, ${d.opacity * 0.95})`;
           ctx.beginPath();
-          ctx.arc(headX - d.width * 0.2, headY - d.width * 0.2, d.width * 0.3, 0, Math.PI * 2);
+          ctx.arc(
+            headX - d.width * 0.2,
+            headY - d.width * 0.2,
+            d.width * 0.3,
+            0,
+            Math.PI * 2
+          );
           ctx.fill();
         }
       }
 
-      // ── Update & Render Splashes ──────────────────────────────────
       for (const s of splashes) {
         if (!s.active) continue;
-
         s.life += dt * 60;
         if (s.life >= s.maxLife) {
           s.active = false;
           continue;
         }
-
         s.x += s.vx;
         s.y += s.vy;
-        s.vy += 0.36; // gravity arc downward
-
+        s.vy += 0.36;
         const progress = s.life / s.maxLife;
         const alpha = Math.max(0, (1 - progress) * s.opacity);
         const currentSize = s.size * (1 - progress * 0.4);
-
         ctx.fillStyle = s.color.replace(/[\d.]+\)$/, `${alpha})`);
         ctx.beginPath();
         ctx.arc(s.x, s.y, currentSize, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // ── Update & Render Surface Water Beads ───────────────────────
       for (const b of beads) {
         if (!b.active) continue;
-
         b.life += dt * 60;
         if (b.life >= b.maxLife) {
           b.active = false;
           continue;
         }
-
-        // Slides down along gravity
         b.y += b.slideSpeed * dt;
-        b.x += (Math.random() - 0.5) * 0.2; // subtle micro-wobble
-
+        b.x += (Math.random() - 0.5) * 0.2;
         const progress = b.life / b.maxLife;
         const alpha = Math.max(0, (1 - progress) * b.opacity);
-
-        // Water droplet body with soft cyan gleam
         ctx.fillStyle = `rgba(0, 210, 255, ${alpha * 0.6})`;
         ctx.beginPath();
         ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
         ctx.fill();
-
-        // White specular reflection highlight
         ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.95})`;
         ctx.beginPath();
-        ctx.arc(b.x - b.radius * 0.3, b.y - b.radius * 0.3, b.radius * 0.4, 0, Math.PI * 2);
+        ctx.arc(
+          b.x - b.radius * 0.3,
+          b.y - b.radius * 0.3,
+          b.radius * 0.4,
+          0,
+          Math.PI * 2
+        );
         ctx.fill();
       }
 
-      // ── Update & Render Impact Rings ──────────────────────────────
       for (const r of rings) {
         if (!r.active) continue;
-
         r.radius += (r.maxRadius - r.radius) * 0.2;
         r.opacity -= dt * 3.5;
-
         if (r.opacity <= 0.05 || r.radius >= r.maxRadius - 0.5) {
           r.active = false;
           continue;
         }
-
         ctx.strokeStyle = `rgba(0, 210, 255, ${r.opacity * 0.7})`;
         ctx.lineWidth = 1.2;
         ctx.beginPath();
@@ -534,7 +512,6 @@ export function RainSimulationCanvas({
         ctx.stroke();
       }
 
-      // ── Telemetry Wetness Calculation using NFengine's h0 model ───
       const currentWetness = wetnessModel.update(dt);
       uiTimer += dt;
       if (uiTimer >= 0.1) {
@@ -545,13 +522,40 @@ export function RainSimulationCanvas({
       }
     };
 
+    // Gambar 1 frame pertama secara instan saat mount!
+    stepSimulation(0.016);
+
+    const render = (now: number) => {
+      if (!isVisible || !isLoopActive) return;
+      animationFrameId = requestAnimationFrame(render);
+      if (isPaused) return;
+      const dt = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+      stepSimulation(dt);
+    };
+
+    const startLoop = () => {
+      if (isLoopActive) return;
+      isLoopActive = true;
+      lastTime = performance.now();
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    window.addEventListener("pointermove", startLoop, { passive: true, once: true });
+    window.addEventListener("touchstart", startLoop, { passive: true, once: true });
+    window.addEventListener("scroll", startLoop, { passive: true, once: true });
+    window.addEventListener("wheel", startLoop, { passive: true, once: true });
+    const warmTimer = setTimeout(startLoop, 2800);
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         const visible = entry.isIntersecting;
         if (visible && !isVisible) {
           isVisible = true;
-          lastTime = performance.now();
-          animationFrameId = requestAnimationFrame(render);
+          if (isLoopActive) {
+            lastTime = performance.now();
+            animationFrameId = requestAnimationFrame(render);
+          }
         } else if (!visible && isVisible) {
           isVisible = false;
           cancelAnimationFrame(animationFrameId);
@@ -561,12 +565,16 @@ export function RainSimulationCanvas({
     );
     observer.observe(canvas);
 
-    animationFrameId = requestAnimationFrame(render);
-
     return () => {
+      isLoopActive = false;
       cancelAnimationFrame(animationFrameId);
+      clearTimeout(warmTimer);
       resizeObserver.disconnect();
       observer.disconnect();
+      window.removeEventListener("pointermove", startLoop);
+      window.removeEventListener("touchstart", startLoop);
+      window.removeEventListener("scroll", startLoop);
+      window.removeEventListener("wheel", startLoop);
     };
   }, [intensity, speed, size, isPaused]);
 
