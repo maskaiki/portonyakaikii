@@ -1,29 +1,13 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { Hero } from "./Hero";
 import { TickerSection } from "./TickerSection";
 import { AboutSection } from "./AboutSection";
-
-const PortaleSection = dynamic(() =>
-  import("./PortaleSection").then((m) => ({ default: m.PortaleSection }))
-);
-const SelectedWorkSection = dynamic(() =>
-  import("./SelectedWorkSection").then((m) => ({
-    default: m.SelectedWorkSection,
-  }))
-);
-const CatWorkflowSection = dynamic(() =>
-  import("./CatWorkflowSection").then((m) => ({
-    default: m.CatWorkflowSection,
-  }))
-);
-const ArsenalSection = dynamic(() =>
-  import("./ArsenalSection").then((m) => ({ default: m.ArsenalSection }))
-);
-const JourneySection = dynamic(() =>
-  import("./JourneySection").then((m) => ({ default: m.JourneySection }))
-);
+import { PortaleSection } from "./PortaleSection";
+import { SelectedWorkSection } from "./SelectedWorkSection";
+import { CatWorkflowSection } from "./CatWorkflowSection";
+import { ArsenalSection } from "./ArsenalSection";
+import { JourneySection } from "./JourneySection";
 
 export default function HomePage() {
   return (

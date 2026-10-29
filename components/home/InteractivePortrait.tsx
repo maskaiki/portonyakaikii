@@ -70,14 +70,19 @@ export function InteractivePortrait({
               fill
               priority={isFirst}
               fetchPriority={isFirst ? "high" : "low"}
+              decoding={isFirst ? "sync" : "async"}
               quality={70}
               sizes="(max-width: 640px) 240px, (max-width: 1024px) 480px, 720px"
               className="object-contain object-bottom scale-100 origin-bottom"
-              style={{
-                opacity: currentIndex === index ? 1 : 0,
-                transition: "opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-                zIndex: currentIndex === index ? 2 : 1,
-              }}
+              style={
+                preloadOthers
+                  ? {
+                      opacity: currentIndex === index ? 1 : 0,
+                      transition: "opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+                      zIndex: currentIndex === index ? 2 : 1,
+                    }
+                  : undefined
+              }
             />
           );
         })}

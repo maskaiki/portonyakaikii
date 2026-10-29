@@ -1,11 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import {
-  bodyFont,
-  displayFont,
-  serifFont,
-  manropeFont,
-  barcodeFont,
-} from "@/lib/fonts";
+import { bodyFont, displayFont, serifFont } from "@/lib/fonts";
 import { SiteShell } from "@/components/layout";
 import "./globals.css";
 
@@ -34,7 +28,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${displayFont.variable} ${bodyFont.variable} ${serifFont.variable} ${manropeFont.variable} ${barcodeFont.variable}`}
+      className={`${displayFont.variable} ${bodyFont.variable} ${serifFont.variable}`}
     >
       <body>
         <SiteShell>{children}</SiteShell>

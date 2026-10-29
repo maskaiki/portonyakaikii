@@ -29,28 +29,44 @@ export function ProductCallout({ className = "" }: ProductCalloutProps) {
   const [activeIdx, setActiveIdx] = useState(0);
 
   useEffect(() => {
-    const cycle = setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % DISCIPLINES.length);
-    }, 3500);
-    return () => clearInterval(cycle);
+    // Jangan jalankan interval di Mobile karena komponen ini hidden md:flex!
+    if (typeof window !== "undefined" && window.innerWidth < 768) return;
+
+    let cycle: ReturnType<typeof setInterval> | null = null;
+    const startCycle = () => {
+      if (cycle) return;
+      cycle = setInterval(() => {
+        setActiveIdx((prev) => (prev + 1) % DISCIPLINES.length);
+      }, 3500);
+    };
+
+    window.addEventListener("pointermove", startCycle, {
+      passive: true,
+      once: true,
+    });
+    window.addEventListener("scroll", startCycle, {
+      passive: true,
+      once: true,
+    });
+
+    return () => {
+      if (cycle) clearInterval(cycle);
+      window.removeEventListener("pointermove", startCycle);
+      window.removeEventListener("scroll", startCycle);
+    };
   }, []);
 
   const current = DISCIPLINES[activeIdx];
 
   return (
-    <motion.aside
-      initial={{ opacity: 0, x: 25 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+    <aside
       className={`z-25 flex flex-col items-end select-none pointer-events-auto ${className}`}
       aria-label="Kaiki Disciplines"
     >
-      {/* Clean Storm Lab Architectural Glass Card */}
       <div
         onClick={() => setActiveIdx((prev) => (prev + 1) % DISCIPLINES.length)}
         className="relative w-48 sm:w-52 p-4 border border-white/85 bg-white/55 backdrop-blur-xl cursor-pointer transition-colors duration-300 hover:bg-white/75 shadow-[0_16px_40px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(255,255,255,0.9)]"
       >
-        {/* Storm Lab Top-Right Solid Square Tick */}
         <div
           className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#111112]"
           aria-hidden="true"
@@ -84,7 +100,6 @@ export function ProductCallout({ className = "" }: ProductCalloutProps) {
           </AnimatePresence>
         </div>
 
-        {/* GPU-Composited scaleX indicator (Zero non-composited width animations!) */}
         <div className="flex items-center gap-1.5 mt-3 pt-2 border-t border-[#111112]/15">
           {DISCIPLINES.map((_, i) => (
             <span
@@ -99,13 +114,12 @@ export function ProductCallout({ className = "" }: ProductCalloutProps) {
         </div>
       </div>
 
-      {/* Storm Lab Barcode */}
       <div
         className="w-48 sm:w-52 mt-2 font-barcode text-[#111112]/80 text-xl leading-none select-none tracking-widest text-right overflow-hidden"
         aria-hidden="true"
       >
         <div className="whitespace-nowrap">NEVERSTOPCREATING</div>
       </div>
-    </motion.aside>
+    </aside>
   );
 }

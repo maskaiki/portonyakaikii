@@ -1,17 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 interface ReticleFocusProps {
   className?: string;
 }
 
 export function ReticleFocus({ className = "" }: ReticleFocusProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
+    <div
       className={`pointer-events-none select-none z-10 text-[#00d2ff]/60 ${className}`}
       aria-hidden="true"
     >
@@ -23,6 +18,6 @@ export function ReticleFocus({ className = "" }: ReticleFocusProps) {
       >
         <path d="M1 23V1h22M57 1h22v22M79 57v22H57M23 79H1V57" />
       </svg>
-    </motion.div>
+    </div>
   );
 }
