@@ -49,6 +49,7 @@ export function InteractivePortrait({
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       onMouseEnter={handleMouseEnter}
+      onTouchStart={() => setPreloadOthers(true)}
       onMouseLeave={() => onHoverChange?.(false)}
       className={`relative flex flex-col items-center justify-end select-none w-[128vw] sm:w-full max-w-none h-[82svh] sm:h-[95vh] lg:h-[98vh] max-h-[1080px] aspect-square mx-auto pointer-events-auto cursor-pointer ${className}`}
       aria-label="Mohammad Rifky Wicaksana (Kaiki) — Click to switch pose"
@@ -57,8 +58,7 @@ export function InteractivePortrait({
     >
       <div className="absolute inset-0 flex items-end justify-center pointer-events-none">
         {PORTRAIT_IMAGES.map((src, index) => {
-          // Hanya render Pose 2 dan 3 setelah ada interaksi (menghemat 323 KiB bandwidth awal di Mobile)
-          if (index > 0 && !preloadOthers && currentIndex !== index) {
+          if (index > 0 && !preloadOthers && currentIndex === 0) {
             return null;
           }
           const isFirst = index === 0;
@@ -70,8 +70,8 @@ export function InteractivePortrait({
               fill
               priority={isFirst}
               fetchPriority={isFirst ? "high" : "low"}
-              quality={75}
-              sizes="(max-width: 640px) 380px, (max-width: 1024px) 580px, 750px"
+              quality={70}
+              sizes="(max-width: 640px) 240px, (max-width: 1024px) 480px, 720px"
               className="object-contain object-bottom scale-100 origin-bottom"
               style={{
                 opacity: currentIndex === index ? 1 : 0,

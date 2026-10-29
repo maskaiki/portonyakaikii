@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 // ── 1. GEOMETRY & TIMING CONSTANTS (1080 x 1080 Stage) ───────────────
 const STAGE = 1080;
@@ -51,7 +51,11 @@ const LOOP = 10.5;
 const COPY = {
   lead: "How a project",
   accent: "works",
-  steps: ["01 — You ask", "02 — We craft the system", "03 — Standout result wins"],
+  steps: [
+    "01 — You ask",
+    "02 — We craft the system",
+    "03 — Standout result wins",
+  ],
   query: "cool portfolio web",
   searching: "Crafting…",
   crawlLabel: "Engineering & Design",
@@ -74,14 +78,15 @@ const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const seg = (t: number, a: number, b: number) => clamp((t - a) / (b - a));
 const eo = (t: number) => 1 - Math.pow(1 - t, 3);
-const eio = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const eio = (t: number) =>
+  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const back = (t: number) => {
   const c = 1.5;
   return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2);
 };
 const bump = (d: number, w: number) => Math.exp(-Math.pow(d / w, 2));
 
-const N_LEN = 16384;
+const N_LEN = 4096;
 const NZ = new Float32Array(N_LEN);
 {
   let s = 11;
@@ -92,17 +97,18 @@ const NZ = new Float32Array(N_LEN);
 }
 const noise = (i: number) => NZ[((i % N_LEN) + N_LEN) % N_LEN];
 
-// Pre-render a 128x128 repeating noise tile once to replace slow per-frame getImageData loops
-function createNoisePattern(ctx: CanvasRenderingContext2D): CanvasPattern | null {
+function createNoisePattern(
+  ctx: CanvasRenderingContext2D
+): CanvasPattern | null {
   if (typeof document === "undefined") return null;
   const tile = document.createElement("canvas");
-  tile.width = 128;
-  tile.height = 128;
+  tile.width = 64;
+  tile.height = 64;
   const tctx = tile.getContext("2d");
   if (!tctx) return null;
-  const imgData = tctx.createImageData(128, 128);
+  const imgData = tctx.createImageData(64, 64);
   const data = imgData.data;
-  for (let i = 0; i < 128 * 128; i++) {
+  for (let i = 0; i < 64 * 64; i++) {
     const n = noise(i);
     const v = (n * 255) | 0;
     const idx = i * 4;
@@ -115,7 +121,6 @@ function createNoisePattern(ctx: CanvasRenderingContext2D): CanvasPattern | null
   return ctx.createPattern(tile, "repeat");
 }
 
-// ── 3. DOT-MATRIX BACKGROUND RENDERER (Optimized single-pass) ──────────
 function drawBackground(
   canvas: HTMLCanvasElement,
   ex: number,
@@ -131,11 +136,9 @@ function drawBackground(
 
   c.setTransform(1, 0, 0, 1, ex, ey);
 
-  // Deep Obsidian / Navy Backdrop
   c.fillStyle = "#05070f";
   c.fillRect(-ex, -ey, cw, ch);
 
-  // Radial Ambient Light Top
   const LIGHT = { x: 540, y: -120, stretch: 1.9, radius: 640 };
   c.save();
   c.translate(LIGHT.x, LIGHT.y);
@@ -145,11 +148,15 @@ function drawBackground(
   g.addColorStop(0.5, "#091538");
   g.addColorStop(1, "rgba(5,7,15,0)");
   c.fillStyle = g;
-  c.fillRect((-ex - LIGHT.x) / LIGHT.stretch, -ey - LIGHT.y, cw / LIGHT.stretch, ch);
+  c.fillRect(
+    (-ex - LIGHT.x) / LIGHT.stretch,
+    -ey - LIGHT.y,
+    cw / LIGHT.stretch,
+    ch
+  );
   c.restore();
 
-  // Dot Matrix Grid
-  const pitch = 11;
+  const pitch = 14;
   const start = 6;
   const size = 2.4;
   const reach = 700;
@@ -158,15 +165,17 @@ function drawBackground(
   for (let y = y0; y < STAGE + ey; y += pitch) {
     for (let x = x0; x < STAGE + ex; x += pitch) {
       const d = Math.hypot((x - LIGHT.x) / LIGHT.stretch, y - LIGHT.y);
-      const k = Math.max(0, 1 - d / reach) * (0.85 + 0.15 * Math.sin(x * 0.004));
+      const k =
+        Math.max(0, 1 - d / reach) * (0.85 + 0.15 * Math.sin(x * 0.004));
       const a = k * k * (0.75 + 0.35 * noise(y * 43 + x));
       if (a < 0.02) continue;
-      c.fillStyle = `rgba(${(90 + 90 * k) | 0},${(150 + 70 * k) | 0},255,${a})`;
+      c.fillStyle = `rgba(${(90 + 90 * k) | 0},${
+        (150 + 70 * k) | 0
+      },255,${a})`;
       c.fillRect(x - size / 2, y - size / 2, size, size);
     }
   }
 
-  // Vignette Gradient
   const v = c.createLinearGradient(0, 0, 0, STAGE);
   v.addColorStop(0, "rgba(5,7,15,0)");
   v.addColorStop(0.55, "rgba(5,7,15,0.15)");
@@ -174,7 +183,6 @@ function drawBackground(
   c.fillStyle = v;
   c.fillRect(-ex, -ey, cw, ch);
 
-  // Subtle film grain overlay on background
   if (noisePattern) {
     c.save();
     c.globalAlpha = 0.14;
@@ -184,8 +192,6 @@ function drawBackground(
   }
 }
 
-// ── 4. GPU-ACCELERATED GRAINY NEON GLOW LAYER ─────────────────────────
-// Fast GPU glow rendering using native radial gradients (0ms stall, no shadowBlur / getImageData)
 function drawGlows(
   c: CanvasRenderingContext2D,
   glows: { rect: Rect; a: number; rgb: string }[]
@@ -205,7 +211,6 @@ function drawGlows(
   }
 }
 
-// ── 5. THE WHITE VECTOR CAT ENGINE ────────────────────────────────────
 const FUR = "#f3f6ff";
 const EYE = "#09122a";
 const SIZE = 1.5;
@@ -236,7 +241,12 @@ function drawCatEyes(c: CanvasRenderingContext2D, blink: number) {
   c.fillStyle = FUR;
 }
 
-function sitting(c: CanvasRenderingContext2D, t: number, tap: number, blink: number) {
+function sitting(
+  c: CanvasRenderingContext2D,
+  t: number,
+  tap: number,
+  blink: number
+) {
   const tl = Math.sin(t * 2.6) * 0.5;
   c.lineCap = "round";
   c.strokeStyle = FUR;
@@ -265,7 +275,12 @@ function sitting(c: CanvasRenderingContext2D, t: number, tap: number, blink: num
   c.lineWidth = 5.5;
   c.beginPath();
   c.moveTo(7, -16);
-  c.quadraticCurveTo(12 + tap * 4, -10 - tap * 10, 10 + tap * 8, -Math.sin(tap * Math.PI) * 14);
+  c.quadraticCurveTo(
+    12 + tap * 4,
+    -10 - tap * 10,
+    10 + tap * 8,
+    -Math.sin(tap * Math.PI) * 14
+  );
   c.stroke();
   drawCatEyes(c, blink);
 }
@@ -366,7 +381,14 @@ function leap(t: number, t0: number, from: Pt, to: Pt, peak: number): CatState {
   const flip = to[0] < from[0];
   if (t < t0) {
     const k = Math.sin(seg(t, t0 - CROUCH, t0) * Math.PI * 0.5);
-    return { x: from[0], y: from[1], pose: "sit", sx: 1 + 0.1 * k, sy: 1 - 0.2 * k, flip };
+    return {
+      x: from[0],
+      y: from[1],
+      pose: "sit",
+      sx: 1 + 0.1 * k,
+      sy: 1 - 0.2 * k,
+      flip,
+    };
   }
   const e = seg(t, t0, t0 + JUMP);
   if (e < 1) {
@@ -374,17 +396,39 @@ function leap(t: number, t0: number, from: Pt, to: Pt, peak: number): CatState {
     const x = lerp(from[0], to[0], e);
     const y = lerp(from[1], to[1], e) - peak * 4 * e * (1 - e);
     const tilt = lerp(-0.42, 0.38, eio(e)) * dir;
-    return { x, y, pose: "leap", reach: e, tilt, flip: dir < 0, sx: 1 + 0.06 * Math.sin(e * Math.PI), sy: 1 };
+    return {
+      x,
+      y,
+      pose: "leap",
+      reach: e,
+      tilt,
+      flip: dir < 0,
+      sx: 1 + 0.06 * Math.sin(e * Math.PI),
+      sy: 1,
+    };
   }
   const sq = squash(t, t0 + JUMP);
-  return { x: to[0], y: to[1], pose: "sit", sx: 1 + 0.18 * sq, sy: 1 - 0.24 * sq, flip };
+  return {
+    x: to[0],
+    y: to[1],
+    pose: "sit",
+    sx: 1 + 0.18 * sq,
+    sy: 1 - 0.24 * sq,
+    flip,
+  };
 }
 
 function catAt(t: number, lift = 0): CatState | null {
   if (t < T.drop0) return null;
   if (t < T.land1) {
     const k = seg(t, T.drop0, T.land1);
-    return { x: SEAT_PILL[0], y: lerp(-90 - lift, SEAT_PILL[1], k * k), pose: "leap", reach: 0.9, tilt: 0.5 };
+    return {
+      x: SEAT_PILL[0],
+      y: lerp(-90 - lift, SEAT_PILL[1], k * k),
+      pose: "leap",
+      reach: 0.9,
+      tilt: 0.5,
+    };
   }
   if (t < T.jump1 - CROUCH) {
     const sq = squash(t, T.land1);
@@ -398,11 +442,16 @@ function catAt(t: number, lift = 0): CatState | null {
     };
   }
   if (t < T.tap2 - 0.32) return leap(t, T.jump1, SEAT_PILL, SEAT_CRAWL, 165);
-  if (t < T.jump2 - CROUCH) return { x: SEAT_CRAWL[0], y: SEAT_CRAWL[1], pose: "sit", tap: tapAt(t, T.tap2) };
+  if (t < T.jump2 - CROUCH)
+    return {
+      x: SEAT_CRAWL[0],
+      y: SEAT_CRAWL[1],
+      pose: "sit",
+      tap: tapAt(t, T.tap2),
+    };
   return leap(t, T.jump2, SEAT_CRAWL, SEAT_MATCH, 150);
 }
 
-// ── 6. MAIN REACT SECTION COMPONENT ──────────────────────────────────
 export function CatWorkflowSection() {
   const viewportRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -433,7 +482,7 @@ export function CatWorkflowSection() {
   const flowDotsRef = useRef<(SVGCircleElement | null)[]>([]);
   const flowDotGlowsRef = useRef<(SVGCircleElement | null)[]>([]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const viewport = viewportRef.current;
     const stage = stageRef.current;
     const bgCanvas = bgCanvasRef.current;
@@ -445,24 +494,23 @@ export function CatWorkflowSection() {
     const catCtx = catCanvas.getContext("2d");
     if (!glowCtx || !catCtx) return;
 
-    // Create noise pattern tile once
-    const noisePattern = createNoisePattern(glowCtx);
-
-    const flows = [0, 1].map((i) => {
-      const line = flowLinesRef.current[i]!;
-      const glow = flowGlowsRef.current[i]!;
-      const dot = flowDotsRef.current[i]!;
-      const dotGlow = flowDotGlowsRef.current[i]!;
-      return { line, glow, dot, dotGlow, length: line.getTotalLength() };
-    });
+    let initialized = false;
+    let noisePattern: CanvasPattern | null = null;
+    let flows: {
+      line: SVGPathElement;
+      glow: SVGPathElement;
+      dot: SVGCircleElement;
+      dotGlow: SVGCircleElement;
+      length: number;
+    }[] = [];
 
     let currentLift = 0;
     let currentTop = 0;
     let reach = "";
+    let ro: ResizeObserver | null = null;
 
-    const fit = () => {
-      const vw = viewport.clientWidth;
-      const vh = viewport.clientHeight;
+    const fit = (vw: number, vh: number) => {
+      if (!vw || !vh) return;
       const s = Math.min(vw / STAGE, vh / STAGE);
       stage.style.transform = `scale(${s})`;
       const ex = Math.max(0, Math.ceil((vw / s - STAGE) / 2));
@@ -486,39 +534,24 @@ export function CatWorkflowSection() {
       catCanvas.style.height = `${STAGE + currentTop}px`;
     };
 
-    fit();
-    const ro = new ResizeObserver(fit);
-    ro.observe(viewport);
+    const ensureInitialized = () => {
+      if (initialized) return;
+      initialized = true;
+      noisePattern = createNoisePattern(glowCtx);
+      flows = [0, 1].map((i) => {
+        const line = flowLinesRef.current[i]!;
+        const glow = flowGlowsRef.current[i]!;
+        const dot = flowDotsRef.current[i]!;
+        const dotGlow = flowDotGlowsRef.current[i]!;
+        return { line, glow, dot, dotGlow, length: line.getTotalLength() };
+      });
 
-    let isVisible = false;
-    let t0: number | null = null;
-    let raf = 0;
-
-    const tick = (now: number) => {
-      if (!isVisible) {
-        raf = 0;
-        return;
-      }
-      if (t0 === null) t0 = now;
-      renderFrame(((now - t0) / 1000) % LOOP);
-      raf = requestAnimationFrame(tick);
+      ro = new ResizeObserver(([entry]) => {
+        if (!entry) return;
+        fit(entry.contentRect.width, entry.contentRect.height);
+      });
+      ro.observe(viewport);
     };
-
-    // Performance booster: Only render when the section is in the viewport!
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        const wasVisible = isVisible;
-        isVisible = entry.isIntersecting;
-        if (isVisible && !wasVisible && !raf) {
-          raf = requestAnimationFrame(tick);
-        } else if (!isVisible && raf) {
-          cancelAnimationFrame(raf);
-          raf = 0;
-        }
-      },
-      { threshold: 0.05 }
-    );
-    io.observe(viewport);
 
     const renderFrame = (t: number) => {
       const pillEl = pillElRef.current;
@@ -537,33 +570,37 @@ export function CatWorkflowSection() {
 
       if (!pillEl || !crawlEl || !matchEl) return;
 
-      // Step 01: Pill
       const e1i = eo(seg(t, 0, 0.7));
       pillEl.style.opacity = String(e1i);
       const press1 = bump(t - T.tap1 - 0.08, 0.08);
-      pillEl.style.transform = `translateY(${(1 - e1i) * 14}px) scale(${1 - press1 * 0.03})`;
+      pillEl.style.transform = `translateY(${(1 - e1i) * 14}px) scale(${
+        1 - press1 * 0.03
+      })`;
       if (t < T.tap1) {
         const n = Math.floor(COPY.query.length * seg(t, T.type0, T.type1));
         if (pillQuery) pillQuery.dataset.state = "typing";
         if (pillText) pillText.textContent = COPY.query.slice(0, n);
-        if (pillCaret) pillCaret.style.opacity = Math.floor(t * 2.4) % 2 ? "1" : "0";
+        if (pillCaret)
+          pillCaret.style.opacity = Math.floor(t * 2.4) % 2 ? "1" : "0";
       } else {
         if (pillQuery) pillQuery.dataset.state = "searching";
         if (pillText) pillText.textContent = COPY.searching;
       }
 
-      // Step 02: Crawl Card
       const e2k = back(seg(t, T.e2in, T.e2in + 0.6));
       crawlEl.style.opacity = String(seg(t, T.e2in, T.e2in + 0.3));
-      const hit2 = bump(t - T.land2 - 0.04, 0.09) * 0.7 + bump(t - T.tap2 - 0.06, 0.08);
+      const hit2 =
+        bump(t - T.land2 - 0.04, 0.09) * 0.7 + bump(t - T.tap2 - 0.06, 0.08);
       crawlEl.style.transform = `translateY(${(1 - e2k) * 12}px) scale(${
         lerp(0.94, 1, e2k) * (1 - hit2 * 0.025)
       })`;
       const cp = eo(seg(t, T.tap2, T.end - 0.6));
-      if (crawlCount) crawlCount.textContent = Math.round(cp * COPY.crawlPages).toLocaleString("en-US");
+      if (crawlCount)
+        crawlCount.textContent = Math.round(
+          cp * COPY.crawlPages
+        ).toLocaleString("en-US");
       if (crawlBar) crawlBar.style.width = cp * 100 + "%";
 
-      // Step 03: Match Card
       const e3k = back(seg(t, T.e3in, T.e3in + 0.6));
       matchEl.style.opacity = String(seg(t, T.e3in, T.e3in + 0.3));
       const hit3 = bump(t - T.land3 - 0.04, 0.1);
@@ -572,18 +609,25 @@ export function CatWorkflowSection() {
       })`;
       [matchResult, matchScores].forEach((el, i) => {
         if (!el) return;
-        const k = eo(seg(t, T.land3 + 0.2 + i * 0.18, T.land3 + 0.75 + i * 0.18));
+        const k = eo(
+          seg(t, T.land3 + 0.2 + i * 0.18, T.land3 + 0.75 + i * 0.18)
+        );
         el.style.opacity = String(k);
         el.style.transform = `translateY(${(1 - k) * 8}px)`;
       });
       if (matchPercent) {
         matchPercent.textContent = String(
-          Math.round(COPY.matchPercent * eo(seg(t, T.land3 + 0.15, T.land3 + 1.6)))
+          Math.round(
+            COPY.matchPercent * eo(seg(t, T.land3 + 0.15, T.land3 + 1.6))
+          )
         );
       }
       COPY.scores.forEach(({ value, delay }, i) => {
         const bar = matchFillsRef.current[i];
-        if (bar) bar.style.width = value * 100 * eio(seg(t, T.land3 + delay, T.land3 + delay + 0.9)) + "%";
+        if (bar)
+          bar.style.width =
+            value * 100 * eio(seg(t, T.land3 + delay, T.land3 + delay + 0.9)) +
+            "%";
       });
       if (matchShine) {
         matchShine.style.transform = `translateX(${lerp(
@@ -593,10 +637,11 @@ export function CatWorkflowSection() {
         )}%)`;
       }
       if (matchAvatar) {
-        matchAvatar.style.transform = `scale(${1 + 0.06 * bump(t - T.land3 - 0.5, 0.15)})`;
+        matchAvatar.style.transform = `scale(${
+          1 + 0.06 * bump(t - T.land3 - 0.5, 0.15)
+        })`;
       }
 
-      // Step Captions
       const marks = [0, T.land2, T.land3];
       const cur = t < T.land2 ? 0 : t < T.land3 ? 1 : 2;
       stepsRef.current.forEach((el, i) => {
@@ -606,26 +651,26 @@ export function CatWorkflowSection() {
         el.style.transform = `translateY(${(1 - k) * 6}px)`;
       });
 
-      // Flow Lines & Sparks
-      [eio(seg(t, T.c1, T.c1 + 0.6)), eio(seg(t, T.c2, T.c2 + 0.6))].forEach((d, i) => {
-        const f = flows[i];
-        if (!f) return;
-        for (const p of [f.line, f.glow]) {
-          if (!p) continue;
-          p.style.strokeDasharray = String(f.length);
-          p.style.strokeDashoffset = String(f.length * (1 - d));
+      [eio(seg(t, T.c1, T.c1 + 0.6)), eio(seg(t, T.c2, T.c2 + 0.6))].forEach(
+        (d, i) => {
+          const f = flows[i];
+          if (!f) return;
+          for (const p of [f.line, f.glow]) {
+            if (!p) continue;
+            p.style.strokeDasharray = String(f.length);
+            p.style.strokeDashoffset = String(f.length * (1 - d));
+          }
+          const live = d > 0 && d < 1;
+          const pt = f.line.getPointAtLength(f.length * d);
+          for (const c of [f.dot, f.dotGlow]) {
+            if (!c) continue;
+            c.setAttribute("cx", String(pt.x));
+            c.setAttribute("cy", String(pt.y));
+            c.style.opacity = live ? "1" : "0";
+          }
         }
-        const live = d > 0 && d < 1;
-        const pt = f.line.getPointAtLength(f.length * d);
-        for (const c of [f.dot, f.dotGlow]) {
-          if (!c) continue;
-          c.setAttribute("cx", String(pt.x));
-          c.setAttribute("cy", String(pt.y));
-          c.style.opacity = live ? "1" : "0";
-        }
-      });
+      );
 
-      // Grainy Cobalt/Cyan Card Glows (Zero lag GPU path)
       drawGlows(glowCtx, [
         {
           rect: PILL,
@@ -634,17 +679,22 @@ export function CatWorkflowSection() {
         },
         {
           rect: CRAWL,
-          a: 0.42 * seg(t, T.e2in, T.e2in + 0.6) + 0.45 * hit2 + 0.15 * seg(t, T.land2, T.land2 + 0.4),
+          a:
+            0.42 * seg(t, T.e2in, T.e2in + 0.6) +
+            0.45 * hit2 +
+            0.15 * seg(t, T.land2, T.land2 + 0.4),
           rgb: "56,189,248",
         },
         {
           rect: MATCH,
-          a: 0.42 * seg(t, T.e3in, T.e3in + 0.6) + 0.5 * hit3 + 0.2 * seg(t, T.land3, T.land3 + 0.5),
+          a:
+            0.42 * seg(t, T.e3in, T.e3in + 0.6) +
+            0.5 * hit3 +
+            0.2 * seg(t, T.land3, T.land3 + 0.5),
           rgb: "37,99,235",
         },
       ]);
 
-      // Cat Layer (Ultra-fast direct render with cyan neon halo)
       catCtx.clearRect(0, 0, STAGE, STAGE + currentTop);
       const s = catAt(t, currentLift);
       if (s) {
@@ -657,19 +707,50 @@ export function CatWorkflowSection() {
           catCtx.globalCompositeOperation = "source-atop";
           catCtx.globalAlpha = 0.2;
           catCtx.fillStyle = noisePattern;
-          catCtx.fillRect(s.x - CAT_REACH, s.y - CAT_REACH, CAT_REACH * 2, CAT_REACH * 2);
+          catCtx.fillRect(
+            s.x - CAT_REACH,
+            s.y - CAT_REACH,
+            CAT_REACH * 2,
+            CAT_REACH * 2
+          );
           catCtx.restore();
         }
         catCtx.restore();
       }
     };
 
-    // Render initial static frame at mount
-    renderFrame(0);
+    let isVisible = false;
+    let t0: number | null = null;
+    let raf = 0;
+
+    const tick = (now: number) => {
+      if (!isVisible) return;
+      if (t0 === null) t0 = now;
+      renderFrame(((now - t0) / 1000) % LOOP);
+      raf = requestAnimationFrame(tick);
+    };
+
+    // Inisialisasi hanya ketika user men-scroll mendekati CatWorkflowSection (0ms CPU & 0 Reflow saat initial load!)
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const vis = entry.isIntersecting;
+        if (vis && !isVisible) {
+          ensureInitialized();
+          isVisible = true;
+          raf = requestAnimationFrame(tick);
+        } else if (!vis && isVisible) {
+          isVisible = false;
+          cancelAnimationFrame(raf);
+        }
+      },
+      { rootMargin: "600px 0px", threshold: 0.01 }
+    );
+    io.observe(viewport);
 
     return () => {
+      isVisible = false;
       cancelAnimationFrame(raf);
-      ro.disconnect();
+      if (ro) ro.disconnect();
       io.disconnect();
     };
   }, []);
@@ -686,7 +767,10 @@ export function CatWorkflowSection() {
         ref={stageRef}
         className="absolute left-1/2 top-1/2 w-[1080px] h-[1080px] -ml-[540px] -mt-[540px]"
       >
-        <canvas ref={bgCanvasRef} className="absolute left-0 top-0 w-[1080px] h-[1080px]" />
+        <canvas
+          ref={bgCanvasRef}
+          className="absolute left-0 top-0 w-[1080px] h-[1080px]"
+        />
         <canvas
           ref={glowCanvasRef}
           width={STAGE}
@@ -695,9 +779,19 @@ export function CatWorkflowSection() {
         />
 
         {/* Flow Lines SVG */}
-        <svg className="absolute left-0 top-0 w-[1080px] h-[1080px]" viewBox="0 0 1080 1080" fill="none">
+        <svg
+          className="absolute left-0 top-0 w-[1080px] h-[1080px]"
+          viewBox="0 0 1080 1080"
+          fill="none"
+        >
           <defs>
-            <filter id="cat-flow-blur" x="-10%" y="-10%" width="120%" height="120%">
+            <filter
+              id="cat-flow-blur"
+              x="-10%"
+              y="-10%"
+              width="120%"
+              height="120%"
+            >
               <feGaussianBlur stdDeviation="4" />
             </filter>
           </defs>
@@ -754,7 +848,7 @@ export function CatWorkflowSection() {
               {COPY.accent}
             </em>
           </h2>
-          <p className="relative h-[24px] mt-[9px] text-[16px] tracking-[-0.01em] text-[#93c5fd]/60">
+          <p className="relative h-[24px] mt-[9px] text-[16px] tracking-[-0.01em] text-[#93c5fd]/80">
             {COPY.steps.map((s, i) => (
               <span
                 key={s}
@@ -772,7 +866,13 @@ export function CatWorkflowSection() {
         {/* Step 01: Lit Search Pill */}
         <div
           ref={pillElRef}
-          style={{ left: PILL.x, top: PILL.y, width: PILL.w, height: PILL.h, borderRadius: PILL.r }}
+          style={{
+            left: PILL.x,
+            top: PILL.y,
+            width: PILL.w,
+            height: PILL.h,
+            borderRadius: PILL.r,
+          }}
           className="absolute z-[4] flex items-center gap-[16px] px-[30px] pl-[34px] bg-[linear-gradient(180deg,rgba(37,99,235,0.92),rgba(0,85,255,0.92))] shadow-[inset_0_0_0_1px_rgba(191,219,254,0.6),inset_0_2px_0_rgba(255,255,255,0.6),inset_0_-12px_24px_rgba(10,25,90,0.4),0_20px_50px_rgba(0,40,140,0.55)] will-change-transform"
         >
           <svg
@@ -813,13 +913,19 @@ export function CatWorkflowSection() {
         {/* Step 02: Crawl Card */}
         <div
           ref={crawlElRef}
-          style={{ left: CRAWL.x, top: CRAWL.y, width: CRAWL.w, height: CRAWL.h, borderRadius: CRAWL.r }}
+          style={{
+            left: CRAWL.x,
+            top: CRAWL.y,
+            width: CRAWL.w,
+            height: CRAWL.h,
+            borderRadius: CRAWL.r,
+          }}
           className={`${glassStyle} p-[24px_28px]`}
         >
-          <div className="text-[16px] text-[#dbeafe]/75">{COPY.crawlLabel}</div>
+          <div className="text-[16px] text-[#dbeafe]/80">{COPY.crawlLabel}</div>
           <div className="text-[36px] font-medium tracking-[-0.045em] mt-[6px] tabular-nums text-white">
             <span ref={crawlCountRef} />
-            <small className="text-[16px] font-normal text-[#dbeafe]/60 ml-[8px] tracking-normal">
+            <small className="text-[16px] font-normal text-[#dbeafe]/75 ml-[8px] tracking-normal">
               {COPY.crawlUnit}
             </small>
           </div>
@@ -834,40 +940,57 @@ export function CatWorkflowSection() {
         {/* Step 03: Match Card */}
         <div
           ref={matchElRef}
-          style={{ left: MATCH.x, top: MATCH.y, width: MATCH.w, height: MATCH.h, borderRadius: MATCH.r }}
+          style={{
+            left: MATCH.x,
+            top: MATCH.y,
+            width: MATCH.w,
+            height: MATCH.h,
+            borderRadius: MATCH.r,
+          }}
           className={`${glassStyle} p-[24px_28px]`}
         >
           <div className="flex justify-between items-baseline">
-            <span className="text-[13px] tracking-[0.16em] uppercase text-[#dbeafe]/60">
+            <span className="text-[13px] tracking-[0.16em] uppercase text-[#dbeafe]/75">
               {COPY.matchLabel}
             </span>
-            <span className="text-[14px] text-[#dbeafe]/60">
-              <b ref={matchPercentRef} className="font-medium text-white text-[15px] tabular-nums" />
+            <span className="text-[14px] text-[#dbeafe]/75">
+              <b
+                ref={matchPercentRef}
+                className="font-medium text-white text-[15px] tabular-nums"
+              />
               {COPY.matchUnit}
             </span>
           </div>
 
-          <div ref={matchResultRef} className="mt-[10px] flex items-center gap-[14px]">
+          <div
+            ref={matchResultRef}
+            className="mt-[10px] flex items-center gap-[14px]"
+          >
             <div
               ref={matchAvatarRef}
               className="w-[48px] h-[48px] rounded-[14px] bg-[linear-gradient(135deg,#38bdf8,#0055FF)] shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] grid place-items-center"
             >
-              <span className="font-display text-lg font-black text-white">RW</span>
+              <span className="font-display text-lg font-black text-white">
+                RW
+              </span>
             </div>
             <div>
               <b className="block text-[24px] font-medium tracking-[-0.035em] text-white">
                 {COPY.matchName}
               </b>
-              <span className="block text-[15px] text-[#dbeafe]/65 mt-[3px]">
+              <span className="block text-[15px] text-[#dbeafe]/75 mt-[3px]">
                 {COPY.matchMeta}
               </span>
             </div>
           </div>
 
-          <div ref={matchScoresRef} className="mt-[16px] grid grid-cols-3 gap-[14px]">
+          <div
+            ref={matchScoresRef}
+            className="mt-[16px] grid grid-cols-3 gap-[14px]"
+          >
             {COPY.scores.map((s, i) => (
               <div key={s.label}>
-                <span className="block text-[12px] text-[#dbeafe]/55 mb-[6px]">
+                <span className="block text-[12px] text-[#dbeafe]/75 mb-[6px]">
                   {s.label}
                 </span>
                 <i className="block h-[4px] rounded-[2px] bg-[#dbeafe]/15 overflow-hidden">
@@ -889,9 +1012,11 @@ export function CatWorkflowSection() {
         </div>
 
         {/* Cat Canvas Layer */}
-        <canvas ref={catCanvasRef} className="absolute left-0 top-0 w-[1080px] h-[1080px] pointer-events-none" />
+        <canvas
+          ref={catCanvasRef}
+          className="absolute left-0 top-0 w-[1080px] h-[1080px] pointer-events-none"
+        />
       </div>
     </section>
   );
 }
-
