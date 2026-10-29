@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import WebThreads from "@/components/shared/WebThreads";
+import CloverMark from "@/components/shared/CloverMark";
 
 const CORE_PILLARS = [
   "ANTIGRAVITY",
@@ -19,6 +20,7 @@ export function Footer() {
   const email = "mwrifky@gmail.com";
 
   const bustRef = useRef<HTMLDivElement>(null);
+  const cloverRef = useRef<HTMLDivElement>(null);
   const bgTitleRef = useRef<HTMLHeadingElement>(null);
 
   const handleCopyEmail = () => {
@@ -45,6 +47,16 @@ export function Footer() {
         duration: 0.5,
         ease: "power2.out",
         transformPerspective: 1000,
+      });
+    }
+
+    if (cloverRef.current) {
+      gsap.to(cloverRef.current, {
+        x: -nx * 24,
+        y: -ny * 18,
+        rotateZ: nx * 16,
+        duration: 0.65,
+        ease: "power2.out",
       });
     }
 
@@ -78,7 +90,7 @@ export function Footer() {
           />
 
           {/* Interactive WebGL2 WebThreads Layer across the Footer Horizon */}
-          <div className="absolute inset-x-0 bottom-0 h-[460px] sm:h-[520px] z-[2]">
+          <div className="absolute inset-x-0 bottom-0 h-[480px] sm:h-[540px] z-[2]">
             <WebThreads
               colors={["#0055FF", "#38bdf8", "#60a5fa", "#f4f4ed"]}
               coreColor="#ffffff"
@@ -94,7 +106,7 @@ export function Footer() {
               falloff={0.6}
               thickness={1.2}
               brightness={0.85}
-              opacity={0.95}
+              opacity={0.92}
               depth={0.65}
               pulses={0.35}
               mirror={true}
@@ -156,7 +168,7 @@ export function Footer() {
               </a>
             </div>
 
-            {/* Full-Width Three-Column Layout: Left Navigation | Center 3D Bust | Right Socials */}
+            {/* Full-Width Three-Column Layout: Left Navigation | Center CloverMark + 3D Bust | Right Socials */}
             <div className="w-full grid grid-cols-1 md:grid-cols-3 items-center gap-8 mb-12 pt-12 border-t border-white/10">
               {/* Left Column: SECTIONS */}
               <div className="flex flex-col items-center md:items-start text-center md:text-left pointer-events-auto">
@@ -197,15 +209,36 @@ export function Footer() {
                 </nav>
               </div>
 
-              {/* Center Column: 3D Parallax Kaiki Bust framed by WebThreads */}
+              {/* Center Column: CloverMark (PlasmaWave) Halo + 3D Parallax Kaiki Bust */}
               <div
-                className="flex flex-col items-center justify-center relative"
+                className="flex flex-col items-center justify-center relative py-4"
                 style={{ perspective: "1000px" }}
               >
+                {/* Masked PlasmaWave CloverMark Emblem Behind Bust */}
+                <div
+                  ref={cloverRef}
+                  className="absolute inset-0 flex items-center justify-center pointer-events-auto will-change-transform opacity-95 drop-shadow-[0_0_40px_rgba(0,85,255,0.45)]"
+                >
+                  <CloverMark
+                    size={340}
+                    className="w-[270px] sm:w-[330px] md:w-[360px]"
+                    plasmaProps={{
+                      color1: "#0055FF",
+                      color2: "#38bdf8",
+                      color3: "#f4f4ed",
+                      backgroundColor: "#0c0b10",
+                      speed: 0.9,
+                      scale: 2.1,
+                      intensity: 1.2,
+                    }}
+                  />
+                </div>
+
+                {/* Foreground 3D Kaiki Bust */}
                 <div
                   ref={bustRef}
                   style={{ transformStyle: "preserve-3d" }}
-                  className="relative w-64 h-64 md:w-80 md:h-80 select-none will-change-transform"
+                  className="relative z-10 w-64 h-64 md:w-80 md:h-80 select-none will-change-transform pointer-events-none"
                 >
                   <Image
                     src="/assets/shared/kaiki-footer.webp"
