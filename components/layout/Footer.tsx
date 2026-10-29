@@ -3,6 +3,7 @@
 import React, { useState, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
+import WebThreads from "@/components/shared/WebThreads";
 
 const CORE_PILLARS = [
   "ANTIGRAVITY",
@@ -65,20 +66,50 @@ export function Footer() {
       {/* Full-Width Edge-to-Edge Outer Padding */}
       <div className="w-full px-4 sm:px-8 lg:px-12">
         <div className="relative rounded-[2rem] bg-[#111112] text-[#f4f4ed] overflow-hidden border border-[#111112]">
-          
           {/* Topographic Lines Inside Footer */}
           <div
             className="absolute inset-0 pointer-events-none opacity-15"
             style={{
-              backgroundImage: "url('/assets/shared/67dbeba158707fa1cd5e5e45_blobs_footer_1.svg')",
+              backgroundImage:
+                "url('/assets/shared/67dbeba158707fa1cd5e5e45_blobs_footer_1.svg')",
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
           />
 
-          <div className="relative z-10 pt-16 pb-12 px-6 sm:px-12 lg:px-16 xl:px-24 flex flex-col items-center">
-            
-            <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#f4f4ed]/75 uppercase mb-3">
+          {/* Interactive WebGL2 WebThreads Layer across the Footer Horizon */}
+          <div className="absolute inset-x-0 bottom-0 h-[460px] sm:h-[520px] z-[2]">
+            <WebThreads
+              colors={["#0055FF", "#38bdf8", "#60a5fa", "#f4f4ed"]}
+              coreColor="#ffffff"
+              threadCount={10}
+              speed={0.22}
+              frequency={4.5}
+              spread={0.26}
+              taper={0.9}
+              position={0.52}
+              pinch={0.5}
+              nodes={2}
+              glow={0.026}
+              falloff={0.6}
+              thickness={1.2}
+              brightness={0.85}
+              opacity={0.95}
+              depth={0.65}
+              pulses={0.35}
+              mirror={true}
+              shimmer={true}
+              fade={0.14}
+              grain={0.04}
+              intro={true}
+              mouseInteraction={true}
+              mouseStrength={0.65}
+              pulseOnClick={true}
+            />
+          </div>
+
+          <div className="relative z-10 pt-16 pb-12 px-6 sm:px-12 lg:px-16 xl:px-24 flex flex-col items-center pointer-events-none">
+            <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#f4f4ed]/70 uppercase mb-3">
               Contact &amp; Collab
             </span>
 
@@ -100,12 +131,14 @@ export function Footer() {
               WEB.
             </h2>
 
-            <p className="font-sans text-sm sm:text-base text-[#f4f4ed]/80 max-w-xl text-center mb-8">
-              Want a standout front-end portfolio website like this, Canva graphic design, or CapCut video edits? Copy my email below or reach out on socials.
+            <p className="font-sans text-sm sm:text-base text-[#f4f4ed]/75 max-w-xl text-center mb-8">
+              Want a standout front-end portfolio website like this, Canva
+              graphic design, or CapCut video edits? Copy my email below or
+              reach out on socials.
             </p>
 
             {/* Copy Gmail + Direct Mailto Buttons */}
-            <div className="flex flex-col sm:flex-row items-center gap-4 mb-16">
+            <div className="flex flex-col sm:flex-row items-center gap-4 mb-16 pointer-events-auto">
               <button
                 onClick={handleCopyEmail}
                 className="inline-flex items-center gap-3 px-8 py-4 bg-[#f4f4ed] hover:bg-[#0055FF] hover:text-white text-[#111112] font-display text-xs font-extrabold uppercase tracking-wider transition-colors cursor-pointer"
@@ -125,33 +158,50 @@ export function Footer() {
 
             {/* Full-Width Three-Column Layout: Left Navigation | Center 3D Bust | Right Socials */}
             <div className="w-full grid grid-cols-1 md:grid-cols-3 items-center gap-8 mb-12 pt-12 border-t border-white/10">
-              
-              {/* Left Column: SECTIONS (Flush Left) */}
-              <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#f4f4ed]/75 mb-4">
+              {/* Left Column: SECTIONS */}
+              <div className="flex flex-col items-center md:items-start text-center md:text-left pointer-events-auto">
+                <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#f4f4ed]/65 mb-4">
                   Navigation
                 </span>
                 <nav className="flex flex-col gap-2">
-                  <a href="#hero" className="font-display text-2xl md:text-4xl font-black uppercase text-[#f4f4ed] hover:text-[#0055FF] hover:translate-x-2 transition-all">
+                  <a
+                    href="#hero"
+                    className="font-display text-2xl md:text-4xl font-black uppercase !text-[#f4f4ed] hover:!text-[#0055FF] hover:translate-x-2 transition-all"
+                  >
                     Explore
                   </a>
-                  <a href="#about" className="font-display text-2xl md:text-4xl font-black uppercase text-[#f4f4ed] hover:text-[#0055FF] hover:translate-x-2 transition-all">
+                  <a
+                    href="#about"
+                    className="font-display text-2xl md:text-4xl font-black uppercase !text-[#f4f4ed] hover:!text-[#0055FF] hover:translate-x-2 transition-all"
+                  >
                     About
                   </a>
-                  <a href="#work" className="font-display text-2xl md:text-4xl font-black uppercase text-[#f4f4ed] hover:text-[#0055FF] hover:translate-x-2 transition-all">
+                  <a
+                    href="#work"
+                    className="font-display text-2xl md:text-4xl font-black uppercase !text-[#f4f4ed] hover:!text-[#0055FF] hover:translate-x-2 transition-all"
+                  >
                     Work
                   </a>
-                  <a href="#skills" className="font-display text-2xl md:text-4xl font-black uppercase text-[#f4f4ed] hover:text-[#0055FF] hover:translate-x-2 transition-all">
+                  <a
+                    href="#skills"
+                    className="font-display text-2xl md:text-4xl font-black uppercase !text-[#f4f4ed] hover:!text-[#0055FF] hover:translate-x-2 transition-all"
+                  >
                     Arsenal
                   </a>
-                  <a href="#journey" className="font-display text-2xl md:text-4xl font-black uppercase text-[#f4f4ed] hover:text-[#0055FF] hover:translate-x-2 transition-all">
+                  <a
+                    href="#journey"
+                    className="font-display text-2xl md:text-4xl font-black uppercase !text-[#f4f4ed] hover:!text-[#0055FF] hover:translate-x-2 transition-all"
+                  >
                     Journey
                   </a>
                 </nav>
               </div>
 
-              {/* Center Column: 3D Parallax Kaiki Bust */}
-              <div className="flex flex-col items-center justify-center relative" style={{ perspective: "1000px" }}>
+              {/* Center Column: 3D Parallax Kaiki Bust framed by WebThreads */}
+              <div
+                className="flex flex-col items-center justify-center relative"
+                style={{ perspective: "1000px" }}
+              >
                 <div
                   ref={bustRef}
                   style={{ transformStyle: "preserve-3d" }}
@@ -167,9 +217,9 @@ export function Footer() {
                 </div>
               </div>
 
-              {/* Right Column: SOCIALS (Flush Right) */}
-              <div className="flex flex-col items-center md:items-end text-center md:text-right">
-                <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#f4f4ed]/75 mb-4">
+              {/* Right Column: SOCIALS */}
+              <div className="flex flex-col items-center md:items-end text-center md:text-right pointer-events-auto">
+                <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#f4f4ed]/65 mb-4">
                   Socials
                 </span>
                 <div className="flex flex-col gap-4">
@@ -177,7 +227,7 @@ export function Footer() {
                     href="https://instagram.com/mrifkywicaksana"
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex flex-col items-center md:items-end text-[#f4f4ed] hover:text-[#0055FF] transition-colors"
+                    className="group flex flex-col items-center md:items-end !text-[#f4f4ed] hover:!text-[#0055FF] transition-colors"
                   >
                     <span className="font-display text-xl md:text-3xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform">
                       Instagram ↗
@@ -191,7 +241,7 @@ export function Footer() {
                     href="https://github.com/maskaiki"
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex flex-col items-center md:items-end text-[#f4f4ed] hover:text-[#0055FF] transition-colors"
+                    className="group flex flex-col items-center md:items-end !text-[#f4f4ed] hover:!text-[#0055FF] transition-colors"
                   >
                     <span className="font-display text-xl md:text-3xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform">
                       GitHub ↗
@@ -205,7 +255,7 @@ export function Footer() {
                     href="https://www.linkedin.com/search/results/all/?keywords=Mohammad%20Rifky%20Wicaksana"
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex flex-col items-center md:items-end text-[#f4f4ed] hover:text-[#0055FF] transition-colors"
+                    className="group flex flex-col items-center md:items-end !text-[#f4f4ed] hover:!text-[#0055FF] transition-colors"
                   >
                     <span className="font-display text-xl md:text-3xl font-black uppercase leading-none group-hover:-translate-x-2 transition-transform">
                       LinkedIn ↗
@@ -215,7 +265,7 @@ export function Footer() {
                     </span>
                   </a>
 
-                  <div className="flex flex-col items-center md:items-end text-[#f4f4ed]/65">
+                  <div className="flex flex-col items-center md:items-end text-[#f4f4ed]/60">
                     <span className="font-display text-xl md:text-3xl font-black uppercase leading-none">
                       TikTok
                     </span>
@@ -225,7 +275,6 @@ export function Footer() {
                   </div>
                 </div>
               </div>
-
             </div>
 
             {/* Bottom Core Platforms Strip */}
@@ -239,17 +288,16 @@ export function Footer() {
                 </span>
               ))}
             </div>
-
           </div>
         </div>
       </div>
 
       {/* Bottom Copyright & Back to Top */}
-      <div className="w-full px-6 sm:px-12 mt-5 flex flex-col sm:flex-row items-center justify-between text-[#111112]/70 font-display text-[11px] font-extrabold uppercase tracking-wider">
+      <div className="w-full px-6 sm:px-12 mt-5 flex flex-col sm:flex-row items-center justify-between text-[#111112]/80 font-display text-[11px] font-extrabold uppercase tracking-wider">
         <span>© 2026 KAIKI — MOHAMMAD RIFKY WICAKSANA</span>
         <button
           onClick={scrollToTop}
-          className="mt-2 sm:mt-0 flex items-center gap-1.5 hover:text-[#111112] transition-colors cursor-pointer"
+          className="mt-2 sm:mt-0 flex items-center gap-1.5 hover:text-[#0055FF] transition-colors cursor-pointer"
         >
           <span>Back to Top</span>
           <span>↑</span>
