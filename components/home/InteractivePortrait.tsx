@@ -52,7 +52,7 @@ export function InteractivePortrait({
       onTouchStart={() => setPreloadOthers(true)}
       onMouseLeave={() => onHoverChange?.(false)}
       className={`relative flex flex-col items-center justify-end select-none w-[128vw] sm:w-full max-w-none h-[82svh] sm:h-[95vh] lg:h-[98vh] max-h-[1080px] aspect-square mx-auto pointer-events-auto cursor-pointer ${className}`}
-      aria-label="Mohammad Rifky Wicaksana (Kaiki) — Click to switch pose"
+      aria-label="Mohammad Rifky Wicaksana (Kaiki). Click to switch pose"
       role="button"
       tabIndex={0}
     >
@@ -67,7 +67,7 @@ export function InteractivePortrait({
             <Image
               key={src}
               src={src}
-              alt={`Mohammad Rifky Wicaksana (Kaiki) — Pose ${index + 1}`}
+              alt={`Mohammad Rifky Wicaksana (Kaiki), Pose ${index + 1}`}
               fill
               priority={isFirst}
               fetchPriority={isFirst ? "high" : "low"}

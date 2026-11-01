@@ -52,9 +52,9 @@ const COPY = {
   lead: "How a project",
   accent: "works",
   steps: [
-    "01 — You ask",
-    "02 — We craft the system",
-    "03 — Standout result wins",
+    "01. You ask",
+    "02. We craft the system",
+    "03. Standout result wins",
   ],
   query: "cool portfolio web",
   searching: "Crafting…",

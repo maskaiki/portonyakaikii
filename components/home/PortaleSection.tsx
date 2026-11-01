@@ -283,7 +283,7 @@ export function PortaleSection() {
             </div>
 
             <p className="font-sans text-base sm:text-lg text-white/80 max-w-md leading-snug">
-              Scroll down to step inside the glass portal — where front-end
+              Scroll down to step inside the glass portal where front-end
               engineering, visual design, and motion converge.
             </p>
           </div>
@@ -375,7 +375,7 @@ export function PortaleSection() {
             <div className="space-y-4 max-w-md">
               <p className="font-sans text-sm sm:text-base text-[#151515]/80 leading-relaxed">
                 Commission your custom portfolio website, graphic design
-                layouts, and video edits — crafted end-to-end so you launch with
+                layouts, and video edits, crafted end-to-end so you launch with
                 confidence.
               </p>
               <a

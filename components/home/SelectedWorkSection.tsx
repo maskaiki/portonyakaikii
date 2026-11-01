@@ -41,8 +41,8 @@ const WEB_PROJECTS = [
 ];
 
 const GRAPHIC_DESIGNS = [
-  { id: 1, title: "Choose Your June Cat — ASC UM", image: "/assets/designs/design-1.webp" },
-  { id: 2, title: "Maulid Nabi 1448 H — ASC UM", image: "/assets/designs/design-2.webp" },
+  { id: 1, title: "Choose Your June Cat · ASC UM", image: "/assets/designs/design-1.webp" },
+  { id: 2, title: "Maulid Nabi 1448 H · ASC UM", image: "/assets/designs/design-2.webp" },
   { id: 3, title: "AKSI Indosiar 2026 Support Poster", image: "/assets/designs/design-3.webp" },
   { id: 4, title: "Rekap Kabar Juara ASC 2026", image: "/assets/designs/design-4.webp" },
   { id: 5, title: "SYIAR UKM ASC 2026", image: "/assets/designs/design-5.webp" },
@@ -625,7 +625,7 @@ export function SelectedWorkSection() {
                 VISUAL STORYTELLING &amp; RHYTHM CUTS.
               </h4>
               <p className="font-sans text-sm sm:text-base text-[#f4f4ed] leading-relaxed">
-                A featured showcase of my short-form editing craft — combining smooth speed ramps, beat-synced transitions, and engaging visual pacing.
+                A featured showcase of my short-form editing craft, combining smooth speed ramps, beat-synced transitions, and engaging visual pacing.
               </p>
             </div>
           </div>

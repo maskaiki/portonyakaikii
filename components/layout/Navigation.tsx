@@ -229,7 +229,7 @@ export function Navigation() {
 
             <div className="w-full pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <p className="font-sans text-sm text-[#f4f4ed]">
-                Mohammad Rifky Wicaksana — Visual Front-End Creator
+                Mohammad Rifky Wicaksana · Visual Front-End Creator
               </p>
               <a
                 href="#contact"

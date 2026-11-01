@@ -12,16 +12,16 @@ export interface PptItem {
 }
 
 const PPT_ITEMS: PptItem[] = [
-  { id: 1, title: "Big Data Progress Deck — TI UM", image: "/assets/ppt/ppt-1.webp" },
-  { id: 2, title: "KerjaKita Solution — HackAttack 2025", image: "/assets/ppt/ppt-2.webp" },
-  { id: 3, title: "KerjaKita Pitch Deck — HackAttack 2025", image: "/assets/ppt/ppt-3.webp" },
-  { id: 4, title: "Ritun Recite-to-Unlock App — UM", image: "/assets/ppt/ppt-4.webp" },
+  { id: 1, title: "Big Data Progress Deck · TI UM", image: "/assets/ppt/ppt-1.webp" },
+  { id: 2, title: "KerjaKita Solution · HackAttack 2025", image: "/assets/ppt/ppt-2.webp" },
+  { id: 3, title: "KerjaKita Pitch Deck · HackAttack 2025", image: "/assets/ppt/ppt-3.webp" },
+  { id: 4, title: "Ritun Recite-to-Unlock App · UM", image: "/assets/ppt/ppt-4.webp" },
   { id: 5, title: "MedChain Blockchain Medical Deck", image: "/assets/ppt/ppt-5.webp" },
-  { id: 6, title: "MongooPod Team & Innovation — KBMK", image: "/assets/ppt/ppt-6.webp" },
+  { id: 6, title: "MongooPod Team & Innovation · KBMK", image: "/assets/ppt/ppt-6.webp" },
   { id: 7, title: "Inspektorat NTB Keynote Deck", image: "/assets/ppt/ppt-7.webp" },
   { id: 8, title: "MongooConnect Platform UI Mockup", image: "/assets/ppt/ppt-8.webp" },
-  { id: 9, title: "Bio-Cube Symbiotic Architecture — IdeaFest", image: "/assets/ppt/ppt-9.webp" },
-  { id: 10, title: "MongooPod Cover Deck — KBMK UM", image: "/assets/ppt/ppt-10.webp" },
+  { id: 9, title: "Bio-Cube Symbiotic Architecture · IdeaFest", image: "/assets/ppt/ppt-9.webp" },
+  { id: 10, title: "MongooPod Cover Deck · KBMK UM", image: "/assets/ppt/ppt-10.webp" },
 ];
 
 export function PptSnakeShowcase() {

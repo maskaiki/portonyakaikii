@@ -27,3 +27,6 @@
 6. **Color Palette:**
    - Warm Bone (`#F4F4ED`), Deep Charcoal (`#111112`), and Editorial Cobalt Blue (`#0055FF`), with Electric Sky (`#38bdf8`) for accents.
    - Alternating Light & Dark Sections rhythm: `#F4F4ED` (Hero, About, Arsenal, Footer Frame) vs `#111112` (Ticker, Work, Journey, Footer Card).
+
+7. **NO Em Dashes (`—`):**
+   - Never use em dashes (`—`) anywhere in website copy, titles, metadata, alt texts, or captions. Replace with clean punctuation: commas (`,`), periods (`.`), or middle dots (`·`).

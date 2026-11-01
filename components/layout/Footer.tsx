@@ -285,7 +285,7 @@ export function Footer() {
 
       {/* Bottom Copyright & Back to Top */}
       <div className="w-full px-6 sm:px-12 mt-5 flex flex-col sm:flex-row items-center justify-between text-[#111112] font-display text-[11px] font-extrabold uppercase tracking-wider">
-        <span>© 2026 KAIKI — MOHAMMAD RIFKY WICAKSANA</span>
+        <span>© 2026 KAIKI · MOHAMMAD RIFKY WICAKSANA</span>
         <button
           onClick={scrollToTop}
           className="mt-2 sm:mt-0 flex items-center gap-1.5 hover:text-[#0055FF] transition-colors cursor-pointer"

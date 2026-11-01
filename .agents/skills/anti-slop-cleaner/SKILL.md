@@ -40,6 +40,12 @@ This skill enforces Kaiki's zero-tolerance policy against AI-generated design sl
   * `font-mono` on section headings, badges, or card subtitles (only `font-display` Mona Sans for headings/labels, `font-brier` for editorial italic accents, `font-sans` for body copy).
   * Fake tech pill chips or tags scattered across cards.
 
+### 🚫 Rule 5: No Em Dashes ("Tanda Pisah Panjang —")
+* **PURGE:**
+  * All em dashes (`—` or `&mdash;` or `\u2014`) in website copy, titles, metadata, alt texts, or captions. This is a classic hallmark of AI-generated prose.
+* **ENFORCE:**
+  * Clean, natural punctuation: commas (`,`), periods (`.`), or middle dots (`·`).
+
 ## 2. Audit Workflow
 When running a clean-up:
 1. Scan all components from top to bottom (`Navigation.tsx` &rarr; `Hero.tsx` &rarr; `TickerSection.tsx` &rarr; `AboutSection.tsx` &rarr; `PortaleSection.tsx` &rarr; `SelectedWorkSection.tsx` &rarr; `CatWorkflowSection.tsx` &rarr; `ArsenalSection.tsx` &rarr; `JourneySection.tsx` &rarr; `Footer.tsx`).

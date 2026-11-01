@@ -10,7 +10,7 @@ const SERVICES_PILLARS = [
     num: "01",
     title: "PORTFOLIO & FRONT-END WEB",
     sub: "Custom Interactive Websites",
-    desc: "Helping creators, students, and professionals own a standout, interactive portfolio website just like this one — custom-crafted, fast, and responsive.",
+    desc: "Helping creators, students, and professionals own a standout, interactive portfolio website just like this one, custom-crafted, fast, and responsive.",
   },
   {
     num: "02",
@@ -109,7 +109,7 @@ function TiltedCard({
 }
 
 const MANIFESTO_WORDS =
-  "I MAKE FRONT-END FOR PEOPLE — TURNING PERSONAL BRANDS INTO INTERACTIVE WEB EXPERIENCES.".split(" ");
+  "I MAKE FRONT-END FOR PEOPLE. TURNING PERSONAL BRANDS INTO INTERACTIVE WEB EXPERIENCES.".split(" ");
 
 export function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -200,7 +200,7 @@ export function AboutSection() {
               <strong className="text-[#111112]">
                 cool, standout portfolio website
               </strong>{" "}
-              just like mine — plus graphic design in{" "}
+              just like mine, plus graphic design in{" "}
               <strong className="text-[#111112]">Canva</strong> and short-form
               video editing in <strong className="text-[#111112]">CapCut</strong>.
             </p>
@@ -253,7 +253,7 @@ export function AboutSection() {
             <TiltedCard className="relative aspect-[4/4.6] w-full overflow-hidden border-2 border-[#111112] bg-[#111112] shadow-[14px_14px_0px_#111112] group">
               <Image
                 src="/assets/about/kaiki-candid.webp"
-                alt="Kaiki — Mohammad Rifky Wicaksana"
+                alt="Kaiki, Mohammad Rifky Wicaksana"
                 fill
                 quality={92}
                 sizes="(max-width: 768px) 95vw, 42vw"

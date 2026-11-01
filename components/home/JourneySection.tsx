@@ -25,16 +25,16 @@ const TIMELINE_DATA: TimelineItem[] = [
   },
   {
     num: "02",
-    year: "2025 — 2026",
+    year: "2025 / 2026",
     role: "Creative Media & Graphic Design",
-    organization: "UKM Al-Qur'an Study Club (ASC) — Universitas Negeri Malang",
+    organization: "UKM Al-Qur'an Study Club (ASC), Universitas Negeri Malang",
     description:
       "Created event posters, commemorative holiday graphics, and visual documentation layouts for organizational programs and social media.",
     tags: ["Graphic Design", "Event Documentation", "Social Media"],
   },
   {
     num: "03",
-    year: "2023 — Present",
+    year: "2023 / Present",
     role: "Informatics Engineering Student",
     organization: "Universitas Negeri Malang (UM)",
     description:

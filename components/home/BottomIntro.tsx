@@ -23,8 +23,8 @@ export function BottomIntro({ className = "" }: BottomIntroProps) {
         </span>
       </h2>
 
-      <p className="mt-2 sm:mt-3.5 font-sans text-xs sm:text-[14px] text-[#111112]/80 font-medium leading-relaxed max-w-lg line-clamp-2 sm:line-clamp-none">
-        Mohammad Rifky Wicaksana (Kaiki) — helping people craft standout
+      <p className="mt-2 sm:mt-3.5 font-sans text-xs sm:text-[14px] text-[#111112] font-medium leading-relaxed max-w-lg line-clamp-2 sm:line-clamp-none">
+        Mohammad Rifky Wicaksana (Kaiki), helping people craft standout
         personal portfolio websites, visual graphics, and video edits.
       </p>
 
