@@ -148,7 +148,7 @@ export function AboutSection() {
     <section
       ref={sectionRef}
       id="about"
-      className="relative w-full bg-[#f4f4ed] text-[#111112] py-24 md:py-36 overflow-hidden border-b border-[#111112]/15"
+      className="relative w-full bg-[#f4f4ed] text-[#111112] py-24 md:py-36 overflow-hidden"
     >
       {/* Full-Width Architectural Grid Lines */}
       <div className="absolute inset-0 pointer-events-none grid grid-cols-4 lg:grid-cols-12 px-5 sm:px-10 lg:px-14 xl:px-20 opacity-[0.05]">
@@ -160,8 +160,8 @@ export function AboutSection() {
       {/* Full-Bleed Widescreen Container */}
       <div className="w-full px-5 sm:px-10 lg:px-14 xl:px-20 relative z-10">
         {/* Full-Width Top Editorial Bar */}
-        <div className="flex items-baseline justify-between pb-6 mb-14 border-b border-[#111112]/15">
-          <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#111112]/75 uppercase">
+        <div className="flex items-baseline justify-between pb-6 mb-14">
+          <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#111112] uppercase">
             About &amp; Services
           </span>
           <span className="font-brier italic text-lg text-[#111112]">
@@ -204,7 +204,7 @@ export function AboutSection() {
               <strong className="text-[#111112]">Canva</strong> and short-form
               video editing in <strong className="text-[#111112]">CapCut</strong>.
             </p>
-            <div className="pt-2 flex items-center justify-between border-t border-[#111112]/15">
+            <div className="pt-2 flex items-center justify-between">
               <span className="font-brier italic text-lg text-[#111112]">
                 Available for projects
               </span>
@@ -227,18 +227,18 @@ export function AboutSection() {
               className="group p-8 sm:p-10 bg-white/80 border border-[#111112]/15 hover:border-[#111112] transition-colors flex flex-col justify-between min-h-[290px]"
             >
               <div style={{ transform: "translateZ(30px)" }}>
-                <div className="flex items-baseline justify-between pb-4 mb-6 border-b border-[#111112]/10">
+                <div className="flex items-baseline justify-between pb-4 mb-6">
                   <span className="font-brier italic text-4xl text-[#0055FF]">
                     {item.num}
                   </span>
-                  <span className="font-display text-[11px] font-bold uppercase tracking-widest text-[#111112]/75">
+                  <span className="font-display text-[11px] font-bold uppercase tracking-widest text-[#111112]">
                     {item.sub}
                   </span>
                 </div>
                 <h3 className="font-display text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#111112] mb-3">
                   {item.title}
                 </h3>
-                <p className="font-sans text-sm sm:text-base text-[#111112]/80 leading-relaxed">
+                <p className="font-sans text-sm sm:text-base text-[#111112] leading-relaxed">
                   {item.desc}
                 </p>
               </div>
@@ -247,7 +247,7 @@ export function AboutSection() {
         </div>
 
         {/* Full-Width 12-Column Personal Side & 3D Portrait Card */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-16 items-center pt-16 border-t border-[#111112]/15">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-16 items-center pt-16">
           {/* Left 5 Cols: 3D Tilted Candid Portrait */}
           <div className="lg:col-span-5">
             <TiltedCard className="relative aspect-[4/4.6] w-full overflow-hidden border-2 border-[#111112] bg-[#111112] shadow-[14px_14px_0px_#111112] group">
@@ -264,7 +264,7 @@ export function AboutSection() {
                 className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-between p-6 sm:p-8"
               >
                 <div>
-                  <span className="font-brier italic text-base text-[#f4f4ed]/85 block">
+                  <span className="font-brier italic text-base text-[#f4f4ed] block">
                     Behind the screen
                   </span>
                   <p className="font-display text-xl sm:text-2xl font-black uppercase text-[#f4f4ed]">
@@ -281,7 +281,7 @@ export function AboutSection() {
           {/* Right 7 Cols: Personal Hobbies Spread Edge-to-Edge */}
           <div className="lg:col-span-7 space-y-10">
             <div>
-              <span className="font-display text-xs font-extrabold uppercase tracking-[0.2em] text-[#111112]/75 block mb-3">
+              <span className="font-display text-xs font-extrabold uppercase tracking-[0.2em] text-[#111112] block mb-3">
                 Personal Side &amp; Interests
               </span>
               <h3 className="font-display text-4xl sm:text-6xl font-black uppercase text-[#111112] leading-[0.94]">
@@ -304,14 +304,14 @@ export function AboutSection() {
                   <h4 className="font-display text-base font-black uppercase text-[#111112] mb-2">
                     {hobby.title}
                   </h4>
-                  <p className="font-sans text-xs sm:text-sm text-[#111112]/80 leading-relaxed">
+                  <p className="font-sans text-xs sm:text-sm text-[#111112] leading-relaxed font-medium">
                     {hobby.detail}
                   </p>
                 </TiltedCard>
               ))}
             </div>
 
-            <div className="pt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#111112]/15">
+            <div className="pt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <blockquote className="font-brier italic text-2xl sm:text-3xl text-[#111112]">
                 &ldquo;It doesn&rsquo;t matter where you start, it&rsquo;s how
                 you progress from there.&rdquo;

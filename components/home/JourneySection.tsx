@@ -163,7 +163,7 @@ export function JourneySection() {
         {/* Full-Width Section Header with Reversible Scroll In/Out */}
         <div
           ref={headerRef}
-          className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 mb-16 border-b border-white/15 will-change-transform"
+          className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 mb-16 will-change-transform"
         >
           <div>
             <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#60a5fa] uppercase block mb-3">
@@ -177,7 +177,7 @@ export function JourneySection() {
             </h2>
           </div>
 
-          <p className="max-w-md font-sans text-sm sm:text-base text-[#f4f4ed]/65 leading-relaxed">
+          <p className="max-w-md font-sans text-sm sm:text-base text-[#f4f4ed] leading-relaxed">
             My academic foundation at Universitas Negeri Malang, campus creative roles, and freelance front-end &amp; visual practice.
           </p>
         </div>
@@ -204,13 +204,13 @@ export function JourneySection() {
                     {item.year}
                   </span>
                   <div
-                    className="inline-flex items-center gap-1.5 mt-2.5 w-fit px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm"
+                    className="inline-flex items-center gap-1.5 mt-2.5 w-fit px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm"
                     style={{
                       animation: `bounce-down ${3.4 + idx * 0.4}s ease-in-out infinite`,
                     }}
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-[#0055FF]" />
-                    <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#f4f4ed]/60">
+                    <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#f4f4ed]">
                       Milestone {item.num}
                     </span>
                   </div>
@@ -228,14 +228,14 @@ export function JourneySection() {
 
                 {/* Right 4 Cols: Description & Tags in Midnight-Cobalt Glass Card */}
                 <div className="lg:col-span-4 flex flex-col justify-between space-y-6 rounded-[24px] bg-[#141824]/80 backdrop-blur-xl border border-white/10 group-hover:border-[#0055FF]/60 p-6 sm:p-8 transition-all shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-                  <p className="font-sans text-sm sm:text-base text-[#f4f4ed]/70 leading-relaxed">
+                  <p className="font-sans text-sm sm:text-base text-[#f4f4ed] leading-relaxed">
                     {item.description}
                   </p>
-                  <div className="flex flex-wrap gap-2 pt-4 border-t border-white/10">
+                  <div className="flex flex-wrap gap-2 pt-4">
                     {item.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2.5 py-1 rounded-[8px] bg-white/5 border border-white/10 font-display text-[10px] font-bold uppercase tracking-wider text-[#f4f4ed]/60"
+                        className="px-2.5 py-1 rounded-[8px] bg-white/10 font-display text-[10px] font-bold uppercase tracking-wider text-[#f4f4ed]"
                       >
                         {tag}
                       </span>

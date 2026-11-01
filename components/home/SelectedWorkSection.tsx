@@ -113,20 +113,20 @@ function Web3DCard({ web, index }: { web: (typeof WEB_PROJECTS)[0]; index: numbe
         <h4 className="font-display text-2xl font-black uppercase text-[#f4f4ed] mb-2">
           {web.title}
         </h4>
-        <p className="font-sans text-sm text-[#f4f4ed]/65 leading-relaxed mb-6">
+        <p className="font-sans text-sm text-[#f4f4ed] leading-relaxed mb-6">
           {web.description}
         </p>
       </div>
 
       <div
         style={{ transform: "translateZ(20px)" }}
-        className="pt-4 border-t border-white/10 flex items-center justify-between gap-2"
+        className="pt-4 flex items-center justify-between gap-2"
       >
         <div className="flex flex-wrap gap-2">
           {web.tags.map((t) => (
             <span
               key={t}
-              className="font-display text-[10px] font-bold uppercase tracking-wider text-[#f4f4ed]/50"
+              className="font-display text-[10px] font-bold uppercase tracking-wider text-[#38bdf8]"
             >
               {t}
             </span>
@@ -416,7 +416,7 @@ export function SelectedWorkSection() {
         {/* Section Header with Scroll In/Out */}
         <div
           ref={headerRef}
-          className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-white/15 will-change-transform"
+          className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 will-change-transform"
         >
           <div>
             <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#60a5fa] uppercase block mb-3">
@@ -429,7 +429,7 @@ export function SelectedWorkSection() {
               </span>
             </h2>
           </div>
-          <p className="max-w-md font-sans text-sm sm:text-base text-[#f4f4ed]/65 leading-relaxed">
+          <p className="max-w-md font-sans text-sm sm:text-base text-[#f4f4ed] leading-relaxed">
             Three front-end web builds, ten 3:4 graphic design works in a liquid-glass 3D cylinder, ten 16:9 slide decks, and one featured video edit.
           </p>
         </div>
@@ -443,7 +443,7 @@ export function SelectedWorkSection() {
                 (03)
               </span>
             </h3>
-            <span className="font-display text-xs font-bold tracking-[0.16em] text-[#f4f4ed]/40 uppercase">
+            <span className="font-display text-xs font-bold tracking-[0.16em] text-[#60a5fa] uppercase">
               Interactive Portfolio Builds
             </span>
           </div>
@@ -465,7 +465,7 @@ export function SelectedWorkSection() {
                   (10 works in 3D space)
                 </span>
               </h3>
-              <p className="font-sans text-sm text-[#f4f4ed]/60 mt-1">
+              <p className="font-sans text-sm text-[#f4f4ed] mt-1">
                 Continuous auto-rotation. Drag to spin or click any 3:4 poster to inspect.
               </p>
             </div>
@@ -572,7 +572,7 @@ export function SelectedWorkSection() {
                 (featured reel)
               </span>
             </h3>
-            <span className="font-display text-xs font-bold tracking-[0.16em] text-[#f4f4ed]/40 uppercase">
+            <span className="font-display text-xs font-bold tracking-[0.16em] text-[#60a5fa] uppercase">
               Edited in CapCut
             </span>
           </div>
@@ -624,7 +624,7 @@ export function SelectedWorkSection() {
               <h4 className="font-display text-3xl sm:text-5xl font-black uppercase text-[#f4f4ed] leading-[0.95]">
                 VISUAL STORYTELLING &amp; RHYTHM CUTS.
               </h4>
-              <p className="font-sans text-sm sm:text-base text-[#f4f4ed]/65 leading-relaxed">
+              <p className="font-sans text-sm sm:text-base text-[#f4f4ed] leading-relaxed">
                 A featured showcase of my short-form editing craft — combining smooth speed ramps, beat-synced transitions, and engaging visual pacing.
               </p>
             </div>

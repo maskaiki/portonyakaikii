@@ -202,7 +202,7 @@ export function Navigation() {
             className="fixed inset-0 z-40 bg-[#111112] text-[#f4f4ed] flex flex-col justify-between px-6 sm:px-12 lg:px-20 py-24 overflow-y-auto"
           >
             <div className="w-full pt-8">
-              <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#f4f4ed]/70 uppercase mb-8 block">
+              <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#f4f4ed] uppercase mb-8 block">
                 Navigation
               </span>
               <nav className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
@@ -214,12 +214,12 @@ export function Navigation() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 + i * 0.05, duration: 0.4 }}
                     onClick={() => setMenuOpen(false)}
-                    className="group flex items-baseline justify-between py-4 border-b border-white/10 hover:border-[#0055FF] transition-colors"
+                    className="group flex items-baseline justify-between py-4 hover:border-[#0055FF] transition-colors"
                   >
                     <span className="font-display text-5xl sm:text-7xl font-black uppercase text-[#f4f4ed] group-hover:text-[#0055FF] group-hover:translate-x-4 transition-all duration-300">
                       {label}
                     </span>
-                    <span className="font-brier italic text-2xl text-[#f4f4ed]/60 group-hover:text-[#0055FF]">
+                    <span className="font-brier italic text-2xl text-[#0055FF] group-hover:text-white transition-colors">
                       0{i + 1}
                     </span>
                   </motion.a>
@@ -227,8 +227,8 @@ export function Navigation() {
               </nav>
             </div>
 
-            <div className="w-full pt-8 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <p className="font-sans text-sm text-[#f4f4ed]/75">
+            <div className="w-full pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <p className="font-sans text-sm text-[#f4f4ed]">
                 Mohammad Rifky Wicaksana — Visual Front-End Creator
               </p>
               <a

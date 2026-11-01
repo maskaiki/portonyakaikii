@@ -39,7 +39,7 @@ export function TickerSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-[#111112] text-[#f4f4ed] py-16 md:py-24 overflow-hidden border-t border-b border-white/10"
+      className="relative bg-[#111112] text-[#f4f4ed] py-16 md:py-24 overflow-hidden"
     >
       <div
         className="absolute inset-0 pointer-events-none opacity-15"

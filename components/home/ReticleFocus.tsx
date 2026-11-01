@@ -7,7 +7,7 @@ interface ReticleFocusProps {
 export function ReticleFocus({ className = "" }: ReticleFocusProps) {
   return (
     <div
-      className={`pointer-events-none select-none z-10 text-[#00d2ff]/60 ${className}`}
+      className={`pointer-events-none select-none z-10 text-[#0055FF]/70 ${className}`}
       aria-hidden="true"
     >
       <svg

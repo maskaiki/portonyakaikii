@@ -761,7 +761,7 @@ export function CatWorkflowSection() {
   return (
     <section
       ref={viewportRef}
-      className="relative w-full h-screen min-h-[680px] overflow-hidden bg-[#05070f] text-[#f1f5ff] select-none border-t border-white/10"
+      className="relative w-full h-screen min-h-[680px] overflow-hidden bg-[#05070f] text-[#f1f5ff] select-none"
     >
       <div
         ref={stageRef}

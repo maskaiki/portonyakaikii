@@ -355,9 +355,9 @@ export function PortaleSection() {
                   </h4>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-white/20 text-xs sm:text-sm font-sans text-white/80">
+                <div className="flex items-center justify-between pt-4 text-xs sm:text-sm font-sans text-white font-medium">
                   <span>MOHAMMAD RIFKY WICAKSANA</span>
-                  <span>MALANG, ID • 2026</span>
+                  <span>CREATIVE TECHNOLOGIST</span>
                 </div>
               </div>
             </div>

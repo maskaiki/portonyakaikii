@@ -230,7 +230,7 @@ export function ArsenalSection() {
         {/* Section Header */}
         <div
           ref={headerRef}
-          className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 mb-16 border-b border-[#111112]/15 will-change-transform"
+          className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 mb-16 will-change-transform"
         >
           <div>
             <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#0055FF] uppercase block mb-3">
@@ -244,7 +244,7 @@ export function ArsenalSection() {
             </h2>
           </div>
 
-          <p className="max-w-md font-sans text-sm sm:text-base text-[#111112]/80 leading-relaxed">
+          <p className="max-w-md font-sans text-sm sm:text-base text-[#111112] leading-relaxed">
             How this portfolio website was engineered and the exact platforms I
             use every day to build websites, graphics, and videos.
           </p>
@@ -279,7 +279,7 @@ export function ArsenalSection() {
                   >
                     {item.icon}
                   </div>
-                  <span className="font-brier italic text-2xl text-[#111112]/55 group-hover:text-[#0055FF] transition-colors">
+                  <span className="font-brier italic text-2xl text-[#0055FF] transition-colors">
                     0{idx + 1}
                   </span>
                 </div>
@@ -287,7 +287,7 @@ export function ArsenalSection() {
                   <h3 className="font-display text-2xl font-black uppercase text-[#111112]">
                     {item.name}
                   </h3>
-                  <p className="font-sans text-xs sm:text-sm text-[#111112]/80 mt-1.5 leading-relaxed">
+                  <p className="font-sans text-xs sm:text-sm text-[#111112] mt-1.5 leading-relaxed font-medium">
                     {item.role}
                   </p>
                 </div>
@@ -307,18 +307,18 @@ export function ArsenalSection() {
               <h3 className="font-display text-3xl sm:text-4xl font-black uppercase text-[#f4f4ed] mb-3">
                 HOW THIS WEB WAS BUILT
               </h3>
-              <p className="font-sans text-sm text-[#f4f4ed]/80 leading-relaxed mb-6">
+              <p className="font-sans text-sm text-[#f4f4ed] leading-relaxed mb-6">
                 Built by combining modern front-end frameworks with AI-assisted
                 workflows in Antigravity and Google AI Studio.
               </p>
 
-              <div className="space-y-3.5 py-5 border-t border-b border-white/15 mb-8">
+              <div className="space-y-3.5 py-5 mb-8">
                 {WEBSITE_SPECS.map((spec) => (
                   <div
                     key={spec.label}
                     className="flex flex-col sm:flex-row sm:justify-between py-1 text-xs gap-1"
                   >
-                    <span className="font-display font-bold uppercase tracking-wider text-[#f4f4ed]/75">
+                    <span className="font-display font-bold uppercase tracking-wider text-[#f4f4ed]">
                       {spec.label}
                     </span>
                     <span className="font-sans font-semibold text-[#f4f4ed] sm:text-right">
@@ -340,7 +340,7 @@ export function ArsenalSection() {
         </div>
 
         {/* Full-Bleed Infinite Scrolling Logo Marquee */}
-        <div className="pt-10 border-t border-[#111112]/15">
+        <div className="pt-10">
           <div className="w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
             <div className="flex w-fit marquee-track-logos">
               {[...PLATFORMS, ...PLATFORMS, ...PLATFORMS].map((plat, idx) => (

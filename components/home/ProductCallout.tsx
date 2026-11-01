@@ -72,11 +72,11 @@ export function ProductCallout({ className = "" }: ProductCalloutProps) {
           aria-hidden="true"
         />
 
-        <div className="flex items-baseline justify-between border-b border-[#111112]/15 pb-2 mb-3">
-          <span className="font-display text-[10px] font-extrabold tracking-[0.16em] uppercase text-[#111112]/75">
+        <div className="flex items-baseline justify-between pb-2 mb-2">
+          <span className="font-display text-[10px] font-extrabold tracking-[0.16em] uppercase text-[#111112]">
             Focus Area
           </span>
-          <span className="font-brier italic text-sm text-[#111112]">
+          <span className="font-brier italic text-sm text-[#0055FF]">
             {current.index}
           </span>
         </div>
@@ -93,14 +93,14 @@ export function ProductCallout({ className = "" }: ProductCalloutProps) {
               <p className="font-display text-sm font-black uppercase text-[#111112] tracking-tight leading-none">
                 {current.title}
               </p>
-              <p className="font-sans text-[11px] text-[#111112]/75 mt-1">
+              <p className="font-sans text-[11px] text-[#111112] mt-1 font-medium">
                 {current.sub}
               </p>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <div className="flex items-center gap-1.5 mt-3 pt-2 border-t border-[#111112]/15">
+        <div className="flex items-center gap-1.5 mt-3 pt-2">
           {DISCIPLINES.map((_, i) => (
             <span
               key={i}
@@ -112,13 +112,6 @@ export function ProductCallout({ className = "" }: ProductCalloutProps) {
             />
           ))}
         </div>
-      </div>
-
-      <div
-        className="w-48 sm:w-52 mt-2 font-barcode text-[#111112]/80 text-xl leading-none select-none tracking-widest text-right overflow-hidden"
-        aria-hidden="true"
-      >
-        <div className="whitespace-nowrap">NEVERSTOPCREATING</div>
       </div>
     </aside>
   );
