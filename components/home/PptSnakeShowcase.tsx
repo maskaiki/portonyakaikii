@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -31,6 +31,7 @@ export function PptSnakeShowcase() {
   const cycleRef = useRef(0);
   const speedBoostRef = useRef(0);
   const isHoveredRef = useRef(false);
+  const [inspectedDeck, setInspectedDeck] = useState<PptItem | null>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -147,6 +148,11 @@ export function PptSnakeShowcase() {
       >
         {/* Background Giant Typography with Scroll In/Out */}
         <div className="w-full px-5 sm:px-10 lg:px-14 xl:px-20 relative z-0 pointer-events-none flex flex-col justify-center">
+          <div className="flex items-center gap-2 mb-4 pointer-events-auto">
+            <span className="font-display text-[11px] font-bold tracking-[0.2em] text-[#38bdf8] uppercase bg-[#141824] px-3.5 py-1.5 rounded-full border border-white/15">
+              Hover to slow · Click slide to inspect
+            </span>
+          </div>
           <h3
             ref={titleRef}
             className="font-display text-5xl sm:text-7xl lg:text-8xl xl:text-[6.8rem] font-black uppercase tracking-tight leading-[0.92] text-[#f4f4ed] will-change-transform"
@@ -171,11 +177,12 @@ export function PptSnakeShowcase() {
               ref={(el) => {
                 cardsRef.current[idx] = el;
               }}
+              onClick={() => setInspectedDeck(item)}
               style={{
                 backfaceVisibility: "hidden",
                 WebkitBackfaceVisibility: "hidden",
               }}
-              className="absolute w-[340px] sm:w-[500px] md:w-[620px] lg:w-[700px] aspect-video rounded-[20px] overflow-hidden bg-[#18181c] shadow-[0_28px_70px_rgba(0,0,0,0.92)] will-change-transform"
+              className="absolute w-[340px] sm:w-[500px] md:w-[620px] lg:w-[700px] aspect-video rounded-[20px] overflow-hidden bg-[#18181c] shadow-[0_28px_70px_rgba(0,0,0,0.92)] will-change-transform cursor-pointer border border-white/10 hover:border-[#0055FF] transition-colors"
             >
               <Image
                 src={item.image}
@@ -188,6 +195,58 @@ export function PptSnakeShowcase() {
           ))}
         </div>
       </div>
+
+      {/* Slide Deck Inspection Lightbox Modal */}
+      {inspectedDeck && (
+        <div
+          onClick={() => setInspectedDeck(null)}
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-4 sm:p-8 animate-fadeIn"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-4xl w-full bg-[#111112] border border-white/20 rounded-[28px] overflow-hidden shadow-2xl p-6 sm:p-8 flex flex-col gap-6"
+          >
+            <div className="flex items-center justify-between pb-4 border-b border-white/10">
+              <div>
+                <span className="font-display text-[11px] font-bold tracking-[0.2em] text-[#38bdf8] uppercase block">
+                  Pitch Deck Architecture
+                </span>
+                <h4 className="font-display text-xl sm:text-2xl font-black uppercase text-[#f4f4ed] mt-1">
+                  {inspectedDeck.title}
+                </h4>
+              </div>
+              <button
+                onClick={() => setInspectedDeck(null)}
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#0055FF] text-[#f4f4ed] hover:text-white flex items-center justify-center font-display font-bold transition-colors cursor-pointer"
+                aria-label="Close inspection modal"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="relative w-full aspect-video rounded-[18px] overflow-hidden bg-[#0d1017] border border-white/10">
+              <Image
+                src={inspectedDeck.image}
+                alt={inspectedDeck.title}
+                fill
+                sizes="(max-width: 1024px) 95vw, 1200px"
+                className="object-contain"
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+              <span className="font-brier italic text-base text-[#0055FF]">
+                Designed in Canva &amp; Keynote by Kaiki
+              </span>
+              <span className="font-sans text-xs text-[#f4f4ed]/90">
+                Optimized visual hierarchy, rhythm layout, and typographic structure.
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { HeroGhostBuddy } from "./HeroGhostBuddy";
 
 const SERVICES_PILLARS = [
   {
@@ -148,8 +149,11 @@ export function AboutSection() {
     <section
       ref={sectionRef}
       id="about"
-      className="relative w-full bg-[#f4f4ed] text-[#111112] py-24 md:py-36 overflow-hidden"
+      className="section-stage relative w-full bg-[#f4f4ed] text-[#111112] py-24 md:py-36 overflow-hidden"
     >
+      {/* Interactive Glass Ghost Buddy Mascot Floating in About Section */}
+      <HeroGhostBuddy />
+
       {/* Full-Width Architectural Grid Lines */}
       <div className="absolute inset-0 pointer-events-none grid grid-cols-4 lg:grid-cols-12 px-5 sm:px-10 lg:px-14 xl:px-20 opacity-[0.05]">
         {Array.from({ length: 12 }).map((_, i) => (

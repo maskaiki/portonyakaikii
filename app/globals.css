@@ -13,7 +13,7 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   KAIKI — Design System
+   KAIKI · Design System
    Bold & Edgy, single-scroll kinetic portfolio
    Palette: #0A0A0A deep black + #0066FF electric blue + #00FF88 neon mint
    Typography: Mona Sans (display) + Brier (serif accent) + Inter (body)
@@ -81,6 +81,11 @@ html {
 
 section[id] {
   scroll-margin-top: 80px;
+}
+
+.section-stage {
+  position: relative;
+  contain: layout style paint;
 }
 
 body {

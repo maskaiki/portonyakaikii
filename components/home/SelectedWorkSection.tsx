@@ -4,10 +4,25 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { PptSnakeShowcase } from "./PptSnakeShowcase";
-import { VisualFlyAndDomeShowcase } from "./VisualFlyAndDomeShowcase";
 
-const WEB_PROJECTS = [
+export interface WebProject {
+  id: string;
+  num: string;
+  title: string;
+  description: string;
+  previewImage: string;
+  liveUrl?: string;
+  isConcept?: boolean;
+  conceptDetails?: {
+    role: string;
+    timeline: string;
+    deliverables: string[];
+    summary: string;
+  };
+  tags: string[];
+}
+
+const WEB_PROJECTS: WebProject[] = [
   {
     id: "web-01",
     num: "01",
@@ -21,22 +36,36 @@ const WEB_PROJECTS = [
   {
     id: "web-02",
     num: "02",
-    title: "Web Project Showcase Two",
+    title: "Design System & UI Library",
     description:
-      "Clean, modern front-end web build designed for personal branding and digital portfolio presentation.",
+      "Modular front-end component architecture featuring dark-mode tokens, accessible state management, and fluid motion primitives.",
     previewImage: "/assets/about/obj-design.webp",
-    liveUrl: "#",
-    tags: ["Front-End", "Responsive UI", "Web Design"],
+    isConcept: true,
+    conceptDetails: {
+      role: "Front-End Developer & UI Designer",
+      timeline: "2026",
+      deliverables: ["Design Tokens", "Component Sandbox", "Micro-Interactions"],
+      summary:
+        "A modular, high-contrast design system crafted for rapid prototyping of creative portfolios and editorial platforms with zero visual clutter.",
+    },
+    tags: ["Design System", "TypeScript", "Tailwind CSS"],
   },
   {
     id: "web-03",
     num: "03",
-    title: "Web Project Showcase Three",
+    title: "Visual Photo Archive & Lab",
     description:
-      "Lightweight interactive landing page crafted with smooth transitions and mobile-first layout structure.",
+      "Lightweight interactive digital gallery showcasing photography, typographic hierarchy, and responsive CSS layout systems.",
     previewImage: "/assets/about/obj-photo.webp",
-    liveUrl: "#",
-    tags: ["React", "TypeScript", "Interactive"],
+    isConcept: true,
+    conceptDetails: {
+      role: "Creative Technologist",
+      timeline: "2026",
+      deliverables: ["Responsive Gallery", "Canvas Physics", "Performance Tuning"],
+      summary:
+        "An experimental playground exploring spatial layout compositions, smooth gesture interactions, and high-performance image loading.",
+    },
+    tags: ["React", "Motion", "Interactive"],
   },
 ];
 
@@ -53,7 +82,15 @@ const GRAPHIC_DESIGNS = [
   { id: 10, title: "Halalbihalal Keluarga Besar ASC 2026", image: "/assets/designs/design-10.webp" },
 ];
 
-function Web3DCard({ web, index }: { web: (typeof WEB_PROJECTS)[0]; index: number }) {
+function Web3DCard({
+  web,
+  index,
+  onOpenConcept,
+}: {
+  web: WebProject;
+  index: number;
+  onOpenConcept: (web: WebProject) => void;
+}) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -110,9 +147,14 @@ function Web3DCard({ web, index }: { web: (typeof WEB_PROJECTS)[0]; index: numbe
           </div>
         </div>
 
-        <h4 className="font-display text-2xl font-black uppercase text-[#f4f4ed] mb-2">
-          {web.title}
-        </h4>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="font-brier italic text-base text-[#0055FF]">
+            {web.num}
+          </span>
+          <h4 className="font-display text-2xl font-black uppercase text-[#f4f4ed]">
+            {web.title}
+          </h4>
+        </div>
         <p className="font-sans text-sm text-[#f4f4ed] leading-relaxed mb-6">
           {web.description}
         </p>
@@ -132,15 +174,26 @@ function Web3DCard({ web, index }: { web: (typeof WEB_PROJECTS)[0]; index: numbe
             </span>
           ))}
         </div>
-        <a
-          href={web.liveUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1 font-display text-xs font-extrabold !text-[#f4f4ed] hover:!text-[#0055FF] uppercase tracking-wider shrink-0 transition-colors"
-        >
-          <span>Visit Web</span>
-          <span>↗</span>
-        </a>
+
+        {web.liveUrl ? (
+          <a
+            href={web.liveUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 font-display text-xs font-extrabold !text-[#f4f4ed] hover:!text-[#38bdf8] uppercase tracking-wider shrink-0 transition-colors"
+          >
+            <span>Visit Web</span>
+            <span>↗</span>
+          </a>
+        ) : (
+          <button
+            onClick={() => onOpenConcept(web)}
+            className="inline-flex items-center gap-1 font-display text-xs font-extrabold text-[#38bdf8] hover:text-white uppercase tracking-wider shrink-0 transition-colors cursor-pointer"
+          >
+            <span>Case Study</span>
+            <span>↗</span>
+          </button>
+        )}
       </div>
     </div>
   );
@@ -152,8 +205,6 @@ export function SelectedWorkSection() {
   const webGridRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const cylinderStageRef = useRef<HTMLDivElement>(null);
-  const videoStageRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const activeNumRef = useRef<HTMLSpanElement>(null);
   const activeTitleRef = useRef<HTMLParagraphElement>(null);
 
@@ -165,20 +216,31 @@ export function SelectedWorkSection() {
   const pauseUntilRef = useRef(0);
   const activeIdxRef = useRef(0);
 
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [inspectedPoster, setInspectedPoster] = useState<(typeof GRAPHIC_DESIGNS)[0] | null>(null);
+  const [selectedConcept, setSelectedConcept] = useState<WebProject | null>(null);
 
   const count = GRAPHIC_DESIGNS.length;
   const angleStep = 360 / count;
   const radius = 580;
 
-  // Direct DOM highlight update to prevent expensive React component re-renders during 60fps spin
+  // Direct DOM highlight update with smooth GSAP flip to prevent full React tree re-renders
   const updateActiveCardVisuals = useCallback(
     (activeIdx: number) => {
       if (activeNumRef.current) {
         activeNumRef.current.textContent = `Visual ${String(activeIdx + 1).padStart(2, "0")} / ${count}`;
+        gsap.fromTo(
+          activeNumRef.current,
+          { y: -6, opacity: 0.4 },
+          { y: 0, opacity: 1, duration: 0.22, ease: "power2.out" }
+        );
       }
       if (activeTitleRef.current) {
         activeTitleRef.current.textContent = GRAPHIC_DESIGNS[activeIdx]?.title || "";
+        gsap.fromTo(
+          activeTitleRef.current,
+          { y: 6, opacity: 0.5 },
+          { y: 0, opacity: 1, duration: 0.25, ease: "power2.out" }
+        );
       }
       if (ringRef.current) {
         const cards = ringRef.current.children;
@@ -306,26 +368,6 @@ export function SelectedWorkSection() {
           }
         );
       }
-
-      if (videoStageRef.current) {
-        gsap.fromTo(
-          videoStageRef.current,
-          { rotateX: 16, scale: 0.9, opacity: 0.3 },
-          {
-            rotateX: 0,
-            scale: 1,
-            opacity: 1,
-            ease: "power2.out",
-            immediateRender: false,
-            scrollTrigger: {
-              trigger: videoStageRef.current,
-              start: "top 85%",
-              end: "top 35%",
-              scrub: 0.5,
-            },
-          }
-        );
-      }
     }, sectionRef);
 
     return () => ctx.revert();
@@ -359,24 +401,13 @@ export function SelectedWorkSection() {
     targetYRef.current = snapped + dir * angleStep;
   };
 
-  const toggleVideo = () => {
-    if (!videoRef.current) return;
-    if (videoRef.current.paused) {
-      videoRef.current.play();
-      setIsPlaying(true);
-    } else {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    }
-  };
-
   return (
     <section
       ref={sectionRef}
       id="work"
-      className="relative w-full py-28 lg:py-40 bg-[#0d1017] text-[#f4f4ed] overflow-hidden"
+      className="section-stage relative w-full py-28 lg:py-40 bg-[#0d1017] text-[#f4f4ed] overflow-hidden"
     >
-      {/* LAYERED ARCHITECTURAL TWO-TONE BACKGROUND (Deep Obsidian × Midnight Cobalt Wall Split) */}
+      {/* Architectural Wall Split Background */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -389,7 +420,7 @@ export function SelectedWorkSection() {
       <div className="absolute top-[12%] left-[18%] w-[520px] h-[520px] rounded-full bg-[#0055FF]/12 blur-[150px] pointer-events-none" />
       <div className="absolute top-[48%] right-[12%] w-[480px] h-[480px] rounded-full bg-[#38bdf8]/10 blur-[160px] pointer-events-none" />
 
-      {/* Top 3D Paper-Cut Layered Wave Relief Divider (Art-Life Inspired in Bone & Blue) */}
+      {/* Top 3D Paper-Cut Layered Wave Relief Divider */}
       <div className="absolute top-0 inset-x-0 w-full overflow-hidden leading-none pointer-events-none z-20">
         <svg viewBox="0 0 1440 110" preserveAspectRatio="none" className="w-full h-12 sm:h-20">
           <path
@@ -411,31 +442,69 @@ export function SelectedWorkSection() {
         ))}
       </div>
 
-      <div className="w-full px-5 sm:px-10 lg:px-14 xl:px-20 relative z-10 space-y-32 pt-8">
-
-        {/* Section Header with Scroll In/Out */}
+      <div className="w-full px-5 sm:px-10 lg:px-14 xl:px-20 relative z-10 space-y-28 pt-8">
+        {/* Section Header with Quick Discovery Category Bar */}
         <div
           ref={headerRef}
-          className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 will-change-transform"
+          className="flex flex-col gap-8 pb-8 will-change-transform"
         >
-          <div>
-            <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#60a5fa] uppercase block mb-3">
-              Selected Work
-            </span>
-            <h2 className="font-display text-4xl sm:text-6xl lg:text-8xl font-black uppercase tracking-tight text-[#f4f4ed] leading-[0.92]">
-              WEB, VISUALS &amp; <br />
-              <span className="font-brier italic font-normal text-[#0055FF]">
-                motion archive.
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+            <div>
+              <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#60a5fa] uppercase block mb-3">
+                Selected Work
               </span>
-            </h2>
+              <h2 className="font-display text-4xl sm:text-6xl lg:text-8xl font-black uppercase tracking-tight text-[#f4f4ed] leading-[0.92]">
+                WEB, VISUALS &amp; <br />
+                <span className="font-brier italic font-normal text-[#0055FF]">
+                  motion archive.
+                </span>
+              </h2>
+            </div>
+            <p className="max-w-md font-sans text-sm sm:text-base text-[#f4f4ed] leading-relaxed">
+              Explore three front-end web builds, ten 3:4 graphic posters in an interactive 3D cylinder, followed by slide decks and video reel below.
+            </p>
           </div>
-          <p className="max-w-md font-sans text-sm sm:text-base text-[#f4f4ed] leading-relaxed">
-            Three front-end web builds, ten 3:4 graphic design works in a liquid-glass 3D cylinder, ten 16:9 slide decks, and one featured video edit.
-          </p>
+
+          {/* Gamified Discovery Category Navigation Bar */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-2xl bg-[#141824]/80 border border-white/15 backdrop-blur-md">
+            <span className="font-display text-[10px] sm:text-xs font-extrabold tracking-[0.18em] text-[#38bdf8] uppercase px-3 py-1">
+              Explore:
+            </span>
+            <a
+              href="#work-web"
+              className="font-display text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-[#0055FF] text-[#f4f4ed] hover:text-white border border-white/10 transition-colors"
+            >
+              [01] Web Builds (3)
+            </a>
+            <a
+              href="#work-posters"
+              className="font-display text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-[#0055FF] text-[#f4f4ed] hover:text-white border border-white/10 transition-colors"
+            >
+              [02] Posters (10)
+            </a>
+            <a
+              href="#work-ppt"
+              className="font-display text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-[#0055FF] text-[#f4f4ed] hover:text-white border border-white/10 transition-colors"
+            >
+              [03] Slide Decks (10)
+            </a>
+            <a
+              href="#work-video"
+              className="font-display text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-[#0055FF] text-[#f4f4ed] hover:text-white border border-white/10 transition-colors"
+            >
+              [04] Video Reel (1)
+            </a>
+            <a
+              href="#work-monument"
+              className="font-display text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-[#0055FF] text-[#f4f4ed] hover:text-white border border-white/10 transition-colors"
+            >
+              [05] Monument (16)
+            </a>
+          </div>
         </div>
 
         {/* ── PART 1: 3 WEB PROJECTS ───────────────────────────────── */}
-        <div ref={webGridRef}>
+        <div id="work-web" ref={webGridRef}>
           <div className="flex items-baseline justify-between mb-10">
             <h3 className="font-display text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#f4f4ed]">
               Front-End Web{" "}
@@ -450,13 +519,18 @@ export function SelectedWorkSection() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 xl:gap-10">
             {WEB_PROJECTS.map((web, idx) => (
-              <Web3DCard key={web.id} web={web} index={idx} />
+              <Web3DCard
+                key={web.id}
+                web={web}
+                index={idx}
+                onOpenConcept={setSelectedConcept}
+              />
             ))}
           </div>
         </div>
 
         {/* ── PART 2: 10 GRAPHIC DESIGNS (Exact 3:4 Liquid Glass Cylinder) ─ */}
-        <div>
+        <div id="work-posters">
           <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
             <div>
               <h3 className="font-display text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#f4f4ed]">
@@ -466,20 +540,22 @@ export function SelectedWorkSection() {
                 </span>
               </h3>
               <p className="font-sans text-sm text-[#f4f4ed] mt-1">
-                Continuous auto-rotation. Drag to spin or click any 3:4 poster to inspect.
+                Drag to spin or click any 3:4 poster to inspect in full resolution.
               </p>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => spinByStep(1)}
-                className="px-5 py-2.5 bg-white/5 backdrop-blur-md border border-white/20 hover:border-white text-xs font-display font-extrabold uppercase tracking-wider text-[#f4f4ed] transition-colors cursor-pointer"
+                className="px-4 py-2 bg-white/5 backdrop-blur-md border border-white/20 hover:border-[#38bdf8] text-xs font-display font-extrabold uppercase tracking-wider text-[#f4f4ed] transition-colors cursor-pointer"
+                aria-label="Spin 3D poster cylinder left"
               >
                 ← Spin Left
               </button>
               <button
                 onClick={() => spinByStep(-1)}
-                className="px-5 py-2.5 bg-white/5 backdrop-blur-md border border-white/20 hover:border-white text-xs font-display font-extrabold uppercase tracking-wider text-[#f4f4ed] transition-colors cursor-pointer"
+                className="px-4 py-2 bg-white/5 backdrop-blur-md border border-white/20 hover:border-[#38bdf8] text-xs font-display font-extrabold uppercase tracking-wider text-[#f4f4ed] transition-colors cursor-pointer"
+                aria-label="Spin 3D poster cylinder right"
               >
                 Spin Right →
               </button>
@@ -496,7 +572,7 @@ export function SelectedWorkSection() {
             className="relative w-full h-[560px] sm:h-[640px] py-10 flex items-center justify-center overflow-x-clip overflow-y-visible select-none cursor-grab active:cursor-grabbing"
             style={{ perspective: "2600px" }}
           >
-            {/* Outer Ring Locked to Exact 3:4 Proportions (255x340 / 285x380) */}
+            {/* Outer Ring Locked to Exact 3:4 Proportions */}
             <div
               ref={ringRef}
               className="relative w-[255px] h-[340px] sm:w-[285px] sm:h-[380px]"
@@ -511,6 +587,7 @@ export function SelectedWorkSection() {
                     onClick={() => {
                       if (!dragMovedRef.current) {
                         goToCardIndex(i);
+                        setInspectedPoster(item);
                       }
                     }}
                     style={{
@@ -519,28 +596,29 @@ export function SelectedWorkSection() {
                       backfaceVisibility: "hidden",
                       WebkitBackfaceVisibility: "hidden",
                     }}
-                    className={`graphic-cylinder-card absolute inset-0 w-full h-full rounded-[24px] p-2 bg-[#121622]/90 border transition-[border-color,box-shadow] duration-200 overflow-hidden group will-change-transform ${isInitial
+                    className={`graphic-cylinder-card absolute inset-0 w-full h-full rounded-[24px] p-2 bg-[#121622]/90 border transition-[border-color,box-shadow] duration-200 overflow-hidden group will-change-transform cursor-pointer ${
+                      isInitial
                         ? "border-white/80 shadow-[inset_0_1px_2px_rgba(255,255,255,0.85),0_26px_60px_rgba(0,85,255,0.35)]"
                         : "border-white/20 shadow-[0_20px_45px_rgba(0,0,0,0.8)]"
-                      }`}
+                    }`}
                   >
                     {/* Liquid Glass Specular Sheen */}
                     <div
-                      className="pointer-events-none absolute inset-0 z-20 rounded-[24px] opacity-40 group-hover:opacity-65 transition-opacity"
+                      className="pointer-events-none absolute inset-0 z-20 rounded-[24px] opacity-40 group-hover:opacity-75 transition-opacity"
                       style={{
                         background:
                           "linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.05) 40%, transparent 65%, rgba(255,255,255,0.2) 100%)",
                       }}
                     />
 
-                    {/* Full-Width & Full-Height 3:4 Poster Image (Zero Right-Side Clipping!) */}
+                    {/* Full-Width & Full-Height 3:4 Poster Image */}
                     <div className="relative w-full h-full rounded-[18px] overflow-hidden bg-[#10131a]">
                       <Image
                         src={item.image}
                         alt={item.title}
                         fill
                         sizes="(max-width: 768px) 260px, 300px"
-                        className="object-cover pointer-events-none block"
+                        className="object-cover pointer-events-none block group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
                   </div>
@@ -549,98 +627,163 @@ export function SelectedWorkSection() {
             </div>
           </div>
 
-          {/* Active Poster Title Readout */}
-          <div className="text-center mt-2">
-            <span ref={activeNumRef} className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-[#0055FF] block">
+          {/* Active Poster Title Readout with Inspect Button */}
+          <div className="text-center mt-3 flex flex-col items-center">
+            <span
+              ref={activeNumRef}
+              className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-[#38bdf8] block"
+            >
               Visual 01 / {count}
             </span>
-            <p ref={activeTitleRef} className="font-display text-lg sm:text-xl font-black uppercase text-[#f4f4ed] mt-1">
+            <p
+              ref={activeTitleRef}
+              className="font-display text-lg sm:text-xl font-black uppercase text-[#f4f4ed] mt-1"
+            >
               {GRAPHIC_DESIGNS[0]?.title}
             </p>
+            <button
+              onClick={() => {
+                const current = GRAPHIC_DESIGNS[activeIdxRef.current] || GRAPHIC_DESIGNS[0];
+                setInspectedPoster(current);
+              }}
+              className="mt-3 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/10 hover:bg-[#0055FF] text-[#f4f4ed] hover:text-white font-display text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+            >
+              <span>Inspect Poster</span>
+              <span>↗</span>
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* ── PART 2.5: 10 PPT SLIDE DECKS (3D SNAKE TRAIN) ────────── */}
-        <PptSnakeShowcase />
-
-        {/* ── PART 3: 1 FEATURED VIDEO EDIT ────────────────────────── */}
-        <div style={{ perspective: "1200px" }}>
-          <div className="flex items-baseline justify-between mb-10">
-            <h3 className="font-display text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#f4f4ed]">
-              Video Editing{" "}
-              <span className="font-brier italic font-normal text-[#0055FF] lowercase ml-1">
-                (featured reel)
-              </span>
-            </h3>
-            <span className="font-display text-xs font-bold tracking-[0.16em] text-[#60a5fa] uppercase">
-              Edited in CapCut
-            </span>
-          </div>
-
+      {/* ── POSTER INSPECTION LIGHTBOX MODAL ───────────────────────── */}
+      {inspectedPoster && (
+        <div
+          onClick={() => setInspectedPoster(null)}
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6 animate-fadeIn"
+          role="dialog"
+          aria-modal="true"
+        >
           <div
-            ref={videoStageRef}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-16 items-center p-6 sm:p-10 rounded-[28px] bg-[#141824]/80 backdrop-blur-xl border border-white/15 will-change-transform"
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-lg w-full bg-[#111112] border border-white/20 rounded-[28px] overflow-hidden shadow-2xl p-6 flex flex-col gap-5"
           >
-            <div className="lg:col-span-8">
-              <div
-                onClick={!isPlaying ? toggleVideo : undefined}
-                className="relative w-full aspect-video rounded-[20px] overflow-hidden bg-[#0b0d13] border border-white/15 hover:border-[#f4f4ed] group cursor-pointer flex items-center justify-center transition-colors"
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div>
+                <span className="font-display text-[11px] font-bold tracking-[0.2em] text-[#38bdf8] uppercase block">
+                  Graphic Poster Archive
+                </span>
+                <h4 className="font-display text-lg sm:text-xl font-black uppercase text-[#f4f4ed] mt-0.5">
+                  {inspectedPoster.title}
+                </h4>
+              </div>
+              <button
+                onClick={() => setInspectedPoster(null)}
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#0055FF] text-[#f4f4ed] hover:text-white flex items-center justify-center font-display font-bold transition-colors cursor-pointer shrink-0"
+                aria-label="Close poster inspection"
               >
-                <video
-                  ref={videoRef}
-                  src="/assets/projects/featured-video.mp4"
-                  poster="/assets/projects/featured-video-poster.webp"
-                  preload="metadata"
-                  loop
-                  playsInline
-                  controls={isPlaying}
-                  onPlay={() => setIsPlaying(true)}
-                  onPause={() => setIsPlaying(false)}
-                  onEnded={() => setIsPlaying(false)}
-                  className="w-full h-full object-cover"
-                >
-                  <track
-                    kind="captions"
-                    src="data:text/vtt;charset=utf-8,WEBVTT"
-                    srcLang="en"
-                    label="English"
-                    default
-                  />
-                </video>
+                ✕
+              </button>
+            </div>
 
-                {!isPlaying && (
-                  <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-6 text-center">
-                    <div className="w-16 h-16 rounded-full bg-[#f4f4ed] text-[#111112] group-hover:bg-[#0055FF] group-hover:text-white flex items-center justify-center group-hover:scale-110 transition-all mb-4">
-                      <svg className="w-6 h-6 fill-current ml-0.5" viewBox="0 0 16 16">
-                        <path d="m4 2 10 6-10 6z" />
-                      </svg>
-                    </div>
-                    <span className="font-display text-xs font-extrabold tracking-[0.2em] text-[#f4f4ed] uppercase">
-                      Play Featured Video Edit
+            <div className="relative w-full aspect-[3/4] rounded-[18px] overflow-hidden bg-[#0d1017] border border-white/10">
+              <Image
+                src={inspectedPoster.image}
+                alt={inspectedPoster.title}
+                fill
+                sizes="(max-width: 640px) 95vw, 500px"
+                className="object-contain"
+              />
+            </div>
+
+            <div className="flex items-center justify-between text-xs pt-1">
+              <span className="font-brier italic text-base text-[#0055FF]">
+                Canva Visual Composition
+              </span>
+              <span className="font-display text-[11px] font-bold text-[#f4f4ed] uppercase tracking-wider">
+                Full 3:4 High-Resolution Poster
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── WEB CONCEPT PREVIEW MODAL ──────────────────────────────── */}
+      {selectedConcept && (
+        <div
+          onClick={() => setSelectedConcept(null)}
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-4 sm:p-8 animate-fadeIn"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-2xl w-full bg-[#111112] border border-white/20 rounded-[28px] overflow-hidden shadow-2xl p-6 sm:p-8 flex flex-col gap-6"
+          >
+            <div className="flex items-center justify-between pb-4 border-b border-white/10">
+              <div>
+                <span className="font-display text-[11px] font-bold tracking-[0.2em] text-[#38bdf8] uppercase block">
+                  Concept Architecture &middot; Project {selectedConcept.num}
+                </span>
+                <h4 className="font-display text-2xl font-black uppercase text-[#f4f4ed] mt-1">
+                  {selectedConcept.title}
+                </h4>
+              </div>
+              <button
+                onClick={() => setSelectedConcept(null)}
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#0055FF] text-[#f4f4ed] hover:text-white flex items-center justify-center font-display font-bold transition-colors cursor-pointer shrink-0"
+                aria-label="Close concept details"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="relative w-full aspect-[16/10] rounded-[18px] overflow-hidden bg-[#0d1017] border border-white/10">
+              <Image
+                src={selectedConcept.previewImage}
+                alt={selectedConcept.title}
+                fill
+                sizes="(max-width: 768px) 95vw, 650px"
+                className="object-cover"
+              />
+            </div>
+
+            {selectedConcept.conceptDetails && (
+              <div className="space-y-4">
+                <p className="font-sans text-sm text-[#f4f4ed] leading-relaxed">
+                  {selectedConcept.conceptDetails.summary}
+                </p>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2 border-t border-white/10">
+                  <div>
+                    <span className="font-display text-[10px] font-bold uppercase tracking-wider text-[#38bdf8] block">
+                      Role
+                    </span>
+                    <span className="font-display text-xs font-bold text-[#f4f4ed]">
+                      {selectedConcept.conceptDetails.role}
                     </span>
                   </div>
-                )}
+                  <div>
+                    <span className="font-display text-[10px] font-bold uppercase tracking-wider text-[#38bdf8] block">
+                      Timeline
+                    </span>
+                    <span className="font-display text-xs font-bold text-[#f4f4ed]">
+                      {selectedConcept.conceptDetails.timeline}
+                    </span>
+                  </div>
+                  <div className="col-span-2 sm:col-span-1">
+                    <span className="font-display text-[10px] font-bold uppercase tracking-wider text-[#38bdf8] block">
+                      Deliverables
+                    </span>
+                    <span className="font-display text-xs font-bold text-[#f4f4ed]">
+                      {selectedConcept.conceptDetails.deliverables.join(" · ")}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            <div className="lg:col-span-4 space-y-5">
-              <span className="font-brier italic text-2xl text-[#0055FF] block">
-                CapCut Showcase
-              </span>
-              <h4 className="font-display text-3xl sm:text-5xl font-black uppercase text-[#f4f4ed] leading-[0.95]">
-                VISUAL STORYTELLING &amp; RHYTHM CUTS.
-              </h4>
-              <p className="font-sans text-sm sm:text-base text-[#f4f4ed] leading-relaxed">
-                A featured showcase of my short-form editing craft, combining smooth speed ramps, beat-synced transitions, and engaging visual pacing.
-              </p>
-            </div>
+            )}
           </div>
         </div>
-
-        {/* ── PART 4: FLY-PAST KAIKI & 16-VISUAL FISHEYE DOME ──────── */}
-        <VisualFlyAndDomeShowcase />
-
-      </div>
+      )}
     </section>
   );
 }

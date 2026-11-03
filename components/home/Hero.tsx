@@ -9,7 +9,6 @@ import { HeroTitle } from "./HeroTitle";
 import { InteractivePortrait } from "./InteractivePortrait";
 import { BottomIntro } from "./BottomIntro";
 import { ProductCallout } from "./ProductCallout";
-import { HeroGhostBuddy } from "./HeroGhostBuddy";
 
 export function Hero() {
   const [intensity, setIntensity] = useState(25);
@@ -118,7 +117,7 @@ export function Hero() {
       ref={sectionRef}
       id="hero"
       onMouseMove={handleMouseMove}
-      className="hero-section relative isolate h-screen w-full bg-[#f4f4ed] text-[#111112] overflow-hidden select-none"
+      className="section-stage hero-section relative isolate h-screen w-full bg-[#f4f4ed] text-[#111112] overflow-hidden select-none"
       style={{
         backgroundImage:
           "url('/assets/shared/67dbeba158707fa1cd5e5e45_blobs_footer_1.svg')",
@@ -151,9 +150,6 @@ export function Hero() {
 
       {/* LAYER 2 (z-20): Difference-Blend HeroTitle */}
       <HeroTitle titleRef={titleStageRef} overlayRef={titleOverlayRef} />
-
-      {/* Interactive Glass Ghost Buddy Mascot */}
-      <HeroGhostBuddy />
 
       {/* LAYER 3 (z-30): Real-time Rain Particle Simulation Canvas */}
       <RainSimulationCanvas
