@@ -9,7 +9,6 @@ import { HeroTitle } from "./HeroTitle";
 import { InteractivePortrait } from "./InteractivePortrait";
 import { BottomIntro } from "./BottomIntro";
 import { ProductCallout } from "./ProductCallout";
-import { ReticleFocus } from "./ReticleFocus";
 import { HeroGhostBuddy } from "./HeroGhostBuddy";
 
 export function Hero() {
@@ -17,14 +16,12 @@ export function Hero() {
   const [speed, setSpeed] = useState(80);
   const [size, setSize] = useState(30);
   const [isPaused, setIsPaused] = useState(false);
-  const [portraitHovered, setPortraitHovered] = useState(false);
 
   const sectionRef = useRef<HTMLElement>(null);
   const portraitStageRef = useRef<HTMLDivElement>(null);
   const portraitShiftRef = useRef<HTMLDivElement>(null);
   const titleStageRef = useRef<HTMLDivElement>(null);
   const titleOverlayRef = useRef<HTMLDivElement>(null);
-  const reticleWrapRef = useRef<HTMLDivElement>(null);
   const leftHudRef = useRef<HTMLDivElement>(null);
   const rightHudRef = useRef<HTMLDivElement>(null);
 
@@ -99,7 +96,6 @@ export function Hero() {
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const nx = (e.clientX - rect.left) / rect.width - 0.5;
-    const ny = (e.clientY - rect.top) / rect.height - 0.5;
 
     if (portraitShiftRef.current) {
       gsap.to(portraitShiftRef.current, {
@@ -111,14 +107,6 @@ export function Hero() {
     if (titleStageRef.current && titleOverlayRef.current) {
       gsap.to([titleStageRef.current, titleOverlayRef.current], {
         x: -nx * 40,
-        duration: 0.45,
-        ease: "power2.out",
-      });
-    }
-    if (reticleWrapRef.current) {
-      gsap.to(reticleWrapRef.current, {
-        x: nx * 56,
-        y: ny * 40,
         duration: 0.45,
         ease: "power2.out",
       });
@@ -148,20 +136,6 @@ export function Hero() {
         ))}
       </div>
 
-      {/* Storm Lab Reticle Brackets */}
-      <div
-        ref={reticleWrapRef}
-        className="absolute top-[17%] sm:top-[16%] left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-[35%] pointer-events-none z-10"
-      >
-        <div
-          className={`transition-transform duration-500 ${
-            portraitHovered ? "scale-110" : "scale-100"
-          }`}
-        >
-          <ReticleFocus />
-        </div>
-      </div>
-
       {/* LAYER 1 (z-10): Portrait Stage (Zero hydration transform mutations on LCP!) */}
       <div
         ref={portraitStageRef}
@@ -171,7 +145,7 @@ export function Hero() {
           ref={portraitShiftRef}
           className="absolute inset-x-0 bottom-0 flex justify-center items-end pointer-events-auto"
         >
-          <InteractivePortrait onHoverChange={setPortraitHovered} />
+          <InteractivePortrait />
         </div>
       </div>
 
