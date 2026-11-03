@@ -258,11 +258,11 @@ export default function PlasmaWave({
       };
 
       const tick = (now: number) => {
-        raf = requestAnimationFrame(tick);
         if (!visible || document.hidden) {
-          last = now;
+          raf = 0;
           return;
         }
+        raf = requestAnimationFrame(tick);
         const p = propsRef.current;
         const dt = last ? Math.min((now - last) / 1000, 0.1) : 1 / 60;
         last = now;
@@ -286,7 +286,20 @@ export default function PlasmaWave({
       };
 
       const visibility = new IntersectionObserver((entries) => {
-        visible = entries.some((entry) => entry.isIntersecting);
+        const isNowVisible = entries.some((entry) => entry.isIntersecting);
+        if (isNowVisible && !visible) {
+          visible = true;
+          if (!raf) {
+            last = performance.now();
+            raf = requestAnimationFrame(tick);
+          }
+        } else if (!isNowVisible && visible) {
+          visible = false;
+          if (raf) {
+            cancelAnimationFrame(raf);
+            raf = 0;
+          }
+        }
       });
       visibility.observe(container);
 
@@ -298,7 +311,6 @@ export default function PlasmaWave({
       resize();
 
       window.addEventListener("pointermove", onMove, { passive: true });
-      raf = requestAnimationFrame(tick);
 
       cleanupGl = () => {
         cancelAnimationFrame(raf);

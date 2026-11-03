@@ -118,19 +118,16 @@ export function PortaleSection() {
           rotationY: -70,
           rotationZ: 18,
           scale: 0.72,
-          filter: "blur(16px) brightness(1.6)",
           opacity: 0,
         },
         {
           rotationY: 0,
           rotationZ: 0,
           scale: 1,
-          filter: "blur(0px) brightness(1)",
           opacity: 1,
           duration: 1.2,
           ease: "power3.out",
           immediateRender: false,
-          clearProps: "filter",
         },
         0
       );
@@ -138,16 +135,14 @@ export function PortaleSection() {
       const words = pinRef.current.querySelectorAll(".portale-word");
       readyTl.fromTo(
         words,
-        { opacity: 0, yPercent: 28, filter: "blur(12px)" },
+        { opacity: 0, yPercent: 28 },
         {
           opacity: 1,
           yPercent: 0,
-          filter: "blur(0px)",
           duration: 0.65,
           stagger: 0.07,
           ease: "power2.out",
           immediateRender: false,
-          clearProps: "filter",
         },
         0.18
       );
@@ -237,12 +232,14 @@ export function PortaleSection() {
           <div
             ref={lightPlaneRef}
             className="absolute left-0 top-0 w-[652px] h-[1024px] origin-top-left pointer-events-none will-change-transform"
-            style={{
-              filter:
-                "drop-shadow(0 0 6px rgba(255,255,255,0.95)) drop-shadow(0 0 22px rgba(0,85,255,0.65))",
-            }}
           >
-            <div className="w-[1024px] h-[652px] origin-top-left translate-x-[652px] rotate-90 rounded-[28px] border-[3px] border-white/90 bg-white/[0.06] backdrop-blur-md p-14 flex flex-col justify-between text-white">
+            <div
+              className="w-[1024px] h-[652px] origin-top-left translate-x-[652px] rotate-90 rounded-[28px] border-[3px] border-white/90 bg-[#0e1320]/80 p-14 flex flex-col justify-between text-white"
+              style={{
+                boxShadow:
+                  "0 0 8px rgba(255,255,255,0.9), 0 0 32px rgba(0,85,255,0.5), inset 0 0 20px rgba(56,189,248,0.25)",
+              }}
+            >
               <div className="flex items-center justify-between">
                 <div className="w-24 h-20 rounded-xl border-2 border-white/80 grid grid-cols-2 gap-1 p-2">
                   <div className="border border-white/60 rounded-sm" />

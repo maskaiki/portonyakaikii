@@ -124,28 +124,22 @@ function buildLowPolyCyberDragon(
   const root = new THREE.Group();
   const codeTex = createCyberCodeTexture(glowHexStr);
 
-  // Matte Black Faceted Obsidian Armor with Glowing Code Circuitry
-  const armorMat = new THREE.MeshStandardMaterial({
+  // Matte Black Faceted Obsidian Armor with Glowing Code Circuitry (Optimized Lambert)
+  const armorMat = new THREE.MeshLambertMaterial({
     color: armorColorHex,
-    roughness: 0.32,
-    metalness: 0.78,
     flatShading: true,
     emissive: new THREE.Color(glowHexNum),
     emissiveMap: codeTex,
     emissiveIntensity: 1.65,
   });
 
-  const darkPlateMat = new THREE.MeshStandardMaterial({
+  const darkPlateMat = new THREE.MeshLambertMaterial({
     color: 0x070a12,
-    roughness: 0.4,
-    metalness: 0.85,
     flatShading: true,
   });
 
-  const wingMembraneMat = new THREE.MeshStandardMaterial({
+  const wingMembraneMat = new THREE.MeshLambertMaterial({
     color: 0x080d18,
-    roughness: 0.38,
-    metalness: 0.65,
     flatShading: true,
     side: THREE.DoubleSide,
     emissive: new THREE.Color(glowHexNum),
@@ -461,15 +455,14 @@ export function CodeDragonsCanvas() {
 
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
-      antialias: true,
+      antialias: false,
       powerPreference: "high-performance",
       precision: "mediump",
       stencil: false,
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(1);
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.4;
+    renderer.toneMapping = THREE.NoToneMapping;
     container.appendChild(renderer.domElement);
 
     // Dramatic Studio Rim Lighting for Sharp Low-Poly Facets
@@ -543,14 +536,14 @@ export function CodeDragonsCanvas() {
     let isTabVisible = !document.hidden;
 
     const startLoopIfNeeded = () => {
-      if (!isRunning && isTabVisible && window.scrollY <= 3800) {
+      if (!isRunning && isTabVisible && window.scrollY <= 2600) {
         isRunning = true;
         animId = requestAnimationFrame(animate);
       }
     };
 
     const onScroll = () => {
-      if (window.scrollY <= 3800) {
+      if (window.scrollY <= 2600) {
         startLoopIfNeeded();
       }
     };
@@ -565,7 +558,7 @@ export function CodeDragonsCanvas() {
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     const animate = () => {
-      if (!isTabVisible || window.scrollY > 3800) {
+      if (!isTabVisible || window.scrollY > 2600) {
         isRunning = false;
         return;
       }

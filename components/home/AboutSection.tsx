@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -52,7 +52,26 @@ function TiltedCard({
   className?: string;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
+  const quickRotX = useRef<((value: number) => void) | null>(null);
+  const quickRotY = useRef<((value: number) => void) | null>(null);
+  const quickScale = useRef<((value: number) => void) | null>(null);
+
+  useEffect(() => {
+    if (cardRef.current) {
+      quickRotX.current = gsap.quickTo(cardRef.current, "rotateX", {
+        duration: 0.35,
+        ease: "power2.out",
+      });
+      quickRotY.current = gsap.quickTo(cardRef.current, "rotateY", {
+        duration: 0.35,
+        ease: "power2.out",
+      });
+      quickScale.current = gsap.quickTo(cardRef.current, "scale", {
+        duration: 0.35,
+        ease: "power2.out",
+      });
+    }
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const el = cardRef.current;
@@ -63,16 +82,13 @@ function TiltedCard({
     const rotateY = (px - 0.5) * 18;
     const rotateX = (0.5 - py) * 18;
 
-    gsap.to(el, {
-      rotateX,
-      rotateY,
-      scale: 1.02,
-      duration: 0.35,
-      ease: "power2.out",
-      transformPerspective: 1000,
-    });
+    quickRotX.current?.(rotateX);
+    quickRotY.current?.(rotateY);
+    quickScale.current?.(1.02);
 
-    setGlare({ x: px * 100, y: py * 100, opacity: 0.35 });
+    el.style.setProperty("--glare-x", `${px * 100}%`);
+    el.style.setProperty("--glare-y", `${py * 100}%`);
+    el.style.setProperty("--glare-opacity", "0.35");
   };
 
   const handleMouseLeave = () => {
@@ -85,7 +101,7 @@ function TiltedCard({
       duration: 0.6,
       ease: "elastic.out(1, 0.5)",
     });
-    setGlare((prev) => ({ ...prev, opacity: 0 }));
+    el.style.setProperty("--glare-opacity", "0");
   };
 
   return (
@@ -99,8 +115,9 @@ function TiltedCard({
       <div
         className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-300"
         style={{
-          opacity: glare.opacity,
-          background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,0.8), transparent 60%)`,
+          opacity: "var(--glare-opacity, 0)" as unknown as number,
+          background:
+            "radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255,255,255,0.7), transparent 60%)",
         }}
       />
       {children}
