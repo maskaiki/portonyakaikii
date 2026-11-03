@@ -583,14 +583,20 @@ export function SelectedWorkSection() {
           >
             <div className="lg:col-span-8">
               <div
-                onClick={toggleVideo}
+                onClick={!isPlaying ? toggleVideo : undefined}
                 className="relative w-full aspect-video rounded-[20px] overflow-hidden bg-[#0b0d13] border border-white/15 hover:border-[#f4f4ed] group cursor-pointer flex items-center justify-center transition-colors"
               >
                 <video
                   ref={videoRef}
                   src="/assets/projects/featured-video.mp4"
+                  poster="/assets/projects/featured-video-poster.webp"
+                  preload="metadata"
                   loop
                   playsInline
+                  controls={isPlaying}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  onEnded={() => setIsPlaying(false)}
                   className="w-full h-full object-cover"
                 >
                   <track
