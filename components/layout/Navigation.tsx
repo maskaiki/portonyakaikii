@@ -64,35 +64,29 @@ export function Navigation() {
 
   useEffect(() => {
     const onScroll = () => {
-      const isScrolled = window.scrollY > 40;
-      setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-
-    const sectionIds = ["hero", "about", "work", "skills", "journey", "contact"];
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        }
-      },
-      {
-        rootMargin: "-20% 0px -60% 0px",
-        threshold: 0,
+      const y = window.scrollY;
+      // Saat di bagian atas halaman, lewati pembacaan offsetTop agar 0ms Forced Reflow!
+      if (y <= 40) {
+        setScrolled(false);
+        setActiveSection("hero");
+        return;
       }
-    );
 
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
+      setScrolled(true);
+      const sections = ["hero", "about", "work", "skills", "journey", "contact"];
+      const scrollPos = y + 260;
 
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      observer.disconnect();
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sections[i]);
+        if (el && el.offsetTop <= scrollPos) {
+          setActiveSection(sections[i]);
+          break;
+        }
+      }
     };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {

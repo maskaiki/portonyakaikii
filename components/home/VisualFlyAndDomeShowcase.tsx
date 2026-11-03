@@ -38,28 +38,16 @@ export function VisualFlyAndDomeShowcase() {
   const megaCanvasRef = useRef<HTMLCanvasElement>(null);
   const wordmark3DRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const quickRotY = useRef<((value: number) => void) | null>(null);
-  const quickRotX = useRef<((value: number) => void) | null>(null);
+  const [shinePos, setShinePos] = useState({ x: 50, y: 50 });
 
-  // 1. Jalankan Engine Awan Mega Mendung (hanya saat terlihat di viewport)
+  // 1. Jalankan Engine Awan Mega Mendung (sama seperti HeroGhostBuddy)
   useEffect(() => {
     if (!megaCanvasRef.current) return;
     return startMegaMendungStage(megaCanvasRef.current);
   }, []);
 
-  // 2. Inisialisasi quickTo untuk 0-allocation tilt dan Observer Visibilitas
+  // 2. Observer Visibilitas & Idle 3D Breathing untuk Teks "KAIKI"
   useEffect(() => {
-    if (wordmark3DRef.current) {
-      quickRotY.current = gsap.quickTo(wordmark3DRef.current, "rotateY", {
-        duration: 0.55,
-        ease: "power2.out",
-      });
-      quickRotX.current = gsap.quickTo(wordmark3DRef.current, "rotateX", {
-        duration: 0.55,
-        ease: "power2.out",
-      });
-    }
-
     const targetEl = containerRef.current;
     if (!targetEl) return;
 
@@ -74,27 +62,37 @@ export function VisualFlyAndDomeShowcase() {
     return () => observer.disconnect();
   }, []);
 
-  // 3. Interaksi Tilt 3D & Specular Light Sweep via CSS Variables (0 React re-renders)
+  // 3. Interaksi Tilt 3D & Specular Light Sweep pada Teks "KAIKI"
   const handleStageMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const el = e.currentTarget;
-    const rect = el.getBoundingClientRect();
+    const rect = e.currentTarget.getBoundingClientRect();
     const px = (e.clientX - rect.left) / rect.width;
     const py = (e.clientY - rect.top) / rect.height;
     const nx = px - 0.5;
     const ny = py - 0.5;
 
-    el.style.setProperty("--shine-x", `${px * 100}%`);
-    el.style.setProperty("--shine-y", `${py * 100}%`);
+    setShinePos({ x: px * 100, y: py * 100 });
 
-    quickRotY.current?.(nx * 24);
-    quickRotX.current?.(-ny * 20);
+    if (wordmark3DRef.current) {
+      gsap.to(wordmark3DRef.current, {
+        rotateY: nx * 24,
+        rotateX: -ny * 20,
+        duration: 0.55,
+        ease: "power2.out",
+        transformPerspective: 1400,
+      });
+    }
   };
 
-  const handleStageMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.currentTarget.style.setProperty("--shine-x", "50%");
-    e.currentTarget.style.setProperty("--shine-y", "50%");
-    quickRotY.current?.(0);
-    quickRotX.current?.(0);
+  const handleStageMouseLeave = () => {
+    setShinePos({ x: 50, y: 50 });
+    if (wordmark3DRef.current) {
+      gsap.to(wordmark3DRef.current, {
+        rotateY: 0,
+        rotateX: 0,
+        duration: 0.9,
+        ease: "elastic.out(1, 0.5)",
+      });
+    }
   };
 
   return (
@@ -180,7 +178,7 @@ export function VisualFlyAndDomeShowcase() {
               style={{
                 transform: "translateZ(4px)",
                 backgroundImage: `
-                  radial-gradient(circle at var(--shine-x, 50%) var(--shine-y, 50%), rgba(255,255,255,0.98) 0%, rgba(186,230,253,0.75) 22%, rgba(244,244,237,0) 52%),
+                  radial-gradient(circle at ${shinePos.x}% ${shinePos.y}%, rgba(255,255,255,0.98) 0%, rgba(186,230,253,0.75) 22%, rgba(244,244,237,0) 52%),
                   repeating-linear-gradient(135deg, rgba(255,255,255,0.16) 0px, rgba(255,255,255,0.16) 2px, rgba(0,85,255,0.12) 2px, rgba(0,85,255,0.12) 6px),
                   linear-gradient(180deg, #ffffff 0%, #f4f4ed 36%, #bae6fd 68%, #38bdf8 86%, #f4f4ed 100%)
                 `,
@@ -249,8 +247,6 @@ export function VisualFlyAndDomeShowcase() {
                         alt=""
                         fill
                         sizes="(max-width: 768px) 220px, 330px"
-                        quality={70}
-                        loading="lazy"
                         className="w-full h-full object-cover block group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>

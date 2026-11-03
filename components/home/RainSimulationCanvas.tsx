@@ -413,55 +413,43 @@ export function RainSimulationCanvas({
           }
           continue;
         }
-      }
 
-      // ── BATCHED RAIN RENDERING (Zero createLinearGradient, 3 draw calls total) ──
-      // Tier 1: Background thin drops
-      ctx.lineWidth = 1.0;
-      ctx.strokeStyle = "rgba(56, 189, 248, 0.32)";
-      ctx.beginPath();
-      for (let i = 0; i < drops.length; i++) {
-        const d = drops[i];
-        if (!d.active || d.width > 1.2) continue;
-        ctx.moveTo(d.x - d.angleSin * d.len, d.y - d.angleCos * d.len);
-        ctx.lineTo(d.x, d.y);
-      }
-      ctx.stroke();
+        const headX = d.x;
+        const headY = d.y;
+        const tailX = d.x - d.angleSin * d.len;
+        const tailY = d.y - d.angleCos * d.len;
 
-      // Tier 2: Midground drops
-      ctx.lineWidth = 1.6;
-      ctx.strokeStyle = "rgba(0, 210, 255, 0.55)";
-      ctx.beginPath();
-      for (let i = 0; i < drops.length; i++) {
-        const d = drops[i];
-        if (!d.active || d.width <= 1.2 || d.width > 2.0) continue;
-        ctx.moveTo(d.x - d.angleSin * d.len, d.y - d.angleCos * d.len);
-        ctx.lineTo(d.x, d.y);
-      }
-      ctx.stroke();
+        const grad = ctx.createLinearGradient(tailX, tailY, headX, headY);
+        grad.addColorStop(0, "rgba(0, 210, 255, 0)");
+        grad.addColorStop(0.5, `rgba(56, 189, 248, ${d.opacity * 0.4})`);
+        grad.addColorStop(0.88, `rgba(0, 210, 255, ${d.opacity * 0.9})`);
+        grad.addColorStop(1, `rgba(17, 17, 18, ${d.opacity * 0.95})`);
 
-      // Tier 3: Foreground heavy drops
-      ctx.lineWidth = 2.4;
-      ctx.strokeStyle = "rgba(0, 210, 255, 0.85)";
-      ctx.beginPath();
-      for (let i = 0; i < drops.length; i++) {
-        const d = drops[i];
-        if (!d.active || d.width <= 2.0) continue;
-        ctx.moveTo(d.x - d.angleSin * d.len, d.y - d.angleCos * d.len);
-        ctx.lineTo(d.x, d.y);
-      }
-      ctx.stroke();
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = d.width;
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(headX, headY);
+        ctx.stroke();
 
-      // Foreground drop heads
-      ctx.fillStyle = "rgba(0, 210, 255, 0.85)";
-      ctx.beginPath();
-      for (let i = 0; i < drops.length; i++) {
-        const d = drops[i];
-        if (!d.active || d.width <= 2.0) continue;
-        ctx.moveTo(d.x + d.width * 0.7, d.y);
-        ctx.arc(d.x, d.y, d.width * 0.7, 0, Math.PI * 2);
+        if (d.width > 2.0) {
+          ctx.fillStyle = `rgba(0, 210, 255, ${d.opacity * 0.85})`;
+          ctx.beginPath();
+          ctx.arc(headX, headY, d.width * 0.7, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = `rgba(230, 250, 255, ${d.opacity * 0.95})`;
+          ctx.beginPath();
+          ctx.arc(
+            headX - d.width * 0.2,
+            headY - d.width * 0.2,
+            d.width * 0.3,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+        }
       }
-      ctx.fill();
 
       for (const s of splashes) {
         if (!s.active) continue;

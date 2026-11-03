@@ -721,11 +721,11 @@ export default function WebThreads({
       };
 
       const tick = (now: number) => {
+        state.raf = requestAnimationFrame(tick);
         if (!state.visible || document.hidden) {
-          state.raf = 0;
+          state.last = now;
           return;
         }
-        state.raf = requestAnimationFrame(tick);
         const s = settingsRef.current;
         const dt = state.last
           ? Math.min((now - state.last) / 1000, 0.1)
@@ -802,20 +802,7 @@ export default function WebThreads({
       };
 
       const visibility = new IntersectionObserver((entries) => {
-        const isNowVisible = entries.some((entry) => entry.isIntersecting);
-        if (isNowVisible && !state.visible) {
-          state.visible = true;
-          if (!state.raf) {
-            state.last = performance.now();
-            state.raf = requestAnimationFrame(tick);
-          }
-        } else if (!isNowVisible && state.visible) {
-          state.visible = false;
-          if (state.raf) {
-            cancelAnimationFrame(state.raf);
-            state.raf = 0;
-          }
-        }
+        state.visible = entries.some((entry) => entry.isIntersecting);
       });
       visibility.observe(container);
 
@@ -829,6 +816,7 @@ export default function WebThreads({
       window.addEventListener("pointermove", onMove, { passive: true });
       window.addEventListener("pointerdown", onDown);
       document.documentElement.addEventListener("pointerleave", onLeave);
+      state.raf = requestAnimationFrame(tick);
 
       cleanupGl = () => {
         cancelAnimationFrame(state.raf);
