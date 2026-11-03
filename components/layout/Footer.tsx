@@ -1,9 +1,16 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import dynamic from "next/dynamic";
 import gsap from "gsap";
-import WebThreads from "@/components/shared/WebThreads";
-import CloverMark from "@/components/shared/CloverMark";
+
+const WebThreads = dynamic(() => import("@/components/shared/WebThreads"), {
+  ssr: false,
+});
+
+const CloverMark = dynamic(() => import("@/components/shared/CloverMark"), {
+  ssr: false,
+});
 
 const CORE_PILLARS = [
   "ANTIGRAVITY",

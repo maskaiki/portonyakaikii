@@ -1,13 +1,18 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Hero } from "./Hero";
 import { TickerSection } from "./TickerSection";
 import { AboutSection } from "./AboutSection";
 import { PortaleSection } from "./PortaleSection";
 import { SelectedWorkSection } from "./SelectedWorkSection";
-import { CatWorkflowSection } from "./CatWorkflowSection";
 import { ArsenalSection } from "./ArsenalSection";
 import { JourneySection } from "./JourneySection";
+
+const CatWorkflowSection = dynamic(
+  () => import("./CatWorkflowSection").then((mod) => mod.CatWorkflowSection),
+  { ssr: false }
+);
 
 export default function HomePage() {
   return (

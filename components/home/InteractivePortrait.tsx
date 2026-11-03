@@ -72,18 +72,14 @@ export function InteractivePortrait({
               priority={isFirst}
               fetchPriority={isFirst ? "high" : "low"}
               decoding={isFirst ? "sync" : "async"}
-              unoptimized
-              sizes="100vw"
+              quality={75}
+              sizes="(max-width: 640px) 85vw, (max-width: 1024px) 50vw, 520px"
               className="object-contain object-bottom scale-100 origin-bottom"
-              style={
-                preloadOthers
-                  ? {
-                      opacity: currentIndex === index ? 1 : 0,
-                      transition: "opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-                      zIndex: currentIndex === index ? 2 : 1,
-                    }
-                  : undefined
-              }
+              style={{
+                opacity: index === 0 && !preloadOthers ? 1 : currentIndex === index ? 1 : 0,
+                transition: preloadOthers ? "opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)" : "none",
+                zIndex: currentIndex === index ? 2 : 1,
+              }}
             />
           );
         })}

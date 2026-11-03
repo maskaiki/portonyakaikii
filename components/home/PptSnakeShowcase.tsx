@@ -182,6 +182,8 @@ export function PptSnakeShowcase() {
                 alt={item.title}
                 fill
                 sizes="(max-width: 768px) 340px, 700px"
+                quality={70}
+                loading="lazy"
                 className="w-full h-full object-cover rounded-[20px] block"
               />
             </div>

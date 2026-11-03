@@ -247,6 +247,8 @@ export function VisualFlyAndDomeShowcase() {
                         alt=""
                         fill
                         sizes="(max-width: 768px) 220px, 330px"
+                        quality={70}
+                        loading="lazy"
                         className="w-full h-full object-cover block group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
