@@ -720,12 +720,14 @@ export default function WebThreads({
         gl.drawArrays(gl.TRIANGLES, 0, 3);
       };
 
+      let isRunning = false;
       const tick = (now: number) => {
-        state.raf = requestAnimationFrame(tick);
         if (!state.visible || document.hidden) {
+          isRunning = false;
           state.last = now;
           return;
         }
+        state.raf = requestAnimationFrame(tick);
         const s = settingsRef.current;
         const dt = state.last
           ? Math.min((now - state.last) / 1000, 0.1)
@@ -755,6 +757,21 @@ export default function WebThreads({
         if (state.quiet > 3) return;
 
         render(reduced);
+      };
+
+      const startLoop = () => {
+        if (!isRunning && state.visible && !document.hidden) {
+          isRunning = true;
+          state.last = performance.now();
+          state.raf = requestAnimationFrame(tick);
+        }
+      };
+
+      const stopLoop = () => {
+        if (isRunning) {
+          isRunning = false;
+          cancelAnimationFrame(state.raf);
+        }
       };
 
       const local = (event: PointerEvent) => {
@@ -802,9 +819,25 @@ export default function WebThreads({
       };
 
       const visibility = new IntersectionObserver((entries) => {
-        state.visible = entries.some((entry) => entry.isIntersecting);
+        const isIntersecting = entries.some((entry) => entry.isIntersecting);
+        if (isIntersecting && !state.visible) {
+          state.visible = true;
+          startLoop();
+        } else if (!isIntersecting && state.visible) {
+          state.visible = false;
+          stopLoop();
+        }
       });
       visibility.observe(container);
+
+      const onVisibilityChange = () => {
+        if (!document.hidden && state.visible) {
+          startLoop();
+        } else {
+          stopLoop();
+        }
+      };
+      document.addEventListener("visibilitychange", onVisibilityChange);
 
       const sizes = new ResizeObserver(([entry]) => {
         if (!entry) return;
@@ -816,15 +849,16 @@ export default function WebThreads({
       window.addEventListener("pointermove", onMove, { passive: true });
       window.addEventListener("pointerdown", onDown);
       document.documentElement.addEventListener("pointerleave", onLeave);
-      state.raf = requestAnimationFrame(tick);
+      startLoop();
 
       cleanupGl = () => {
-        cancelAnimationFrame(state.raf);
+        stopLoop();
         visibility.disconnect();
         sizes.disconnect();
         window.removeEventListener("pointermove", onMove);
         window.removeEventListener("pointerdown", onDown);
         document.documentElement.removeEventListener("pointerleave", onLeave);
+        document.removeEventListener("visibilitychange", onVisibilityChange);
         gl.deleteProgram(program);
         gl.deleteBuffer(buffer);
         gl.deleteVertexArray(vao);

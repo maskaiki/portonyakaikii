@@ -1,20 +1,16 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { RainSimulationCanvas } from "./RainSimulationCanvas";
-import { WeatherControlPanel } from "./WeatherControlPanel";
 import { HeroTitle } from "./HeroTitle";
 import { InteractivePortrait } from "./InteractivePortrait";
 import { BottomIntro } from "./BottomIntro";
 import { ProductCallout } from "./ProductCallout";
+import { HeroGhostBuddy } from "./HeroGhostBuddy";
 
 export function Hero() {
-  const [intensity, setIntensity] = useState(25);
-  const [speed, setSpeed] = useState(80);
-  const [size, setSize] = useState(30);
-  const [isPaused, setIsPaused] = useState(false);
 
   const sectionRef = useRef<HTMLElement>(null);
   const portraitStageRef = useRef<HTMLDivElement>(null);
@@ -24,7 +20,37 @@ export function Hero() {
   const leftHudRef = useRef<HTMLDivElement>(null);
   const rightHudRef = useRef<HTMLDivElement>(null);
 
+  const portraitXTo = useRef<gsap.QuickToFunc | null>(null);
+  const titleStageXTo = useRef<gsap.QuickToFunc | null>(null);
+  const titleOverlayXTo = useRef<gsap.QuickToFunc | null>(null);
+  const viewportWidthRef = useRef<number>(1440);
+
   useEffect(() => {
+    viewportWidthRef.current = window.innerWidth || 1440;
+    const onResize = () => {
+      viewportWidthRef.current = window.innerWidth || 1440;
+    };
+    window.addEventListener("resize", onResize, { passive: true });
+
+    if (portraitShiftRef.current) {
+      portraitXTo.current = gsap.quickTo(portraitShiftRef.current, "x", {
+        duration: 0.45,
+        ease: "power2.out",
+      });
+    }
+    if (titleStageRef.current) {
+      titleStageXTo.current = gsap.quickTo(titleStageRef.current, "x", {
+        duration: 0.45,
+        ease: "power2.out",
+      });
+    }
+    if (titleOverlayRef.current) {
+      titleOverlayXTo.current = gsap.quickTo(titleOverlayRef.current, "x", {
+        duration: 0.45,
+        ease: "power2.out",
+      });
+    }
+
     let ctx: gsap.Context | null = null;
 
     const initScrollTrigger = () => {
@@ -44,8 +70,8 @@ export function Hero() {
           tl.to(
             portraitStageRef.current,
             {
-              scale: 1.15,
-              yPercent: 12,
+              scale: 1.12,
+              yPercent: 10,
               ease: "none",
               immediateRender: false,
             },
@@ -85,6 +111,7 @@ export function Hero() {
     });
 
     return () => {
+      window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", initScrollTrigger);
       window.removeEventListener("wheel", initScrollTrigger);
       window.removeEventListener("touchmove", initScrollTrigger);
@@ -93,23 +120,10 @@ export function Hero() {
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const nx = (e.clientX - rect.left) / rect.width - 0.5;
-
-    if (portraitShiftRef.current) {
-      gsap.to(portraitShiftRef.current, {
-        x: nx * 32,
-        duration: 0.45,
-        ease: "power2.out",
-      });
-    }
-    if (titleStageRef.current && titleOverlayRef.current) {
-      gsap.to([titleStageRef.current, titleOverlayRef.current], {
-        x: -nx * 40,
-        duration: 0.45,
-        ease: "power2.out",
-      });
-    }
+    const nx = e.clientX / viewportWidthRef.current - 0.5;
+    portraitXTo.current?.(nx * 32);
+    titleStageXTo.current?.(-nx * 40);
+    titleOverlayXTo.current?.(-nx * 40);
   };
 
   return (
@@ -117,7 +131,7 @@ export function Hero() {
       ref={sectionRef}
       id="hero"
       onMouseMove={handleMouseMove}
-      className="section-stage hero-section relative isolate h-screen w-full bg-[#f4f4ed] text-[#111112] overflow-hidden select-none"
+      className="hero-section relative isolate h-screen w-full bg-[#f4f4ed] text-[#111112] overflow-hidden select-none"
       style={{
         backgroundImage:
           "url('/assets/shared/67dbeba158707fa1cd5e5e45_blobs_footer_1.svg')",
@@ -125,59 +139,59 @@ export function Hero() {
         backgroundPosition: "center",
       }}
     >
-      {/* Architectural Grid Lines */}
-      <div className="absolute inset-0 pointer-events-none grid grid-cols-4 lg:grid-cols-12 px-5 sm:px-10 lg:px-14 xl:px-20 opacity-[0.04]">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <div
-            key={i}
-            className="border-r border-[#111112] h-full first:border-l"
-          />
-        ))}
-      </div>
+      {/* Subtle Studio Lighting Gradient (Key Light Top-Right + Soft Halo Behind Torso) */}
+      <div
+        className="absolute inset-0 z-[2] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 48% 52% at 50% 62%, rgba(0, 85, 255, 0.08) 0%, rgba(56, 189, 248, 0.04) 45%, transparent 74%), radial-gradient(circle at 80% 16%, rgba(255, 255, 255, 0.92) 0%, transparent 52%)",
+        }}
+        aria-hidden="true"
+      />
 
-      {/* LAYER 1 (z-10): Portrait Stage (Zero hydration transform mutations on LCP!) */}
+      {/* LAYER 1 (z-10): Portrait Stage With Realistic Cast Shadow */}
       <div
         ref={portraitStageRef}
-        className="absolute inset-0 z-10 pointer-events-none"
+        className="absolute inset-0 z-10 pointer-events-none will-change-transform"
       >
         <div
           ref={portraitShiftRef}
-          className="absolute inset-x-0 bottom-0 flex justify-center items-end pointer-events-auto"
+          className="absolute inset-x-0 bottom-0 flex justify-center items-end pointer-events-auto will-change-transform"
         >
           <InteractivePortrait />
         </div>
       </div>
 
-      {/* LAYER 2 (z-20): Difference-Blend HeroTitle */}
+      {/* Subtle Bottom Grounding Fade for Clean HUD Contrast */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-64 sm:h-32 z-[15] pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(244, 244, 237, 0.96) 0%, rgba(244, 244, 237, 0.72) 45%, transparent 100%)",
+        }}
+        aria-hidden="true"
+      />
+
+      {/* LAYER 2 (z-20): Original Difference-Blend HeroTitle */}
       <HeroTitle titleRef={titleStageRef} overlayRef={titleOverlayRef} />
 
-      {/* LAYER 3 (z-30): Real-time Rain Particle Simulation Canvas */}
+      {/* LAYER 3 (z-30): Real-time Rain Particle Simulation Canvas (Fixed Preset) */}
       <RainSimulationCanvas
-        intensity={intensity}
-        speed={speed}
-        size={size}
-        isPaused={isPaused}
+        intensity={92}
+        speed={89}
+        size={100}
+        isPaused={false}
       />
+
+      {/* LAYER 4 (z-32): Interactive Glass Ghost Buddy Mascot (Cleanly In Front) */}
+      <HeroGhostBuddy />
 
       {/* Left HUD Wrapper */}
       <div
         ref={leftHudRef}
         className="absolute inset-y-0 left-0 w-full pointer-events-none z-[35]"
       >
-        <div className="absolute top-16 sm:top-24 left-5 sm:left-10 lg:left-14 xl:left-20 pointer-events-auto">
-          <WeatherControlPanel
-            intensity={intensity}
-            speed={speed}
-            size={size}
-            isPaused={isPaused}
-            onIntensityChange={setIntensity}
-            onSpeedChange={setSpeed}
-            onSizeChange={setSize}
-            onTogglePause={() => setIsPaused((prev) => !prev)}
-          />
-        </div>
-
-        <div className="absolute bottom-5 sm:bottom-8 left-5 right-5 sm:right-auto sm:left-10 lg:left-14 xl:left-20 pointer-events-auto">
+        <div className="absolute bottom-6 sm:bottom-9 left-5 right-5 sm:right-auto sm:left-10 lg:left-14 xl:left-20 pointer-events-auto">
           <BottomIntro />
         </div>
       </div>
@@ -187,7 +201,7 @@ export function Hero() {
         ref={rightHudRef}
         className="absolute inset-y-0 right-0 w-full pointer-events-none z-[35]"
       >
-        <div className="absolute bottom-5 sm:bottom-8 right-5 sm:right-10 lg:right-14 xl:right-20 pointer-events-auto hidden md:flex">
+        <div className="absolute bottom-6 sm:bottom-9 right-5 sm:right-10 lg:right-14 xl:right-20 pointer-events-auto hidden md:flex">
           <ProductCallout />
         </div>
       </div>

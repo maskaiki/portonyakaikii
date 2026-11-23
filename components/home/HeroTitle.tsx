@@ -22,6 +22,7 @@ export function HeroTitle({
 
   return (
     <>
+      <h1 className="sr-only">never stop creating</h1>
       {/* LAYER 1: DIFFERENCE BLEND MODE ON OUTER DIRECT CHILD OF HERO SECTION */}
       <div
         ref={titleRef}
@@ -29,7 +30,7 @@ export function HeroTitle({
         className={`${sharedPositionClass} ${className}`}
         aria-hidden="true"
       >
-        <h1
+        <div
           className="font-manrope font-extrabold lowercase tracking-[-0.07em] leading-[0.78161] whitespace-nowrap text-white"
           style={sharedTypographyStyle}
         >
@@ -44,7 +45,7 @@ export function HeroTitle({
             <span className="text-white">creat</span>
             <span className="opacity-0 select-none">ing</span>
           </span>
-        </h1>
+        </div>
       </div>
 
       {/* LAYER 2: NORMAL BLEND MODE FOR SOLID CYAN-BLUE 'er' AND 'ing' */}
@@ -54,7 +55,7 @@ export function HeroTitle({
         className={`${sharedPositionClass} ${className}`}
         aria-hidden="true"
       >
-        <h1
+        <div
           className="font-manrope font-extrabold lowercase tracking-[-0.07em] leading-[0.78161] whitespace-nowrap"
           style={sharedTypographyStyle}
         >
@@ -69,7 +70,7 @@ export function HeroTitle({
             <span className="opacity-0 select-none">creat</span>
             <span className="text-[#00b8ff]">ing</span>
           </span>
-        </h1>
+        </div>
       </div>
     </>
   );

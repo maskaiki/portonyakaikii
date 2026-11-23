@@ -257,12 +257,14 @@ export default function PlasmaWave({
         pointer.ty = 1.0 - (e.clientY - rect.top) / rect.height;
       };
 
+      let isRunning = false;
       const tick = (now: number) => {
-        raf = requestAnimationFrame(tick);
         if (!visible || document.hidden) {
+          isRunning = false;
           last = now;
           return;
         }
+        raf = requestAnimationFrame(tick);
         const p = propsRef.current;
         const dt = last ? Math.min((now - last) / 1000, 0.1) : 1 / 60;
         last = now;
@@ -285,10 +287,41 @@ export default function PlasmaWave({
         gl.drawArrays(gl.TRIANGLES, 0, 3);
       };
 
+      const startLoop = () => {
+        if (!isRunning && visible && !document.hidden) {
+          isRunning = true;
+          last = performance.now();
+          raf = requestAnimationFrame(tick);
+        }
+      };
+
+      const stopLoop = () => {
+        if (isRunning) {
+          isRunning = false;
+          cancelAnimationFrame(raf);
+        }
+      };
+
       const visibility = new IntersectionObserver((entries) => {
-        visible = entries.some((entry) => entry.isIntersecting);
+        const isIntersecting = entries.some((entry) => entry.isIntersecting);
+        if (isIntersecting && !visible) {
+          visible = true;
+          startLoop();
+        } else if (!isIntersecting && visible) {
+          visible = false;
+          stopLoop();
+        }
       });
       visibility.observe(container);
+
+      const onVisibilityChange = () => {
+        if (!document.hidden && visible) {
+          startLoop();
+        } else {
+          stopLoop();
+        }
+      };
+      document.addEventListener("visibilitychange", onVisibilityChange);
 
       const sizes = new ResizeObserver(([entry]) => {
         if (!entry) return;
@@ -298,13 +331,14 @@ export default function PlasmaWave({
       resize();
 
       window.addEventListener("pointermove", onMove, { passive: true });
-      raf = requestAnimationFrame(tick);
+      startLoop();
 
       cleanupGl = () => {
-        cancelAnimationFrame(raf);
+        stopLoop();
         visibility.disconnect();
         sizes.disconnect();
         window.removeEventListener("pointermove", onMove);
+        document.removeEventListener("visibilitychange", onVisibilityChange);
         gl.deleteProgram(program);
         gl.deleteBuffer(buffer);
         gl.deleteVertexArray(vao);

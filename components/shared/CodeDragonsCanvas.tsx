@@ -541,17 +541,28 @@ export function CodeDragonsCanvas() {
     let animId: number = 0;
     let isRunning = false;
     let isTabVisible = !document.hidden;
+    let cachedScrollY = typeof window !== "undefined" ? window.scrollY : 0;
 
     const startLoopIfNeeded = () => {
-      if (!isRunning && isTabVisible && window.scrollY <= 3800) {
+      if (!isRunning && isTabVisible && cachedScrollY <= 3800) {
         isRunning = true;
         animId = requestAnimationFrame(animate);
       }
     };
 
+    const stopLoop = () => {
+      if (isRunning) {
+        isRunning = false;
+        cancelAnimationFrame(animId);
+      }
+    };
+
     const onScroll = () => {
-      if (window.scrollY <= 3800) {
+      cachedScrollY = window.scrollY;
+      if (cachedScrollY <= 3800) {
         startLoopIfNeeded();
+      } else {
+        stopLoop();
       }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -560,18 +571,21 @@ export function CodeDragonsCanvas() {
       isTabVisible = !document.hidden;
       if (isTabVisible) {
         startLoopIfNeeded();
+      } else {
+        stopLoop();
       }
     };
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     const animate = () => {
-      if (!isTabVisible || window.scrollY > 3800) {
+      if (!isTabVisible || cachedScrollY > 3800) {
         isRunning = false;
         return;
       }
       animId = requestAnimationFrame(animate);
 
-      const scrollY = window.scrollY;
+      // Gunakan cached scroll agar ZERO layout recalculation di setiap frame!
+      const scrollY = cachedScrollY;
       const t = clock.getElapsedTime();
 
       for (const f of flights) {

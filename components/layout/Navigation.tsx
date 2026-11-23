@@ -61,32 +61,43 @@ export function Navigation() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
+  const isScrolledRef = useRef(false);
 
   useEffect(() => {
     const onScroll = () => {
-      const y = window.scrollY;
-      // Saat di bagian atas halaman, lewati pembacaan offsetTop agar 0ms Forced Reflow!
-      if (y <= 40) {
-        setScrolled(false);
-        setActiveSection("hero");
-        return;
-      }
-
-      setScrolled(true);
-      const sections = ["hero", "about", "work", "skills", "journey", "contact"];
-      const scrollPos = y + 260;
-
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const el = document.getElementById(sections[i]);
-        if (el && el.offsetTop <= scrollPos) {
-          setActiveSection(sections[i]);
-          break;
-        }
+      const isPast = window.scrollY > 40;
+      if (isPast !== isScrolledRef.current) {
+        isScrolledRef.current = isPast;
+        setScrolled(isPast);
       }
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    onScroll();
+
+    const sections = ["hero", "about", "work", "skills", "journey", "contact"];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      {
+        rootMargin: "-35% 0px -55% 0px",
+      }
+    );
+
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      observer.disconnect();
+    };
   }, []);
 
   useEffect(() => {

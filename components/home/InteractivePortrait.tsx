@@ -51,7 +51,7 @@ export function InteractivePortrait({
       onMouseEnter={handleMouseEnter}
       onTouchStart={() => setPreloadOthers(true)}
       onMouseLeave={() => onHoverChange?.(false)}
-      className={`relative flex flex-col items-center justify-end select-none w-[128vw] sm:w-full max-w-none h-[82svh] sm:h-[95vh] lg:h-[98vh] max-h-[1080px] aspect-square mx-auto pointer-events-auto cursor-pointer ${className}`}
+      className={`relative flex flex-col items-center justify-end select-none w-[128vw] sm:w-full max-w-none h-[80svh] sm:h-[91vh] lg:h-[93vh] max-h-[1040px] aspect-square mx-auto pointer-events-auto cursor-pointer ${className}`}
       aria-label="Mohammad Rifky Wicaksana (Kaiki). Click to switch pose"
       role="button"
       tabIndex={0}

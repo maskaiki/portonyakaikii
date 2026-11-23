@@ -455,7 +455,15 @@ export function startMegaMendungStage(canvas: HTMLCanvasElement): () => void {
   let isVisible = false;
   const io = new IntersectionObserver(
     ([entry]) => {
+      const wasVisible = isVisible;
       isVisible = entry.isIntersecting;
+      if (isVisible && !wasVisible && !raf) {
+        last = performance.now();
+        raf = requestAnimationFrame(tick);
+      } else if (!isVisible && raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
     },
     { threshold: 0.05 }
   );
@@ -466,10 +474,13 @@ export function startMegaMendungStage(canvas: HTMLCanvasElement): () => void {
   let raf = 0;
 
   const tick = (now: number) => {
+    if (!isVisible) {
+      raf = 0;
+      return;
+    }
     raf = requestAnimationFrame(tick);
     const dt = Math.min(0.033, Math.max(0.001, (now - last) / 1000));
     last = now;
-    if (!isVisible) return;
 
     elapsed += dt;
     const t = elapsed;
@@ -703,7 +714,9 @@ export function startMegaMendungStage(canvas: HTMLCanvasElement): () => void {
     }
   };
 
-  raf = requestAnimationFrame(tick);
+  if (isVisible) {
+    raf = requestAnimationFrame(tick);
+  }
 
   return () => {
     cancelAnimationFrame(raf);

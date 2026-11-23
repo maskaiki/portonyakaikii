@@ -63,25 +63,21 @@ export function ProductCallout({ className = "" }: ProductCalloutProps) {
       className={`z-25 flex flex-col items-end select-none pointer-events-auto ${className}`}
       aria-label="Kaiki Disciplines"
     >
-      <div
+      <button
+        type="button"
         onClick={() => setActiveIdx((prev) => (prev + 1) % DISCIPLINES.length)}
-        className="relative w-48 sm:w-52 p-4 border border-white/85 bg-white/55 backdrop-blur-xl cursor-pointer transition-colors duration-300 hover:bg-white/75 shadow-[0_16px_40px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(255,255,255,0.9)]"
+        className="group relative w-48 sm:w-52 py-1 text-right cursor-pointer transition-opacity duration-200"
       >
-        <div
-          className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#111112]"
-          aria-hidden="true"
-        />
-
-        <div className="flex items-baseline justify-between pb-2 mb-2">
-          <span className="font-display text-[10px] font-extrabold tracking-[0.16em] uppercase text-[#111112]">
+        <div className="flex items-baseline justify-end gap-2.5 mb-2">
+          <span className="font-display text-[11px] font-extrabold tracking-[0.16em] uppercase text-[#111112]">
             Focus Area
           </span>
-          <span className="font-brier italic text-sm text-[#0055FF]">
+          <span className="font-brier italic text-base text-[#0055FF]">
             {current.index}
           </span>
         </div>
 
-        <div className="h-12 flex flex-col justify-center relative overflow-hidden">
+        <div className="h-11 flex flex-col justify-center relative overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={current.index}
@@ -90,29 +86,29 @@ export function ProductCallout({ className = "" }: ProductCalloutProps) {
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.22 }}
             >
-              <p className="font-display text-sm font-black uppercase text-[#111112] tracking-tight leading-none">
+              <p className="font-display text-base font-black uppercase text-[#111112] group-hover:text-[#0055FF] transition-colors tracking-tight leading-none">
                 {current.title}
               </p>
-              <p className="font-sans text-[11px] text-[#111112] mt-1 font-medium">
+              <p className="font-sans text-xs text-[#111112] mt-1 font-medium">
                 {current.sub}
               </p>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <div className="flex items-center gap-1.5 mt-3 pt-2">
+        <div className="flex items-center justify-end gap-1.5 mt-3">
           {DISCIPLINES.map((_, i) => (
             <span
               key={i}
-              className={`h-[2px] w-6 origin-left transition-transform duration-300 will-change-transform ${
+              className={`h-[2px] w-6 origin-right transition-transform duration-300 will-change-transform ${
                 i === activeIdx
-                  ? "scale-x-100 bg-[#111112]"
-                  : "scale-x-[0.35] bg-[#111112]/30"
+                  ? "scale-x-100 bg-[#0055FF]"
+                  : "scale-x-[0.35] bg-[#111112]/35"
               }`}
             />
           ))}
         </div>
-      </div>
+      </button>
     </aside>
   );
 }
