@@ -131,7 +131,7 @@ export function Hero() {
       ref={sectionRef}
       id="hero"
       onMouseMove={handleMouseMove}
-      className="hero-section relative isolate h-screen w-full bg-[#f4f4ed] text-[#111112] overflow-hidden select-none"
+      className="section-stage hero-section relative isolate h-screen w-full bg-[#f4f4ed] text-[#111112] overflow-hidden select-none"
       style={{
         backgroundImage:
           "url('/assets/shared/67dbeba158707fa1cd5e5e45_blobs_footer_1.svg')",
@@ -184,7 +184,7 @@ export function Hero() {
       />
 
       {/* LAYER 4 (z-32): Interactive Glass Ghost Buddy Mascot (Cleanly In Front) */}
-      <HeroGhostBuddy />
+      <HeroGhostBuddy className="z-[32]" />
 
       {/* Left HUD Wrapper */}
       <div

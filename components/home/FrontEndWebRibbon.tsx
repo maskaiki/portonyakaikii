@@ -8,12 +8,20 @@ export interface WebProjectItem {
   title: string;
   description: string;
   previewImage: string;
-  liveUrl: string;
+  liveUrl?: string;
+  isConcept?: boolean;
+  conceptDetails?: {
+    role: string;
+    timeline: string;
+    deliverables: string[];
+    summary: string;
+  };
   tags: string[];
 }
 
 interface FrontEndWebRibbonProps {
   projects: WebProjectItem[];
+  onOpenConcept?: (project: WebProjectItem) => void;
 }
 
 const VERT_SRC = `
@@ -261,10 +269,17 @@ function wrapLines(
   return lines;
 }
 
-export function FrontEndWebRibbon({ projects }: FrontEndWebRibbonProps) {
+export function FrontEndWebRibbon({
+  projects,
+  onOpenConcept,
+}: FrontEndWebRibbonProps) {
   const stageRef = useRef<HTMLDivElement>(null);
   const scrubRailRef = useRef<HTMLDivElement>(null);
   const scrubThumbRef = useRef<HTMLDivElement>(null);
+  const onOpenConceptRef = useRef(onOpenConcept);
+  useEffect(() => {
+    onOpenConceptRef.current = onOpenConcept;
+  }, [onOpenConcept]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [autoDrift, setAutoDrift] = useState(true);
@@ -690,9 +705,11 @@ export function FrontEndWebRibbon({ projects }: FrontEndWebRibbonProps) {
           const clickedSlot = Math.round((clickX - A0 + pos) / st);
           const clickedIdx = ((clickedSlot % N) + N) % N;
           if (clickedIdx === activeIdxLocal) {
-            const url = projects[clickedIdx]?.liveUrl;
-            if (url && url !== "#") {
-              window.open(url, "_blank", "noopener,noreferrer");
+            const proj = projects[clickedIdx];
+            if (proj?.liveUrl && proj.liveUrl !== "#") {
+              window.open(proj.liveUrl, "_blank", "noopener,noreferrer");
+            } else if (proj && onOpenConceptRef.current) {
+              onOpenConceptRef.current(proj);
             }
           } else {
             controlsRef.current.jumpToIndex(clickedIdx);
@@ -998,15 +1015,26 @@ export function FrontEndWebRibbon({ projects }: FrontEndWebRibbonProps) {
             </button>
           ))}
 
-          <a
-            href={activeProject.liveUrl}
-            target={activeProject.liveUrl !== "#" ? "_blank" : undefined}
-            rel={activeProject.liveUrl !== "#" ? "noopener noreferrer" : undefined}
-            className="inline-flex items-center gap-2 px-5 h-10 bg-[#0055FF] hover:bg-[#f4f4ed] !text-white hover:!text-[#111112] font-display text-xs font-black uppercase tracking-wider transition-colors"
-          >
-            <span>Visit Web</span>
-            <span aria-hidden="true">↗</span>
-          </a>
+          {activeProject.liveUrl && activeProject.liveUrl !== "#" ? (
+            <a
+              href={activeProject.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 h-10 bg-[#0055FF] hover:bg-[#f4f4ed] !text-white hover:!text-[#111112] font-display text-xs font-black uppercase tracking-wider transition-colors"
+            >
+              <span>Visit Web</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+          ) : (
+            <button
+              type="button"
+              onClick={() => onOpenConcept?.(activeProject)}
+              className="inline-flex items-center gap-2 px-5 h-10 bg-[#0055FF] hover:bg-[#f4f4ed] text-white hover:text-[#111112] font-display text-xs font-black uppercase tracking-wider transition-colors cursor-pointer"
+            >
+              <span>Case Study</span>
+              <span aria-hidden="true">↗</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -747,8 +747,3 @@ body::before {
   color: #ffffff !important;
   border-color: #111112 !important;
 }
-
-.section-stage {
-  position: relative;
-  contain: layout style paint;
-}

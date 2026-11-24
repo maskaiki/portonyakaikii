@@ -10,10 +10,14 @@ import { KaikiMonumentSection } from "./KaikiMonumentSection";
 import { CatWorkflowSection } from "./CatWorkflowSection";
 import { ArsenalSection } from "./ArsenalSection";
 import { JourneySection } from "./JourneySection";
+import { AtmosphericPreloader } from "@/components/AtmosphericPreloader";
 
 export default function HomePage() {
   return (
     <div className="relative min-h-screen text-[#efefe5] overflow-x-hidden">
+      {/* 00. INTRO: Atmospheric preloader (once per session, ?intro=1 forces it) */}
+      <AtmosphericPreloader />
+
       {/* 01. EXPLORE: Rain Simulation & Interactive Portrait */}
       <Hero />
 
