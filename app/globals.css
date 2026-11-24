@@ -76,6 +76,29 @@ html {
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --scrollbar-thumb: #60a5fa;
+  --scrollbar-track: #0A0A0A;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-width: thin;
+}
+
+@supports not (scrollbar-color: auto) {
+  html {
+    scrollbar-width: auto;
+  }
+
+  html::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+  }
+
+  html::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
 }
 
 section[id] {
@@ -746,4 +769,95 @@ body::before {
   background: #111112 !important;
   color: #ffffff !important;
   border-color: #111112 !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   MODERN WEB GUIDANCE: TOP-LAYER DIALOGS, DEFERRED SECTIONS & MOTION
+   ══════════════════════════════════════════════════════════════════ */
+
+dialog.work-modal {
+  margin: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  max-width: min(92vw, 42rem);
+  max-height: 90dvh;
+  overflow: auto;
+  color: #f4f4ed;
+  opacity: 0;
+  transition-property: opacity, transform, display, overlay;
+  transition-duration: 0.28s;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  transition-behavior: allow-discrete;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  dialog.work-modal {
+    transform: scale(0.94);
+  }
+}
+
+dialog.work-modal:modal {
+  overscroll-behavior: contain;
+}
+
+dialog.work-modal::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background-color: rgb(0 0 0 / 0);
+  backdrop-filter: blur(0px);
+  transition-property: background-color, backdrop-filter, display, overlay;
+  transition-duration: 0.28s;
+  transition-timing-function: ease-out;
+  transition-behavior: allow-discrete;
+}
+
+dialog.work-modal[open]:where(:not([data-closing])) {
+  opacity: 1;
+
+  @starting-style {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    transform: scale(1);
+
+    @starting-style {
+      transform: scale(0.94);
+    }
+  }
+
+  &::backdrop {
+    background-color: rgb(0 0 0 / 0.88);
+    backdrop-filter: blur(18px);
+
+    @starting-style {
+      background-color: rgb(0 0 0 / 0);
+      backdrop-filter: blur(0px);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog.work-modal,
+  dialog.work-modal::backdrop {
+    transition-duration: 0.1s;
+  }
+
+  .marquee-track-left,
+  .marquee-track-right,
+  .marquee-track-logos,
+  .scroll-indicator {
+    animation: none;
+  }
+}
+
+.deferred-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 950px;
+}
+
+.deferred-section-footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 780px;
 }

@@ -67,7 +67,7 @@ export function Footer() {
     <footer
       id="contact"
       onMouseMove={handleMouseMove}
-      className="relative w-full bg-[#f4f4ed] pt-10 pb-8 overflow-hidden scroll-mt-10"
+      className="deferred-section-footer relative w-full bg-[#f4f4ed] pt-10 pb-8 overflow-hidden scroll-mt-10"
     >
       {/* Full-Width Edge-to-Edge Outer Padding */}
       <div className="w-full px-4 sm:px-8 lg:px-12">

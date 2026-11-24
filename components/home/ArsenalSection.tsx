@@ -186,7 +186,7 @@ export function ArsenalSection() {
     <section
       ref={sectionRef}
       id="skills"
-      className="relative w-full py-28 lg:py-40 bg-[#f4f4ed] text-[#111112] overflow-hidden select-none"
+      className="deferred-section relative w-full py-28 lg:py-40 bg-[#f4f4ed] text-[#111112] overflow-hidden select-none"
     >
       {/* LAYERED ARCHITECTURAL TWO-TONE ICE-BLUE & BONE GRADIENT */}
       <div

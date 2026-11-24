@@ -5,6 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FrontEndWebRibbon, type WebProjectItem } from "./FrontEndWebRibbon";
+import { attachClosedByFallback, closeTopLayer } from "@/lib/topLayerDialog";
 
 export type WebProject = WebProjectItem;
 
@@ -87,6 +88,72 @@ export function SelectedWorkSection() {
 
   const [inspectedPoster, setInspectedPoster] = useState<(typeof GRAPHIC_DESIGNS)[0] | null>(null);
   const [selectedConcept, setSelectedConcept] = useState<WebProject | null>(null);
+  const posterDialogRef = useRef<HTMLDialogElement>(null);
+  const conceptDialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = posterDialogRef.current;
+    if (!dialog) return;
+
+    const onCancel = (e: Event) => {
+      e.preventDefault();
+      void closeTopLayer(dialog);
+    };
+    const onClose = () => {
+      dialog.returnValue = "";
+      setInspectedPoster(null);
+    };
+    const detachFallback = attachClosedByFallback(dialog, () => {
+      void closeTopLayer(dialog);
+    });
+
+    dialog.addEventListener("cancel", onCancel);
+    dialog.addEventListener("close", onClose);
+    return () => {
+      detachFallback();
+      dialog.removeEventListener("cancel", onCancel);
+      dialog.removeEventListener("close", onClose);
+    };
+  }, []);
+
+  useEffect(() => {
+    const dialog = posterDialogRef.current;
+    if (!dialog || !inspectedPoster) return;
+    dialog.removeAttribute("data-closing");
+    if (!dialog.open) dialog.showModal();
+  }, [inspectedPoster]);
+
+  useEffect(() => {
+    const dialog = conceptDialogRef.current;
+    if (!dialog) return;
+
+    const onCancel = (e: Event) => {
+      e.preventDefault();
+      void closeTopLayer(dialog);
+    };
+    const onClose = () => {
+      dialog.returnValue = "";
+      setSelectedConcept(null);
+    };
+    const detachFallback = attachClosedByFallback(dialog, () => {
+      void closeTopLayer(dialog);
+    });
+
+    dialog.addEventListener("cancel", onCancel);
+    dialog.addEventListener("close", onClose);
+    return () => {
+      detachFallback();
+      dialog.removeEventListener("cancel", onCancel);
+      dialog.removeEventListener("close", onClose);
+    };
+  }, []);
+
+  useEffect(() => {
+    const dialog = conceptDialogRef.current;
+    if (!dialog || !selectedConcept) return;
+    dialog.removeAttribute("data-closing");
+    if (!dialog.open) dialog.showModal();
+  }, [selectedConcept]);
 
   const count = GRAPHIC_DESIGNS.length;
   const angleStep = 360 / count;
@@ -505,29 +572,35 @@ export function SelectedWorkSection() {
         </div>
       </div>
 
-      {/* ── POSTER INSPECTION LIGHTBOX MODAL ───────────────────────── */}
-      {inspectedPoster && (
-        <div
-          onClick={() => setInspectedPoster(null)}
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6 animate-fadeIn"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="relative max-w-lg w-full bg-[#111112] border border-white/20 rounded-[28px] overflow-hidden shadow-2xl p-6 flex flex-col gap-5"
-          >
+      {/* ── POSTER INSPECTION LIGHTBOX DIALOG (NATIVE TOP-LAYER) ─────── */}
+      <dialog
+        ref={posterDialogRef}
+        aria-labelledby="poster-modal-title"
+        {...({ closedby: "any" } as Record<string, string>)}
+        className="work-modal w-full max-w-lg"
+      >
+        {inspectedPoster && (
+          <div className="relative w-full bg-[#111112] border border-white/20 rounded-[28px] overflow-hidden shadow-2xl p-6 flex flex-col gap-5">
             <div className="flex items-center justify-between pb-3 border-b border-white/10">
               <div>
                 <span className="font-display text-[11px] font-bold tracking-[0.2em] text-[#38bdf8] uppercase block">
                   Graphic Poster Archive
                 </span>
-                <h4 className="font-display text-lg sm:text-xl font-black uppercase text-[#f4f4ed] mt-0.5">
+                <h1
+                  id="poster-modal-title"
+                  className="font-display text-lg sm:text-xl font-black uppercase text-[#f4f4ed] mt-0.5"
+                >
                   {inspectedPoster.title}
-                </h4>
+                </h1>
               </div>
               <button
-                onClick={() => setInspectedPoster(null)}
+                type="button"
+                autoFocus
+                onClick={() => {
+                  if (posterDialogRef.current) {
+                    void closeTopLayer(posterDialogRef.current);
+                  }
+                }}
                 className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#0055FF] text-[#f4f4ed] hover:text-white flex items-center justify-center font-display font-bold transition-colors cursor-pointer shrink-0"
                 aria-label="Close poster inspection"
               >
@@ -554,32 +627,38 @@ export function SelectedWorkSection() {
               </span>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </dialog>
 
-      {/* ── WEB CONCEPT PREVIEW MODAL ──────────────────────────────── */}
-      {selectedConcept && (
-        <div
-          onClick={() => setSelectedConcept(null)}
-          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-4 sm:p-8 animate-fadeIn"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="relative max-w-2xl w-full bg-[#111112] border border-white/20 rounded-[28px] overflow-hidden shadow-2xl p-6 sm:p-8 flex flex-col gap-6"
-          >
+      {/* ── WEB CONCEPT PREVIEW DIALOG (NATIVE TOP-LAYER) ────────────── */}
+      <dialog
+        ref={conceptDialogRef}
+        aria-labelledby="concept-modal-title"
+        {...({ closedby: "any" } as Record<string, string>)}
+        className="work-modal w-full max-w-2xl"
+      >
+        {selectedConcept && (
+          <div className="relative w-full bg-[#111112] border border-white/20 rounded-[28px] overflow-hidden shadow-2xl p-6 sm:p-8 flex flex-col gap-6">
             <div className="flex items-center justify-between pb-4 border-b border-white/10">
               <div>
                 <span className="font-display text-[11px] font-bold tracking-[0.2em] text-[#38bdf8] uppercase block">
                   Concept Architecture &middot; Project {selectedConcept.num}
                 </span>
-                <h4 className="font-display text-2xl font-black uppercase text-[#f4f4ed] mt-1">
+                <h1
+                  id="concept-modal-title"
+                  className="font-display text-2xl font-black uppercase text-[#f4f4ed] mt-1"
+                >
                   {selectedConcept.title}
-                </h4>
+                </h1>
               </div>
               <button
-                onClick={() => setSelectedConcept(null)}
+                type="button"
+                autoFocus
+                onClick={() => {
+                  if (conceptDialogRef.current) {
+                    void closeTopLayer(conceptDialogRef.current);
+                  }
+                }}
                 className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#0055FF] text-[#f4f4ed] hover:text-white flex items-center justify-center font-display font-bold transition-colors cursor-pointer shrink-0"
                 aria-label="Close concept details"
               >
@@ -632,8 +711,8 @@ export function SelectedWorkSection() {
               </div>
             )}
           </div>
-        </div>
-      )}
+        )}
+      </dialog>
     </section>
   );
 }

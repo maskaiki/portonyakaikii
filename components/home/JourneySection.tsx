@@ -120,7 +120,7 @@ export function JourneySection() {
     <section
       ref={sectionRef}
       id="journey"
-      className="relative w-full py-28 lg:py-40 bg-[#0d1017] text-[#f4f4ed] overflow-hidden select-none"
+      className="deferred-section relative w-full py-28 lg:py-40 bg-[#0d1017] text-[#f4f4ed] overflow-hidden select-none"
     >
       {/* LAYERED ARCHITECTURAL TWO-TONE BACKGROUND */}
       <div
